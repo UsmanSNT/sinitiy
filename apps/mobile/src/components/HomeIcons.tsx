@@ -21,7 +21,7 @@ export const HeartbeatIcon = ({ color = "#3d5ee1", size = 20 }: IconProps) => (
 );
 
 export const FamilyIcon = ({ color = "#e2536b", size = 20 }: IconProps) => (
-  <MaterialCommunityIcons name="account-group-outline" size={size} color={color} />
+  <MaterialIcons name="diversity-1" size={size} color={color} />
 );
 
 export const MegaphoneIcon = ({ color = "#e08a2b", size = 20 }: IconProps) => (

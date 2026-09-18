@@ -1,4 +1,5 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { FamilyIcon } from "./HomeIcons";
 
 interface Props {
   color: string;
@@ -6,18 +7,18 @@ interface Props {
 }
 
 export const HomeTabIcon = ({ color, size = 22 }: Props) => (
-  <MaterialCommunityIcons name="home-variant-outline" size={size} color={color} />
+  <MaterialIcons name="home" size={size} color={color} />
 );
 
 export const ServicesTabIcon = ({ color, size = 22 }: Props) => (
-  <MaterialCommunityIcons name="view-grid-outline" size={size} color={color} />
+  <MaterialIcons name="widgets" size={size} color={color} />
 );
 
 // Home kartasidagi (커뮤니티) bilan bir xil ikon - Footer va Home mos kelishi uchun.
 export const CommunityTabIcon = ({ color, size = 22 }: Props) => (
-  <MaterialCommunityIcons name="account-group-outline" size={size} color={color} />
+  <FamilyIcon color={color} size={size} />
 );
 
 export const MyPageTabIcon = ({ color, size = 22 }: Props) => (
-  <MaterialCommunityIcons name="account-circle-outline" size={size} color={color} />
+  <MaterialIcons name="person" size={size} color={color} />
 );
