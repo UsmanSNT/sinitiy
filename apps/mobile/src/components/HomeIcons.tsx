@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
 interface IconProps {
   color?: string;
@@ -17,7 +17,7 @@ export const BriefcaseIcon = ({ color = "#3fae5c", size = 20 }: IconProps) => (
 );
 
 export const HeartbeatIcon = ({ color = "#3d5ee1", size = 20 }: IconProps) => (
-  <MaterialCommunityIcons name="heart-pulse" size={size} color={color} />
+  <FontAwesome5 name="heartbeat" size={size} color={color} />
 );
 
 export const FamilyIcon = ({ color = "#e2536b", size = 20 }: IconProps) => (
