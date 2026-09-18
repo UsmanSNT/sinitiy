@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 
 interface IconProps {
   color?: string;
@@ -25,5 +25,5 @@ export const FamilyIcon = ({ color = "#e2536b", size = 20 }: IconProps) => (
 );
 
 export const MegaphoneIcon = ({ color = "#e08a2b", size = 20 }: IconProps) => (
-  <MaterialCommunityIcons name="bullhorn-outline" size={size} color={color} />
+  <MaterialIcons name="campaign" size={size} color={color} />
 );
