@@ -27,7 +27,7 @@ export function HomeScreen() {
             <Text style={styles.greeting}>안녕하세요!</Text>
             <Text style={styles.name}>{user ? `${user.name}님` : "..."} 😊</Text>
           </View>
-          <BellIcon color={colors.navy} />
+          <BellIcon color={colors.white} />
         </View>
         <Text style={styles.subtitle}>오늘도 건강한 하루 되세요.</Text>
 
@@ -64,13 +64,13 @@ export function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.white },
+  screen: { flex: 1, backgroundColor: "rgb(24, 47, 83)" },
   scroll: { flex: 1 },
   content: { padding: 20, paddingTop: 60 },
   headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  greeting: { color: colors.gray, fontSize: 13 },
-  name: { color: colors.navy, fontSize: 20, fontWeight: "700", marginTop: 4 },
-  subtitle: { color: colors.gray, fontSize: 13, marginTop: 10 },
+  greeting: { color: "rgba(255,255,255,0.7)", fontSize: 13 },
+  name: { color: colors.white, fontSize: 20, fontWeight: "700", marginTop: 4 },
+  subtitle: { color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 10 },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
