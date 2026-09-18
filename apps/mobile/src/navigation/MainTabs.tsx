@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { MainTabParamList } from "./types";
 import { HomeScreen } from "../screens/HomeScreen";
 import { ServicesScreen } from "../screens/ServicesScreen";
@@ -10,10 +11,10 @@ import { colors } from "../theme";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const icons: Record<keyof MainTabParamList, (props: { color: string }) => React.ReactElement> = {
-  Home: ({ color }) => <HomeTabIcon color={color} />,
-  Services: ({ color }) => <ServicesTabIcon color={color} />,
-  Community: ({ color }) => <CommunityTabIcon color={color} />,
-  MyPage: ({ color }) => <MyPageTabIcon color={color} />,
+  Home: ({ color }) => <HomeTabIcon color={color} size={27} />,
+  Services: ({ color }) => <ServicesTabIcon color={color} size={27} />,
+  Community: ({ color }) => <CommunityTabIcon color={color} size={27} />,
+  MyPage: ({ color }) => <MyPageTabIcon color={color} size={27} />,
 };
 
 const labels: Record<keyof MainTabParamList, string> = {
@@ -24,6 +25,11 @@ const labels: Record<keyof MainTabParamList, string> = {
 };
 
 export function MainTabs() {
+  // Mobil qurilmaning o'z tugmalar paneli (home indicator/nav bar)dan
+  // yuqoriroqqa chiqishi uchun xavfsiz zona (safe area) hisobga olinadi.
+  const insets = useSafeAreaInsets();
+  const bottomPad = Math.max(insets.bottom, 12);
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -32,6 +38,13 @@ export function MainTabs() {
         tabBarInactiveTintColor: colors.gray,
         tabBarLabel: labels[route.name as keyof MainTabParamList],
         tabBarIcon: ({ color }) => icons[route.name as keyof MainTabParamList]({ color }),
+        tabBarLabelStyle: { fontSize: 13, fontWeight: "600", marginTop: 2 },
+        tabBarStyle: {
+          height: 66 + bottomPad,
+          paddingTop: 10,
+          paddingBottom: bottomPad,
+        },
+        tabBarItemStyle: { paddingVertical: 4 },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />

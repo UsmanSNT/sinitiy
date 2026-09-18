@@ -1,4 +1,4 @@
-import Svg, { Path, Circle } from "react-native-svg";
+import Svg, { Path, Circle, Rect } from "react-native-svg";
 
 interface Props {
   color: string;
@@ -14,10 +14,10 @@ export const HomeTabIcon = ({ color, size = 22 }: Props) => (
 
 export const ServicesTabIcon = ({ color, size = 22 }: Props) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
-    <Path d="M4 5h6v6H4z" />
-    <Path d="M14 5h6v6h-6z" />
-    <Path d="M4 15h6v6H4z" />
-    <Path d="M14 15h6v6h-6z" />
+    <Rect x={4} y={5} width={6} height={6} rx={1.6} />
+    <Rect x={14} y={5} width={6} height={6} rx={1.6} />
+    <Rect x={4} y={15} width={6} height={6} rx={1.6} />
+    <Rect x={14} y={15} width={6} height={6} rx={1.6} />
   </Svg>
 );
 

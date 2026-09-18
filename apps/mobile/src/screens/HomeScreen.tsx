@@ -50,7 +50,7 @@ export function HomeScreen() {
           <Text style={styles.noticeMore}>전체보기 ›</Text>
         </View>
         {notices.map((n) => (
-          <View key={n.text} style={styles.noticeRow}>
+          <View key={n.text} style={styles.noticeCard}>
             <Text style={[styles.noticeTag, { color: n.tagColor }]}>{n.tag}</Text>
             <Text style={styles.noticeText} numberOfLines={1}>
               {n.text}
@@ -98,23 +98,37 @@ const styles = StyleSheet.create({
   cardLabel: { fontSize: 15, fontWeight: "700", color: colors.navy, textAlign: "center" },
   cardSub: { fontSize: 11, color: colors.gray, marginTop: 3, textAlign: "center" },
   noticeBar: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    backgroundColor: "#f7f8fa",
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 14,
+    paddingTop: 22,
+    paddingBottom: 18,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowOffset: { width: 0, height: -6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 10,
   },
-  noticeHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
-  noticeTitle: { fontWeight: "700", color: colors.navy, fontSize: 15 },
-  noticeMore: { color: colors.gray, fontSize: 12 },
-  noticeRow: { flexDirection: "row", alignItems: "center", paddingVertical: 5, gap: 8 },
-  noticeTag: { fontSize: 12, fontWeight: "700", width: 34 },
-  noticeText: { flex: 1, fontSize: 13, color: colors.navy },
-  noticeDate: { fontSize: 11, color: colors.gray },
+  noticeHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
+  noticeTitle: { fontWeight: "700", color: colors.navy, fontSize: 18 },
+  noticeMore: { color: colors.gray, fontSize: 13 },
+  noticeCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  noticeTag: { fontSize: 14, fontWeight: "700", width: 40 },
+  noticeText: { flex: 1, fontSize: 15, color: colors.navy, fontWeight: "500" },
+  noticeDate: { fontSize: 12, color: colors.gray },
 });
