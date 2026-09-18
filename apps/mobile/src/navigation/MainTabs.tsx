@@ -11,10 +11,10 @@ import { colors } from "../theme";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const icons: Record<keyof MainTabParamList, (props: { color: string }) => React.ReactElement> = {
-  Home: ({ color }) => <HomeTabIcon color={color} size={27} />,
-  Services: ({ color }) => <ServicesTabIcon color={color} size={27} />,
-  Community: ({ color }) => <CommunityTabIcon color={color} size={27} />,
-  MyPage: ({ color }) => <MyPageTabIcon color={color} size={27} />,
+  Home: ({ color }) => <HomeTabIcon color={color} size={24} />,
+  Services: ({ color }) => <ServicesTabIcon color={color} size={24} />,
+  Community: ({ color }) => <CommunityTabIcon color={color} size={24} />,
+  MyPage: ({ color }) => <MyPageTabIcon color={color} size={24} />,
 };
 
 const labels: Record<keyof MainTabParamList, string> = {
@@ -38,13 +38,12 @@ export function MainTabs() {
         tabBarInactiveTintColor: colors.gray,
         tabBarLabel: labels[route.name as keyof MainTabParamList],
         tabBarIcon: ({ color }) => icons[route.name as keyof MainTabParamList]({ color }),
-        tabBarLabelStyle: { fontSize: 13, fontWeight: "600", marginTop: 2 },
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
         tabBarStyle: {
-          height: 66 + bottomPad,
-          paddingTop: 10,
+          height: 58 + bottomPad,
+          paddingTop: 8,
           paddingBottom: bottomPad,
         },
-        tabBarItemStyle: { paddingVertical: 4 },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
