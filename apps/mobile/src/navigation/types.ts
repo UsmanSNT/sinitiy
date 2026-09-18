@@ -3,6 +3,8 @@ export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   Main: undefined;
+  PostDetail: { postId: string };
+  NewPost: undefined;
 };
 
 export type MainTabParamList = {

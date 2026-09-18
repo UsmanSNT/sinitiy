@@ -1,34 +1,53 @@
-import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useCallback, useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { PaginatedResult, Post } from "@sinity/shared";
+import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { colors } from "../theme";
 
 export function CommunityScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     api
       .get<PaginatedResult<Post>>("/posts")
       .then((res) => setPosts(res.items))
       .finally(() => setLoading(false));
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      load();
+    }, [load])
+  );
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>커뮤니티</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>커뮤니티</Text>
+        <Pressable onPress={() => navigation.navigate("NewPost")}>
+          <Text style={styles.writeLink}>글쓰기</Text>
+        </Pressable>
+      </View>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 20 }}
         ListEmptyComponent={
           <Text style={styles.empty}>
             {loading ? "불러오는 중..." : "아직 게시글이 없습니다."}
           </Text>
         }
         renderItem={({ item }) => (
-          <View style={styles.postCard}>
+          <Pressable
+            style={styles.postCard}
+            onPress={() => navigation.navigate("PostDetail", { postId: item.id })}
+          >
             <Text style={styles.category}>{item.categoryName}</Text>
             <Text style={styles.postTitle}>{item.title}</Text>
             <Text style={styles.postBody} numberOfLines={2}>
@@ -37,7 +56,7 @@ export function CommunityScreen() {
             <Text style={styles.meta}>
               좋아요 {item.likeCount} · 댓글 {item.commentCount}
             </Text>
-          </View>
+          </Pressable>
         )}
       />
     </View>
@@ -45,8 +64,17 @@ export function CommunityScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.white, padding: 20, paddingTop: 60 },
-  title: { fontSize: 20, fontWeight: "700", color: colors.navy, marginBottom: 16 },
+  container: { flex: 1, backgroundColor: colors.white },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 16,
+  },
+  title: { fontSize: 20, fontWeight: "700", color: colors.navy },
+  writeLink: { fontSize: 14, fontWeight: "700", color: colors.accent },
   empty: { textAlign: "center", color: colors.gray, marginTop: 40 },
   postCard: {
     borderWidth: 1,
