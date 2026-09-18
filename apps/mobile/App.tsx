@@ -15,6 +15,7 @@ import { MainTabs } from "./src/navigation/MainTabs";
 import { PostDetailScreen } from "./src/screens/PostDetailScreen";
 import { NewPostScreen } from "./src/screens/NewPostScreen";
 import { JobWelfareScreen } from "./src/screens/JobWelfareScreen";
+import { JobDetailScreen } from "./src/screens/JobDetailScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,6 +34,7 @@ function App() {
             <Stack.Screen name="PostDetail" component={PostDetailScreen} />
             <Stack.Screen name="NewPost" component={NewPostScreen} />
             <Stack.Screen name="JobWelfare" component={JobWelfareScreen} />
+            <Stack.Screen name="JobDetail" component={JobDetailScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>

@@ -19,10 +19,6 @@ export function JobWelfareScreen({ navigation }: Props) {
   const [activeFilter, setActiveFilter] = useState<(typeof filters)[number]>("전체");
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
-      <View style={styles.brandStrip}>
-        <View style={styles.brandIcon}><MaterialIcons name="business-center" size={15} color={colors.white} /></View>
-        <Text style={styles.brandTitle}>일자리 · 복지</Text>
-      </View>
       <View style={styles.header}>
         <Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}>
           <MaterialIcons name="chevron-left" size={26} color={colors.navy} />
@@ -49,7 +45,11 @@ export function JobWelfareScreen({ navigation }: Props) {
       </View>
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
         {opportunities.map((item) => (
-          <Pressable key={item.title} style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+          <Pressable
+            key={item.title}
+            style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+            onPress={() => navigation.navigate("JobDetail", item)}
+          >
             <Image source={item.image} style={styles.thumbnail} />
             <View style={styles.rowCopy}>
               <Text style={styles.rowTitle} numberOfLines={1}>{item.title}</Text>
@@ -65,9 +65,6 @@ export function JobWelfareScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white },
-  brandStrip: { height: 39, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 18, backgroundColor: "#eaf7f2" },
-  brandIcon: { width: 23, height: 23, borderRadius: 6, alignItems: "center", justifyContent: "center", backgroundColor: "#28a67a" },
-  brandTitle: { fontSize: 14, fontWeight: "800", color: "#168060" },
   header: { height: 52, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14 },
   title: { flex: 1, marginLeft: 7, fontSize: 18, fontWeight: "800", color: colors.navy },
   filters: { flexDirection: "row", gap: 7, paddingHorizontal: 16, paddingBottom: 13, borderBottomWidth: 1, borderBottomColor: "#edf0f4" },

@@ -1,3 +1,5 @@
+import type { ImageSourcePropType } from "react-native";
+
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
@@ -6,6 +8,7 @@ export type RootStackParamList = {
   PostDetail: { postId: string };
   NewPost: undefined;
   JobWelfare: undefined;
+  JobDetail: { title: string; organization: string; period: string; image: ImageSourcePropType };
 };
 
 export type MainTabParamList = {
