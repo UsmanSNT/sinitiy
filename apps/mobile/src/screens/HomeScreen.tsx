@@ -20,29 +20,31 @@ export function HomeScreen() {
   const { user } = useAuth();
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
+    <View style={styles.screen}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <View style={styles.headerTop}>
-          <Text style={styles.greeting}>안녕하세요!</Text>
-          <BellIcon />
-        </View>
-        <Text style={styles.name}>{user ? `${user.name}님` : "..."} 😊</Text>
-        <Text style={styles.subtitle}>오늘도 건강한 하루 되세요.</Text>
-      </View>
-
-      <View style={styles.grid}>
-        {serviceItems.map((item) => (
-          <View key={item.label} style={styles.card}>
-            <View style={[styles.iconWrap, { backgroundColor: item.bg }]}>
-              <item.Icon color={item.iconColor} size={20} />
-            </View>
-            <Text style={styles.cardLabel}>{item.label}</Text>
-            <Text style={styles.cardSub}>{item.sub}</Text>
+          <View>
+            <Text style={styles.greeting}>안녕하세요!</Text>
+            <Text style={styles.name}>{user ? `${user.name}님` : "..."} 😊</Text>
           </View>
-        ))}
-      </View>
+          <BellIcon color={colors.navy} />
+        </View>
+        <Text style={styles.subtitle}>오늘도 건강한 하루 되세요.</Text>
 
-      <View style={styles.noticeSection}>
+        <View style={styles.grid}>
+          {serviceItems.map((item) => (
+            <View key={item.label} style={styles.card}>
+              <View style={[styles.iconWrap, { backgroundColor: item.bg }]}>
+                <item.Icon color={item.iconColor} size={30} />
+              </View>
+              <Text style={styles.cardLabel}>{item.label}</Text>
+              <Text style={styles.cardSub}>{item.sub}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      <View style={styles.noticeBar}>
         <View style={styles.noticeHeader}>
           <Text style={styles.noticeTitle}>오늘의 알림</Text>
           <Text style={styles.noticeMore}>전체보기 ›</Text>
@@ -57,55 +59,61 @@ export function HomeScreen() {
           </View>
         ))}
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f6f8" },
-  content: { paddingBottom: 40 },
-  header: { backgroundColor: colors.navy, paddingTop: 60, paddingBottom: 24, paddingHorizontal: 20 },
-  headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  greeting: { color: "rgba(255,255,255,0.8)", fontSize: 13 },
-  name: { color: colors.white, fontSize: 20, fontWeight: "700", marginTop: 6 },
-  subtitle: { color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 4 },
+  screen: { flex: 1, backgroundColor: colors.white },
+  scroll: { flex: 1 },
+  content: { padding: 20, paddingTop: 60 },
+  headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
+  greeting: { color: colors.gray, fontSize: 13 },
+  name: { color: colors.navy, fontSize: 20, fontWeight: "700", marginTop: 4 },
+  subtitle: { color: colors.gray, fontSize: 13, marginTop: 10 },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    padding: 16,
-    gap: 12,
+    marginTop: 20,
+    gap: 14,
   },
   card: {
     width: "47%",
+    aspectRatio: 1,
     backgroundColor: colors.white,
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.border,
-  },
-  iconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
   },
-  cardLabel: { fontSize: 14, fontWeight: "700", color: colors.navy },
-  cardSub: { fontSize: 11, color: colors.gray, marginTop: 2 },
-  noticeSection: {
-    marginHorizontal: 16,
-    marginTop: 4,
+  iconWrap: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 14,
+  },
+  cardLabel: { fontSize: 15, fontWeight: "700", color: colors.navy, textAlign: "center" },
+  cardSub: { fontSize: 11, color: colors.gray, marginTop: 3, textAlign: "center" },
+  noticeBar: {
     backgroundColor: colors.white,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: 16,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 14,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 8,
   },
   noticeHeader: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },
   noticeTitle: { fontWeight: "700", color: colors.navy, fontSize: 15 },
   noticeMore: { color: colors.gray, fontSize: 12 },
-  noticeRow: { flexDirection: "row", alignItems: "center", paddingVertical: 6, gap: 8 },
+  noticeRow: { flexDirection: "row", alignItems: "center", paddingVertical: 5, gap: 8 },
   noticeTag: { fontSize: 12, fontWeight: "700", width: 34 },
   noticeText: { flex: 1, fontSize: 13, color: colors.navy },
   noticeDate: { fontSize: 11, color: colors.gray },
