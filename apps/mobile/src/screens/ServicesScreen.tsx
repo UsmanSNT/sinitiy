@@ -1,5 +1,8 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 
 const services = [
@@ -42,6 +45,8 @@ const services = [
 ];
 
 export function ServicesScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
@@ -51,7 +56,11 @@ export function ServicesScreen() {
 
       <ScrollView contentContainerStyle={styles.list}>
         {services.map((item) => (
-          <Pressable key={item.title} style={styles.row}>
+          <Pressable
+            key={item.title}
+            style={styles.row}
+            onPress={() => item.title === "일자리·복지" && navigation.navigate("JobWelfare")}
+          >
             <View style={[styles.iconBox, { backgroundColor: item.bg }]}>{item.icon}</View>
             <View style={styles.rowText}>
               <Text style={styles.rowTitle}>{item.title}</Text>

@@ -1,7 +1,10 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 import { BellIcon, BriefcaseIcon, HeartbeatIcon, FamilyIcon, MegaphoneIcon } from "../components/HomeIcons";
+import type { RootStackParamList } from "../navigation/types";
 
 const serviceItems = [
   { Icon: BriefcaseIcon, iconColor: "#3fae5c", label: "일자리·복지", sub: "취업·복지 정보" },
@@ -18,6 +21,7 @@ const notices = [
 
 export function HomeScreen() {
   const { user } = useAuth();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <View style={styles.screen}>
@@ -35,13 +39,17 @@ export function HomeScreen() {
       <View style={styles.gridWrap}>
         <View style={styles.grid}>
           {serviceItems.map((item) => (
-            <View key={item.label} style={styles.card}>
+            <Pressable
+              key={item.label}
+              style={({ pressed }) => [styles.card, pressed && { opacity: 0.78 }]}
+              onPress={() => item.label === "일자리·복지" && navigation.navigate("JobWelfare")}
+            >
               <View style={styles.iconWrap}>
                 <item.Icon color={item.iconColor} size={38} />
               </View>
               <Text style={styles.cardLabel}>{item.label}</Text>
               <Text style={styles.cardSub}>{item.sub}</Text>
-            </View>
+            </Pressable>
           ))}
         </View>
       </View>

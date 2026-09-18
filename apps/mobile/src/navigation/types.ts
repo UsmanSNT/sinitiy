@@ -5,6 +5,7 @@ export type RootStackParamList = {
   Main: undefined;
   PostDetail: { postId: string };
   NewPost: undefined;
+  JobWelfare: undefined;
 };
 
 export type MainTabParamList = {
