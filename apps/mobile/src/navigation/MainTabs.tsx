@@ -11,10 +11,10 @@ import { colors } from "../theme";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const icons: Record<keyof MainTabParamList, (props: { color: string }) => React.ReactElement> = {
-  Home: ({ color }) => <HomeTabIcon color={color} size={24} />,
-  Services: ({ color }) => <ServicesTabIcon color={color} size={24} />,
-  Community: ({ color }) => <CommunityTabIcon color={color} size={24} />,
-  MyPage: ({ color }) => <MyPageTabIcon color={color} size={24} />,
+  Home: ({ color }) => <HomeTabIcon color={color} size={22} />,
+  Services: ({ color }) => <ServicesTabIcon color={color} size={22} />,
+  Community: ({ color }) => <CommunityTabIcon color={color} size={22} />,
+  MyPage: ({ color }) => <MyPageTabIcon color={color} size={22} />,
 };
 
 const labels: Record<keyof MainTabParamList, string> = {
@@ -28,7 +28,10 @@ export function MainTabs() {
   // Mobil qurilmaning o'z tugmalar paneli (home indicator/nav bar)dan
   // yuqoriroqqa chiqishi uchun xavfsiz zona (safe area) hisobga olinadi.
   const insets = useSafeAreaInsets();
-  const bottomPad = Math.max(insets.bottom, 12);
+  // Veb brauzerda safe-area qiymati odatda 0 qaytadi, shuning uchun
+  // haqiqiy mobil brauzerlarda yozuv kesilib qolmasligi uchun minimal
+  // qiymat yetarlicha katta qilib olinadi.
+  const bottomPad = Math.max(insets.bottom, 16);
 
   return (
     <Tab.Navigator
@@ -38,10 +41,10 @@ export function MainTabs() {
         tabBarInactiveTintColor: colors.gray,
         tabBarLabel: labels[route.name as keyof MainTabParamList],
         tabBarIcon: ({ color }) => icons[route.name as keyof MainTabParamList]({ color }),
-        tabBarLabelStyle: { fontSize: 12, fontWeight: "600" },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
         tabBarStyle: {
-          height: 58 + bottomPad,
-          paddingTop: 8,
+          height: 56 + bottomPad,
+          paddingTop: 6,
           paddingBottom: bottomPad,
         },
       })}

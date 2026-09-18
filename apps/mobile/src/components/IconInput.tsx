@@ -71,5 +71,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.navy,
     paddingVertical: 12,
+    // Veb brauzerda standart qora "focus" chegarasini olib tashlash.
+    outlineStyle: "none" as any,
+    outlineWidth: 0 as any,
   },
 });

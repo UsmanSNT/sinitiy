@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 import { BellIcon, BriefcaseIcon, HeartbeatIcon, FamilyIcon, MegaphoneIcon } from "../components/HomeIcons";
@@ -21,7 +21,7 @@ export function HomeScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <View style={styles.top}>
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.greeting}>안녕하세요!</Text>
@@ -30,21 +30,21 @@ export function HomeScreen() {
           <BellIcon color={colors.white} />
         </View>
         <Text style={styles.subtitle}>오늘도 건강한 하루 되세요.</Text>
+      </View>
 
-        <View style={styles.gridWrap}>
-          <View style={styles.grid}>
-            {serviceItems.map((item) => (
-              <View key={item.label} style={styles.card}>
-                <View style={styles.iconWrap}>
-                  <item.Icon color={item.iconColor} size={56} />
-                </View>
-                <Text style={styles.cardLabel}>{item.label}</Text>
-                <Text style={styles.cardSub}>{item.sub}</Text>
+      <View style={styles.gridWrap}>
+        <View style={styles.grid}>
+          {serviceItems.map((item) => (
+            <View key={item.label} style={styles.card}>
+              <View style={styles.iconWrap}>
+                <item.Icon color={item.iconColor} size={38} />
               </View>
-            ))}
-          </View>
+              <Text style={styles.cardLabel}>{item.label}</Text>
+              <Text style={styles.cardSub}>{item.sub}</Text>
+            </View>
+          ))}
         </View>
-      </ScrollView>
+      </View>
 
       <View style={styles.noticeBar}>
         <View style={styles.noticeHeader}>
@@ -67,23 +67,22 @@ export function HomeScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "rgb(24, 47, 83)" },
-  scroll: { flex: 1 },
-  content: { flexGrow: 1, padding: 20, paddingTop: 60 },
+  top: { paddingHorizontal: 20, paddingTop: 50 },
   headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  greeting: { color: "rgba(255,255,255,0.75)", fontSize: 16 },
-  name: { color: colors.white, fontSize: 24, fontWeight: "700", marginTop: 4 },
-  subtitle: { color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 10 },
-  gridWrap: { flex: 1, justifyContent: "center" },
+  greeting: { color: "rgba(255,255,255,0.75)", fontSize: 15 },
+  name: { color: colors.white, fontSize: 21, fontWeight: "700", marginTop: 4 },
+  subtitle: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 8 },
+  gridWrap: { flex: 1, paddingHorizontal: 20, justifyContent: "center" },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 14,
+    gap: 10,
   },
   card: {
-    width: "47%",
-    aspectRatio: 1,
+    width: "48%",
+    aspectRatio: 1.25,
     backgroundColor: colors.white,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.border,
     alignItems: "center",
@@ -92,42 +91,42 @@ const styles = StyleSheet.create({
   iconWrap: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: 8,
   },
-  cardLabel: { fontSize: 15, fontWeight: "700", color: colors.navy, textAlign: "center" },
-  cardSub: { fontSize: 11, color: colors.gray, marginTop: 3, textAlign: "center" },
+  cardLabel: { fontSize: 13, fontWeight: "700", color: colors.navy, textAlign: "center" },
+  cardSub: { fontSize: 10, color: colors.gray, marginTop: 2, textAlign: "center" },
   noticeBar: {
     backgroundColor: "#f7f8fa",
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: 20,
-    paddingTop: 22,
-    paddingBottom: 18,
+    borderTopLeftRadius: 22,
+    borderTopRightRadius: 22,
+    paddingHorizontal: 18,
+    paddingTop: 14,
+    paddingBottom: 12,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -6 },
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.08,
-    shadowRadius: 16,
+    shadowRadius: 12,
     elevation: 10,
   },
-  noticeHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 14 },
-  noticeTitle: { fontWeight: "700", color: colors.navy, fontSize: 18 },
-  noticeMore: { color: colors.gray, fontSize: 13 },
+  noticeHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
+  noticeTitle: { fontWeight: "700", color: colors.navy, fontSize: 15 },
+  noticeMore: { color: colors.gray, fontSize: 12 },
   noticeCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 8,
     backgroundColor: colors.white,
-    borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    marginBottom: 10,
+    borderRadius: 12,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    marginBottom: 6,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  noticeTag: { fontSize: 14, fontWeight: "700", width: 40 },
-  noticeText: { flex: 1, fontSize: 15, color: colors.navy, fontWeight: "500" },
-  noticeDate: { fontSize: 12, color: colors.gray },
+  noticeTag: { fontSize: 12, fontWeight: "700", width: 34 },
+  noticeText: { flex: 1, fontSize: 13, color: colors.navy, fontWeight: "500" },
+  noticeDate: { fontSize: 11, color: colors.gray },
 });
