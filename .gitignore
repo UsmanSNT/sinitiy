@@ -1,0 +1,25 @@
+node_modules/
+.next/
+dist/
+build/
+.env
+.env.local
+*.log
+.DS_Store
+.turbo/
+
+# Expo / React Native
+.expo/
+web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+android/app/build/
+android/.gradle/
+ios/Pods/
+
+# Deploy key (never commit)
+.deploy_key_tmp/

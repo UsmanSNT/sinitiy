@@ -1,0 +1,246 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  individual
+  organization
+  admin
+}
+
+enum UserStatus {
+  active
+  suspended
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  passwordHash         String
+  name                 String
+  phone                String?
+  userType             UserType
+  status               UserStatus @default(active)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  organizationProfile  OrganizationProfile?
+  posts                Post[]
+  comments             Comment[]
+  likes                Like[]
+  reports              Report[]
+  notifications        Notification[]
+
+  @@map("users")
+}
+
+model OrganizationProfile {
+  userId          String   @id
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessNumber  String   @unique
+  orgName         String
+  address         String?
+  homepage        String?
+  verified        Boolean  @default(false)
+
+  listings        Listing[]
+  adRequests      AdRequest[]
+
+  @@map("organization_profiles")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  posts     Post[]
+
+  @@map("categories")
+}
+
+enum PostStatus {
+  visible
+  hidden
+  deleted
+}
+
+model Post {
+  id           String     @id @default(cuid())
+  authorId     String
+  author       User       @relation(fields: [authorId], references: [id])
+  categoryId   String
+  category     Category   @relation(fields: [categoryId], references: [id])
+  title        String
+  content      String
+  images       String[]   @default([])
+  status       PostStatus @default(visible)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  comments     Comment[]
+  likes        Like[]
+  reports      Report[]
+
+  @@map("posts")
+  @@index([categoryId])
+  @@index([authorId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+
+  reports   Report[]
+
+  @@map("comments")
+  @@index([postId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+  @@map("likes")
+}
+
+enum ReportTargetType {
+  post
+  comment
+}
+
+enum ReportStatus {
+  pending
+  reviewed
+  dismissed
+}
+
+model Report {
+  id          String           @id @default(cuid())
+  targetType  ReportTargetType
+  postId      String?
+  post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  commentId   String?
+  comment     Comment?         @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reporterId  String
+  reporter    User             @relation(fields: [reporterId], references: [id])
+  reason      String
+  status      ReportStatus     @default(pending)
+  createdAt   DateTime         @default(now())
+
+  @@map("reports")
+}
+
+enum ListingType {
+  job
+  health
+  education
+}
+
+enum ListingStatus {
+  active
+  closed
+  hidden
+}
+
+model Listing {
+  id             String        @id @default(cuid())
+  orgId          String
+  org            OrganizationProfile @relation(fields: [orgId], references: [userId])
+  listingType    ListingType
+  title          String
+  images         String[]      @default([])
+  content        String
+  targetAudience String
+  applyMethod    String
+  phone          String
+  latitude       Float?
+  longitude      Float?
+  status         ListingStatus @default(active)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("listings")
+  @@index([listingType])
+  @@index([orgId])
+}
+
+enum AdRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+model AdRequest {
+  id         String          @id @default(cuid())
+  orgId      String
+  org        OrganizationProfile @relation(fields: [orgId], references: [userId])
+  title      String
+  content    String
+  images     String[]        @default([])
+  phone      String
+  homepage   String?
+  status     AdRequestStatus @default(pending)
+  adminNote  String?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@map("ad_requests")
+  @@index([status])
+}
+
+model PartnerCompany {
+  id        String   @id @default(cuid())
+  name      String
+  location  String?
+  address   String
+  phone     String
+  homepage  String?
+  createdAt DateTime @default(now())
+
+  @@map("partner_companies")
+}
+
+enum NotificationType {
+  comment
+  like
+  ad_approved
+  ad_rejected
+  announcement
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  refId     String?
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@map("notifications")
+  @@index([userId, isRead])
+}
+
+model AdminSetting {
+  key   String @id
+  value String
+
+  @@map("admin_settings")
+}

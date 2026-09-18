@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "시니티",
+    "slug": "sinity",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.sinitymobile",
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

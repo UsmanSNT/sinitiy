@@ -1,0 +1,15 @@
+{
+  "name": "sinity",
+  "private": true,
+  "scripts": {
+    "dev:api": "pnpm --filter api dev",
+    "dev:app": "cd apps/mobile && npm run start",
+    "web": "cd apps/mobile && npm run web",
+    "android": "cd apps/mobile && npm run android",
+    "db:generate": "pnpm --filter api prisma:generate",
+    "db:migrate": "pnpm --filter api prisma:migrate"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
