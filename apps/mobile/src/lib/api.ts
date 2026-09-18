@@ -4,10 +4,12 @@ import { ApiClient } from "@sinity/shared";
 
 const TOKEN_KEY = "sinity_access_token";
 
-// Android emulyatorda host mashinaning localhost'i 10.0.2.2 orqali ochiladi,
-// veb va iOS simulyatorda esa to'g'ridan-to'g'ri localhost ishlaydi.
+// Production build'da EXPO_PUBLIC_API_URL orqali server manzili beriladi.
+// Lokal devda: Android emulyatorda host mashinaning localhost'i 10.0.2.2 orqali,
+// veb va iOS simulyatorda esa to'g'ridan-to'g'ri localhost orqali ochiladi.
 const API_BASE_URL =
-  Platform.OS === "android" ? "http://10.0.2.2:4000/api" : "http://localhost:4000/api";
+  process.env.EXPO_PUBLIC_API_URL ??
+  (Platform.OS === "android" ? "http://10.0.2.2:4000/api" : "http://localhost:4000/api");
 
 let cachedToken: string | null = null;
 
