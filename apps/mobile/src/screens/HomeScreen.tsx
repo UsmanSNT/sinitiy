@@ -1,13 +1,13 @@
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
-import { BellIcon, BriefcaseIcon, HeartIcon, PeopleIcon, MegaphoneIcon } from "../components/HomeIcons";
+import { BellIcon, BriefcaseIcon, HeartbeatIcon, FamilyIcon, MegaphoneIcon } from "../components/HomeIcons";
 
 const serviceItems = [
-  { Icon: BriefcaseIcon, iconColor: "#3d5ee1", bg: "#e8f0fe", label: "일자리·복지", sub: "취업·복지 정보" },
-  { Icon: HeartIcon, iconColor: "#e2536b", bg: "#fdeaea", label: "건강·의료", sub: "병원·건강 정보" },
-  { Icon: PeopleIcon, iconColor: "#3fae5c", bg: "#eaf7ee", label: "커뮤니티", sub: "소통·동네소식" },
-  { Icon: MegaphoneIcon, iconColor: "#e08a2b", bg: "#fdf3e3", label: "파트너 정보", sub: "추천 서비스" },
+  { Icon: BriefcaseIcon, iconColor: "#3fae5c", label: "일자리·복지", sub: "취업·복지 정보" },
+  { Icon: HeartbeatIcon, iconColor: "#3d5ee1", label: "건강·의료", sub: "병원·건강 정보" },
+  { Icon: FamilyIcon, iconColor: "#e2536b", label: "커뮤니티", sub: "소통·동네소식" },
+  { Icon: MegaphoneIcon, iconColor: "#e08a2b", label: "파트너 정보", sub: "추천 서비스" },
 ];
 
 const notices = [
@@ -34,8 +34,8 @@ export function HomeScreen() {
         <View style={styles.grid}>
           {serviceItems.map((item) => (
             <View key={item.label} style={styles.card}>
-              <View style={[styles.iconWrap, { backgroundColor: item.bg }]}>
-                <item.Icon color={item.iconColor} size={30} />
+              <View style={styles.iconWrap}>
+                <item.Icon color={item.iconColor} size={56} />
               </View>
               <Text style={styles.cardLabel}>{item.label}</Text>
               <Text style={styles.cardSub}>{item.sub}</Text>
@@ -88,12 +88,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconWrap: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 14,
+    marginBottom: 12,
   },
   cardLabel: { fontSize: 15, fontWeight: "700", color: colors.navy, textAlign: "center" },
   cardSub: { fontSize: 11, color: colors.gray, marginTop: 3, textAlign: "center" },
