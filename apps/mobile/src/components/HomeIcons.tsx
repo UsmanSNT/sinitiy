@@ -13,7 +13,7 @@ export const BellIcon = ({ color = "#ffffff", size = 20 }: IconProps) => (
 );
 
 export const BriefcaseIcon = ({ color = "#3fae5c", size = 20 }: IconProps) => (
-  <MaterialCommunityIcons name="briefcase-outline" size={size} color={color} />
+  <MaterialIcons name="business-center" size={size} color={color} />
 );
 
 export const HeartbeatIcon = ({ color = "#3d5ee1", size = 20 }: IconProps) => (
