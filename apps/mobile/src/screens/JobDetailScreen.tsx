@@ -23,15 +23,17 @@ export function JobDetailScreen({ navigation, route }: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Image source={image} style={styles.hero} />
-
-        <View style={styles.body}>
+        <View style={styles.topInfo}>
           <Text style={styles.tag}>일자리</Text>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.meta}>
             {organization} · {period}
           </Text>
+        </View>
 
+        <Image source={image} style={styles.hero} resizeMode="cover" />
+
+        <View style={styles.body}>
           <Text style={styles.description}>
             시니어의 경험과 노하우를 활용한 사회활동에 함께할 참여자를 모집합니다. 지원자격과 일정을
             확인하고 지금 신청해 보세요.
@@ -76,12 +78,19 @@ const styles = StyleSheet.create({
   },
   headerTitle: { fontSize: 16, fontWeight: "700", color: colors.navy },
   content: { paddingBottom: 20 },
-  hero: { width: "100%", height: 200, backgroundColor: "#eef1f5" },
+  topInfo: { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 16 },
+  hero: {
+    width: "auto",
+    marginHorizontal: 20,
+    aspectRatio: 16 / 10,
+    borderRadius: 16,
+    backgroundColor: "#eef1f5",
+  },
   body: { padding: 20 },
   tag: { fontSize: 12, fontWeight: "700", color: colors.accent },
   title: { fontSize: 19, fontWeight: "800", color: colors.navy, marginTop: 6 },
   meta: { fontSize: 12, color: colors.gray, marginTop: 6 },
-  description: { fontSize: 14, color: colors.navy, lineHeight: 22, marginTop: 16 },
+  description: { fontSize: 14, color: colors.navy, lineHeight: 22 },
   infoRow: {
     flexDirection: "row",
     paddingVertical: 12,
