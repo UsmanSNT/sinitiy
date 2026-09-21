@@ -42,7 +42,10 @@ export function HomeScreen() {
             <Pressable
               key={item.label}
               style={({ pressed }) => [styles.card, pressed && { opacity: 0.78 }]}
-              onPress={() => item.label === "일자리·복지" && navigation.navigate("JobWelfare")}
+              onPress={() => {
+                if (item.label === "일자리·복지") navigation.navigate("JobWelfare");
+                if (item.label === "건강·의료") navigation.navigate("HealthMedical");
+              }}
             >
               <View style={styles.iconWrap}>
                 <item.Icon color={item.iconColor} size={38} />
@@ -97,9 +100,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   iconWrap: {
+    height: 38,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   cardLabel: { fontSize: 13, fontWeight: "700", color: colors.navy, textAlign: "center" },
   cardSub: { fontSize: 10, color: colors.gray, marginTop: 2, textAlign: "center" },
