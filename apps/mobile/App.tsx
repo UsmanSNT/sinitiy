@@ -18,6 +18,8 @@ import { JobWelfareScreen } from "./src/screens/JobWelfareScreen";
 import { JobDetailScreen } from "./src/screens/JobDetailScreen";
 import { HealthMedicalScreen } from "./src/screens/HealthMedicalScreen";
 import { HealthDetailScreen } from "./src/screens/HealthDetailScreen";
+import { EducationCultureScreen } from "./src/screens/EducationCultureScreen";
+import { EducationDetailScreen } from "./src/screens/EducationDetailScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -39,6 +41,8 @@ function App() {
             <Stack.Screen name="JobDetail" component={JobDetailScreen} />
             <Stack.Screen name="HealthMedical" component={HealthMedicalScreen} />
             <Stack.Screen name="HealthDetail" component={HealthDetailScreen} />
+            <Stack.Screen name="EducationCulture" component={EducationCultureScreen} />
+            <Stack.Screen name="EducationDetail" component={EducationDetailScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>

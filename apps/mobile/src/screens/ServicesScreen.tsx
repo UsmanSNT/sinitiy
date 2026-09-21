@@ -62,6 +62,7 @@ export function ServicesScreen() {
             onPress={() => {
               if (item.title === "일자리·복지") navigation.navigate("JobWelfare");
               if (item.title === "건강·의료") navigation.navigate("HealthMedical");
+              if (item.title === "교육·문화") navigation.navigate("EducationCulture");
             }}
           >
             <View style={[styles.iconBox, { backgroundColor: item.bg }]}>{item.icon}</View>

@@ -17,6 +17,14 @@ export type RootStackParamList = {
     category: string;
     image: ImageSourcePropType;
   };
+  EducationCulture: undefined;
+  EducationDetail: {
+    title: string;
+    organization: string;
+    period: string;
+    category: string;
+    image: ImageSourcePropType;
+  };
 };
 
 export type MainTabParamList = {
