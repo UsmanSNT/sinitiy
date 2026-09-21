@@ -17,21 +17,6 @@ export function MyPageScreen() {
     navigation.reset({ index: 0, routes: [{ name: "Main" }] });
   }
 
-  if (!user) {
-    return (
-      <View style={styles.guestContainer}>
-        <View style={styles.guestHeader}>
-          <Text style={styles.guestName}>시니티 둘러보기 중</Text>
-          <Text style={styles.guestCopy}>로그인하면 더 많은 서비스를 이용할 수 있습니다.</Text>
-        </View>
-        <View style={styles.authBox}>
-          <Pressable onPress={() => navigation.navigate("Login")} style={styles.loginButton}><Text style={styles.loginButtonText}>로그인</Text></Pressable>
-          <Pressable onPress={() => navigation.navigate("Signup")} style={styles.signupButton}><Text style={styles.signupButtonText}>회원가입</Text></Pressable>
-        </View>
-      </View>
-    );
-  }
-
   const menuItems: Array<{ icon: IconName; color: string; background: string; title: string; subtitle: string; onPress: () => void }> = [
     { icon: "heart", color: "#ef4b9a", background: "#ffe7f3", title: "내 관심정보", subtitle: "관심 분야를 설정해요", onPress: () => navigation.navigate("InterestSettings") },
     { icon: "bell", color: "#f07a3e", background: "#fff0e7", title: "알림 설정", subtitle: "푸시 알림을 관리해요", onPress: () => navigation.navigate("NotificationSettings") },
@@ -40,6 +25,34 @@ export function MyPageScreen() {
     { icon: "face-agent", color: "#5479b8", background: "#eaf0fb", title: "고객센터", subtitle: "문의하기, FAQ", onPress: () => navigation.navigate("CustomerCenter") },
   ];
 
+  const renderMenu = (items: typeof menuItems) => (
+    <View style={styles.menuCard}>
+      {items.map((item, index) => (
+        <Pressable key={item.title} onPress={item.onPress} style={[styles.menuRow, index < items.length - 1 && styles.menuDivider]}>
+          <View style={[styles.menuIcon, { backgroundColor: item.background }]}><MaterialCommunityIcons name={item.icon} size={21} color={item.color} /></View>
+          <View style={styles.menuCopy}><Text style={styles.menuTitle}>{item.title}</Text><Text style={styles.menuSubtitle}>{item.subtitle}</Text></View>
+          <MaterialIcons name="chevron-right" size={22} color="#a4adba" />
+        </Pressable>
+      ))}
+    </View>
+  );
+
+  if (!user) {
+    return (
+      <ScrollView style={styles.guestContainer} contentContainerStyle={{ paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
+        <View style={styles.guestHeader}>
+          <Text style={styles.guestName}>시니티 둘러보기 중</Text>
+          <Text style={styles.guestCopy}>로그인하면 더 많은 서비스를 이용할 수 있습니다.</Text>
+        </View>
+        <View style={styles.authBox}>
+          <Pressable onPress={() => navigation.navigate("Login")} style={styles.loginButton}><Text style={styles.loginButtonText}>로그인</Text></Pressable>
+          <Pressable onPress={() => navigation.navigate("Signup")} style={styles.signupButton}><Text style={styles.signupButtonText}>회원가입</Text></Pressable>
+        </View>
+        <View style={{ paddingHorizontal: 15, paddingTop: 14 }}>{renderMenu(menuItems.filter((m) => m.title !== "내 활동"))}</View>
+      </ScrollView>
+    );
+  }
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={styles.profile}>
@@ -47,15 +60,7 @@ export function MyPageScreen() {
         <View style={styles.profileCopy}><Text style={styles.name}>{user.name}님</Text><Text style={styles.phone}>{user.phone ?? user.email}</Text></View>
         <Pressable accessibilityLabel="관심정보 설정" hitSlop={12} onPress={() => navigation.navigate("InterestSettings")}><MaterialIcons name="settings" size={22} color="#536b9c" /></Pressable>
       </View>
-      <View style={styles.menuCard}>
-        {menuItems.map((item, index) => (
-          <Pressable key={item.title} onPress={item.onPress} style={[styles.menuRow, index < menuItems.length - 1 && styles.menuDivider]}>
-            <View style={[styles.menuIcon, { backgroundColor: item.background }]}><MaterialCommunityIcons name={item.icon} size={21} color={item.color} /></View>
-            <View style={styles.menuCopy}><Text style={styles.menuTitle}>{item.title}</Text><Text style={styles.menuSubtitle}>{item.subtitle}</Text></View>
-            <MaterialIcons name="chevron-right" size={22} color="#a4adba" />
-          </Pressable>
-        ))}
-      </View>
+      {renderMenu(menuItems)}
       <Pressable onPress={handleLogout} style={styles.logoutRow}><MaterialIcons name="logout" size={20} color="#dd6570" /><Text style={styles.logoutText}>로그아웃</Text></Pressable>
     </ScrollView>
   );
