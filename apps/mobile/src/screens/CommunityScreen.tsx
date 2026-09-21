@@ -6,6 +6,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { PaginatedResult, Post } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 
 type CommunityPost = Post & { thumbnail?: ImageSourcePropType; sample?: boolean };
@@ -39,6 +40,7 @@ const samplePosts: CommunityPost[] = [
 
 export function CommunityScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { user } = useAuth();
   const [posts, setPosts] = useState<CommunityPost[]>(samplePosts);
   const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("전체");
 
@@ -54,6 +56,11 @@ export function CommunityScreen() {
     [activeTab, posts]
   );
 
+  function writePost() {
+    if (user) navigation.navigate("NewPost");
+    else navigation.navigate("Signup");
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -62,7 +69,7 @@ export function CommunityScreen() {
           <Pressable accessibilityLabel="검색" hitSlop={12}>
             <MaterialIcons name="search" size={23} color={colors.navy} />
           </Pressable>
-          <Pressable accessibilityLabel="글쓰기" hitSlop={12} onPress={() => navigation.navigate("NewPost")}>
+          <Pressable accessibilityLabel="글쓰기" hitSlop={12} onPress={writePost}>
             <MaterialIcons name="add" size={25} color={colors.navy} />
           </Pressable>
         </View>

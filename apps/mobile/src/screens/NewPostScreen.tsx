@@ -13,12 +13,14 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { Category } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import { BackButton } from "../components/BackButton";
 import { colors } from "../theme";
 
 type Props = NativeStackScreenProps<RootStackParamList, "NewPost">;
 
 export function NewPostScreen({ navigation }: Props) {
+  const { user } = useAuth();
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryId, setCategoryId] = useState("");
   const [title, setTitle] = useState("");
@@ -27,11 +29,15 @@ export function NewPostScreen({ navigation }: Props) {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!user) {
+      navigation.replace("Signup");
+      return;
+    }
     api.get<Category[]>("/categories").then((cats) => {
       setCategories(cats);
       if (cats[0]) setCategoryId(cats[0].id);
     });
-  }, []);
+  }, [navigation, user]);
 
   async function handleSubmit() {
     if (!title.trim() || !content.trim()) {

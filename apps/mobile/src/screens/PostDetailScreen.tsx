@@ -40,6 +40,10 @@ export function PostDetailScreen({ route, navigation }: Props) {
   useFocusEffect(load);
 
   async function toggleLike() {
+    if (!user) {
+      navigation.navigate("Signup");
+      return;
+    }
     const res = await api.post<{ liked: boolean; likeCount: number }>(`/likes/${postId}`);
     setLiked(res.liked);
     setPost((p) => (p ? { ...p, likeCount: res.likeCount } : p));
@@ -47,6 +51,10 @@ export function PostDetailScreen({ route, navigation }: Props) {
 
   async function submitComment() {
     if (!commentText.trim()) return;
+    if (!user) {
+      navigation.navigate("Signup");
+      return;
+    }
     await api.post("/comments", { postId, content: commentText });
     setCommentText("");
     load();
@@ -54,6 +62,10 @@ export function PostDetailScreen({ route, navigation }: Props) {
 
   async function submitReport() {
     if (!reportReason.trim()) return;
+    if (!user) {
+      navigation.navigate("Signup");
+      return;
+    }
     await api.post("/reports", { targetType: "post", targetId: postId, reason: reportReason });
     setReporting(false);
     setReportReason("");
@@ -92,7 +104,10 @@ export function PostDetailScreen({ route, navigation }: Props) {
                 좋아요 {post.likeCount}
               </Text>
             </Pressable>
-            <Pressable onPress={() => setReporting((v) => !v)} style={styles.actionBtn}>
+            <Pressable
+              onPress={() => (user ? setReporting((v) => !v) : navigation.navigate("Signup"))}
+              style={styles.actionBtn}
+            >
               <Text style={styles.actionTextMuted}>신고하기</Text>
             </Pressable>
           </View>
@@ -122,20 +137,26 @@ export function PostDetailScreen({ route, navigation }: Props) {
           ))}
         </ScrollView>
 
-        {user && (
-          <View style={styles.commentInputRow}>
-            <TextInput
-              placeholder="댓글을 입력하세요"
-              placeholderTextColor={colors.gray}
-              value={commentText}
-              onChangeText={setCommentText}
-              style={styles.commentInput}
-            />
-            <Pressable onPress={submitComment} style={styles.commentSubmit}>
-              <Text style={styles.commentSubmitText}>등록</Text>
+        <View style={styles.commentInputRow}>
+          {user ? (
+            <>
+              <TextInput
+                placeholder="댓글을 입력하세요"
+                placeholderTextColor={colors.gray}
+                value={commentText}
+                onChangeText={setCommentText}
+                style={styles.commentInput}
+              />
+              <Pressable onPress={submitComment} style={styles.commentSubmit}>
+                <Text style={styles.commentSubmitText}>등록</Text>
+              </Pressable>
+            </>
+          ) : (
+            <Pressable onPress={() => navigation.navigate("Signup")} style={styles.loginPrompt}>
+              <Text style={styles.loginPromptText}>댓글을 쓰려면 로그인 또는 회원가입이 필요합니다.</Text>
             </Pressable>
-          </View>
-        )}
+          )}
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -209,4 +230,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   commentSubmitText: { color: colors.white, fontWeight: "700", fontSize: 13 },
+  loginPrompt: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 999,
+    paddingVertical: 11,
+    alignItems: "center",
+  },
+  loginPromptText: { color: colors.gray, fontSize: 13, fontWeight: "600" },
 });

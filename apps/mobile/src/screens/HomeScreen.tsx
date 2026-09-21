@@ -29,7 +29,7 @@ export function HomeScreen() {
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.greeting}>안녕하세요!</Text>
-            <Text style={styles.name}>{user ? `${user.name}님` : "..."} 😊</Text>
+            <Text style={styles.name}>{user ? `${user.name}님` : "방문자님"} 😊</Text>
           </View>
           <BellIcon color={colors.white} />
         </View>

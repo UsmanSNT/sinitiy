@@ -180,6 +180,10 @@ export function SignupScreen({ navigation }: Props) {
             <Text style={styles.buttonText}>회원가입</Text>
           )}
         </Pressable>
+
+        <Pressable onPress={() => navigation.replace("Main")} style={styles.skipButton}>
+          <Text style={styles.skipText}>가입하지 않고 둘러보기</Text>
+        </Pressable>
       </View>
 
       <View style={styles.footer}>
@@ -232,6 +236,8 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: colors.white, fontWeight: "700", fontSize: 15 },
+  skipButton: { alignItems: "center", paddingVertical: 4 },
+  skipText: { color: colors.gray, fontSize: 13, fontWeight: "600", textDecorationLine: "underline" },
   footer: { marginTop: 24, flexDirection: "row", justifyContent: "center" },
   footerText: { color: colors.gray, fontSize: 14 },
   link: { color: colors.brand, fontWeight: "700", fontSize: 14, textDecorationLine: "underline" },

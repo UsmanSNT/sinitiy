@@ -118,6 +118,10 @@ export function LoginScreen({ navigation }: Props) {
         <Text style={styles.simpleNotice}>간편 로그인은 준비 중입니다. 아래 SNS 계정을 이용해주세요.</Text>
       )}
 
+      <Pressable onPress={() => navigation.replace("Main")} style={styles.skipButton}>
+        <Text style={styles.skipText}>로그인하지 않고 둘러보기</Text>
+      </Pressable>
+
       <Text style={styles.divider}>또는 간편로그인으로 시작하기</Text>
 
       <View style={styles.socialList}>
@@ -178,6 +182,8 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: colors.white, fontWeight: "700", fontSize: 15 },
+  skipButton: { alignItems: "center", marginTop: 14, paddingVertical: 4 },
+  skipText: { color: colors.gray, fontSize: 13, fontWeight: "600", textDecorationLine: "underline" },
   simpleNotice: { marginTop: 24, textAlign: "center", fontSize: 13, color: colors.gray },
   divider: { marginTop: 24, textAlign: "center", fontSize: 11, color: colors.gray },
   socialList: { marginTop: 12, gap: 8 },
