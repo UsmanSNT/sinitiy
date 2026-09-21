@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../prisma";
 import { requireAuth, requireRole } from "../auth/middleware";
+import { serializeListing } from "./listings";
 
 export const adminRouter = Router();
 
@@ -39,12 +40,14 @@ adminRouter.patch("/posts/:id/status", async (req, res) => {
 });
 
 // Tashkilot e'lonlarini boshqarish
-adminRouter.get("/listings", async (_req, res) => {
+adminRouter.get("/listings", async (req, res) => {
+  const { status } = req.query as Record<string, string>;
   const listings = await prisma.listing.findMany({
+    where: status ? { status: status as any } : {},
     include: { org: true },
     orderBy: { createdAt: "desc" },
   });
-  return res.json(listings);
+  return res.json(listings.map(serializeListing));
 });
 
 adminRouter.patch("/listings/:id/status", async (req, res) => {
@@ -52,8 +55,12 @@ adminRouter.patch("/listings/:id/status", async (req, res) => {
   if (!["active", "closed", "hidden", "pending", "rejected"].includes(status)) {
     return res.status(400).json({ message: "잘못된 요청입니다" });
   }
-  const listing = await prisma.listing.update({ where: { id: req.params.id }, data: { status: status as any } });
-  return res.json(listing);
+  const listing = await prisma.listing.update({
+    where: { id: req.params.id },
+    data: { status: status as any },
+    include: { org: true },
+  });
+  return res.json(serializeListing(listing));
 });
 
 // Sayt sozlamalari

@@ -6,7 +6,7 @@ import type { RootStackParamList } from "../navigation/types";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 
-type IconName = "heart" | "bell" | "bullhorn" | "briefcase" | "face-agent";
+type IconName = "heart" | "bell" | "bullhorn" | "briefcase" | "face-agent" | "clipboard-text" | "shield-check";
 
 export function MyPageScreen() {
   const { user, logout } = useAuth();
@@ -24,6 +24,14 @@ export function MyPageScreen() {
     { icon: "briefcase", color: "#18a9a1", background: "#e2f8f6", title: "내 활동", subtitle: "작성한 글과 댓글, 좋아요 내역", onPress: () => navigation.navigate("Main", { screen: "Community" }) },
     { icon: "face-agent", color: "#5479b8", background: "#eaf0fb", title: "고객센터", subtitle: "문의하기, FAQ", onPress: () => navigation.navigate("CustomerCenter") },
   ];
+
+  // Rolga xos boshqaruv qatorlari (faqat tashkilot / admin ko'radi).
+  if (user?.userType === "organization") {
+    menuItems.unshift({ icon: "clipboard-text", color: "#2368bc", background: "#e8f1ff", title: "내 공고 관리", subtitle: "공고 등록 및 승인 상태 확인", onPress: () => navigation.navigate("MyListings") });
+  }
+  if (user?.userType === "admin") {
+    menuItems.unshift({ icon: "shield-check", color: "#1a9a5a", background: "#e3f7ec", title: "공고 승인 관리", subtitle: "기관이 등록한 공고 심사", onPress: () => navigation.navigate("AdminListings") });
+  }
 
   const renderMenu = (items: typeof menuItems) => (
     <View style={styles.menuCard}>

@@ -47,6 +47,9 @@ export type RootStackParamList = {
     applyMethod?: string;
   };
   Notifications: undefined;
+  MyListings: undefined;
+  ListingForm: undefined;
+  AdminListings: undefined;
   PartnerInfo: undefined;
   PartnerDetail: {
     title: string;

@@ -5,7 +5,7 @@ import { requireAuth, requireRole } from "../auth/middleware";
 
 export const listingsRouter = Router();
 
-function serializeListing(listing: any) {
+export function serializeListing(listing: any) {
   return {
     id: listing.id,
     orgId: listing.orgId,
