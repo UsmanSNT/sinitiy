@@ -20,6 +20,11 @@ import { HealthMedicalScreen } from "./src/screens/HealthMedicalScreen";
 import { HealthDetailScreen } from "./src/screens/HealthDetailScreen";
 import { EducationCultureScreen } from "./src/screens/EducationCultureScreen";
 import { EducationDetailScreen } from "./src/screens/EducationDetailScreen";
+import { PartnerInfoScreen } from "./src/screens/PartnerInfoScreen";
+import { PartnerDetailScreen } from "./src/screens/PartnerDetailScreen";
+import { InterestSettingsScreen } from "./src/screens/InterestSettingsScreen";
+import { NotificationSettingsScreen } from "./src/screens/NotificationSettingsScreen";
+import { CustomerCenterScreen } from "./src/screens/CustomerCenterScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -43,6 +48,11 @@ function App() {
             <Stack.Screen name="HealthDetail" component={HealthDetailScreen} />
             <Stack.Screen name="EducationCulture" component={EducationCultureScreen} />
             <Stack.Screen name="EducationDetail" component={EducationDetailScreen} />
+            <Stack.Screen name="PartnerInfo" component={PartnerInfoScreen} />
+            <Stack.Screen name="PartnerDetail" component={PartnerDetailScreen} />
+            <Stack.Screen name="InterestSettings" component={InterestSettingsScreen} />
+            <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
+            <Stack.Screen name="CustomerCenter" component={CustomerCenterScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>

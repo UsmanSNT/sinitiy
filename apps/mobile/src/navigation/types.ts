@@ -26,6 +26,16 @@ export type RootStackParamList = {
     category: string;
     image: ImageSourcePropType;
   };
+  PartnerInfo: undefined;
+  PartnerDetail: {
+    title: string;
+    service: string;
+    category: string;
+    image: ImageSourcePropType;
+  };
+  InterestSettings: undefined;
+  NotificationSettings: undefined;
+  CustomerCenter: undefined;
 };
 
 export type MainTabParamList = {

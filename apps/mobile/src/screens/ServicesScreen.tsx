@@ -63,6 +63,7 @@ export function ServicesScreen() {
               if (item.title === "일자리·복지") navigation.navigate("JobWelfare");
               if (item.title === "건강·의료") navigation.navigate("HealthMedical");
               if (item.title === "교육·문화") navigation.navigate("EducationCulture");
+              if (item.title === "파트너 정보") navigation.navigate("PartnerInfo");
             }}
           >
             <View style={[styles.iconBox, { backgroundColor: item.bg }]}>{item.icon}</View>
