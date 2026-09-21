@@ -17,6 +17,10 @@ export type RootStackParamList = {
     period: string;
     category: string;
     image: ImageSourcePropType;
+    content?: string;
+    phone?: string;
+    targetAudience?: string;
+    applyMethod?: string;
   };
   EducationCulture: undefined;
   EducationDetail: {
@@ -25,6 +29,10 @@ export type RootStackParamList = {
     period: string;
     category: string;
     image: ImageSourcePropType;
+    content?: string;
+    phone?: string;
+    targetAudience?: string;
+    applyMethod?: string;
   };
   LifeConvenience: undefined;
   LifeConvenienceDetail: {
@@ -33,6 +41,10 @@ export type RootStackParamList = {
     period: string;
     category: string;
     image: ImageSourcePropType;
+    content?: string;
+    phone?: string;
+    targetAudience?: string;
+    applyMethod?: string;
   };
   Notifications: undefined;
   PartnerInfo: undefined;

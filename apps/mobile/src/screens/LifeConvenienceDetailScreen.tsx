@@ -9,7 +9,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "LifeConvenienceDetail">
 const PHONE = "02-567-8901";
 
 export function LifeConvenienceDetailScreen({ navigation, route }: Props) {
-  const { title, organization, period, category, image } = route.params;
+  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod } = route.params;
+  const phoneNumber = phone ?? PHONE;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -31,12 +32,10 @@ export function LifeConvenienceDetailScreen({ navigation, route }: Props) {
         <Image source={image} style={styles.hero} resizeMode="cover" />
 
         <View style={styles.body}>
-          <Text style={styles.description}>
-            만 60세 이상 시니어의 일상 편의를 돕는 지원 사업입니다. 대상과 신청 방법을 확인하고 지금 신청하세요.
-          </Text>
+          <Text style={styles.description}>{content ?? "만 60세 이상 시니어의 일상 편의를 돕는 지원 사업입니다. 대상과 신청 방법을 확인하고 지금 신청하세요."}</Text>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>대상</Text>
-            <Text style={styles.infoValue}>만 60세 이상 주민</Text>
+            <Text style={styles.infoValue}>{targetAudience ?? "만 60세 이상 주민"}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>장소</Text>
@@ -44,17 +43,17 @@ export function LifeConvenienceDetailScreen({ navigation, route }: Props) {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>신청</Text>
-            <Text style={styles.infoValue}>온라인 신청</Text>
+            <Text style={styles.infoValue}>{applyMethod ?? "온라인 신청"}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>문의</Text>
-            <Text style={styles.infoValue}>{PHONE}</Text>
+            <Text style={styles.infoValue}>{phoneNumber}</Text>
           </View>
         </View>
       </ScrollView>
 
       <View style={styles.actions}>
-        <Pressable style={styles.callButton} onPress={() => Linking.openURL(`tel:${PHONE}`)}>
+        <Pressable style={styles.callButton} onPress={() => Linking.openURL(`tel:${phoneNumber}`)}>
           <MaterialIcons name="call" size={19} color="#1768b5" />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>

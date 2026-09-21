@@ -9,7 +9,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "EducationDetail">;
 const PHONE = "02-345-6789";
 
 export function EducationDetailScreen({ navigation, route }: Props) {
-  const { title, organization, period, category, image } = route.params;
+  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod } = route.params;
+  const phoneNumber = phone ?? PHONE;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -25,36 +26,34 @@ export function EducationDetailScreen({ navigation, route }: Props) {
         <View style={styles.topInfo}>
           <Text style={styles.tag}>{category}</Text>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.meta}>{organization} · 2025.05.20 - 06.15</Text>
+          <Text style={styles.meta}>{organization} · {period}</Text>
         </View>
 
         <Image source={image} style={styles.hero} resizeMode="cover" />
 
         <View style={styles.body}>
-          <Text style={styles.description}>
-            스마트폰 기본부터 실생활 활용까지 시니어 맞춤형 교육으로 더 편리한 일상을 함께하세요.
-          </Text>
+          <Text style={styles.description}>{content ?? "스마트폰 기본부터 실생활 활용까지 시니어 맞춤형 교육으로 더 편리한 일상을 함께하세요."}</Text>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>장소</Text>
-            <Text style={styles.infoValue}>서초시립경로교육원</Text>
+            <Text style={styles.infoValue}>{organization}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>대상</Text>
-            <Text style={styles.infoValue}>만 60세 이상</Text>
+            <Text style={styles.infoValue}>{targetAudience ?? "만 60세 이상"}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>신청</Text>
-            <Text style={styles.infoValue}>온라인 신청</Text>
+            <Text style={styles.infoValue}>{applyMethod ?? "온라인 신청"}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>문의</Text>
-            <Text style={styles.infoValue}>{PHONE}</Text>
+            <Text style={styles.infoValue}>{phoneNumber}</Text>
           </View>
         </View>
       </ScrollView>
 
       <View style={styles.actions}>
-        <Pressable style={styles.callButton} onPress={() => Linking.openURL(`tel:${PHONE}`)}>
+        <Pressable style={styles.callButton} onPress={() => Linking.openURL(`tel:${phoneNumber}`)}>
           <MaterialIcons name="call" size={19} color="#1768b5" />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>

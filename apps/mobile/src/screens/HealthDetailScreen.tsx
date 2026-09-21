@@ -9,7 +9,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "HealthDetail">;
 const PHONE = "02-987-6543";
 
 export function HealthDetailScreen({ navigation, route }: Props) {
-  const { title, organization, period, category, image } = route.params;
+  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod } = route.params;
+  const phoneNumber = phone ?? PHONE;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
@@ -31,30 +32,28 @@ export function HealthDetailScreen({ navigation, route }: Props) {
         <Image source={image} style={styles.hero} resizeMode="cover" />
 
         <View style={styles.body}>
-          <Text style={styles.description}>
-            만 60세 이상 시니어를 대상으로 무료 건강검진을 지원합니다. 건강한 노후를 위한 정밀검진, 지금 신청하세요!
-          </Text>
+          <Text style={styles.description}>{content ?? "만 60세 이상 시니어를 대상으로 무료 건강검진을 지원합니다. 건강한 노후를 위한 정밀검진, 지금 신청하세요!"}</Text>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>대상</Text>
-            <Text style={styles.infoValue}>만 60세 이상 주민</Text>
+            <Text style={styles.infoValue}>{targetAudience ?? "만 60세 이상 주민"}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>장소</Text>
-            <Text style={styles.infoValue}>강남구보건소 (서울 강남구)</Text>
+            <Text style={styles.infoValue}>{organization}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>문의</Text>
-            <Text style={styles.infoValue}>{PHONE}</Text>
+            <Text style={styles.infoValue}>{phoneNumber}</Text>
           </View>
         </View>
       </ScrollView>
 
       <View style={styles.actions}>
-        <Pressable style={styles.callButton} onPress={() => Linking.openURL(`tel:${PHONE}`)}>
+        <Pressable style={styles.callButton} onPress={() => Linking.openURL(`tel:${phoneNumber}`)}>
           <MaterialIcons name="call" size={19} color="#1768b5" />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>
-        <Pressable style={styles.mapButton} onPress={() => Linking.openURL("https://maps.google.com/?q=강남구보건소")}>
+        <Pressable style={styles.mapButton} onPress={() => Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(organization)}`)}>
           <Text style={styles.mapButtonText}>지도보기</Text>
         </Pressable>
       </View>

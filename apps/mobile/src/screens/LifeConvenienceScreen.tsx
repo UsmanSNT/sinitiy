@@ -5,6 +5,10 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
+import { useListings } from "../lib/useListings";
+import { listingImage } from "../lib/listingImage";
+import { ListState } from "../components/ListState";
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "LifeConvenience">;
 type LifeCategory = "교통" | "주거" | "생활지원";
@@ -12,81 +16,40 @@ type LifeItem = {
   title: string;
   organization: string;
   period: string;
-  category: LifeCategory;
+  category: string;
   icon: "bus" | "taxi" | "home-city" | "hammer-wrench" | "food-variant" | "hand-heart";
   iconColor: string;
   iconBackground: string;
   image: ImageSourcePropType;
+  content?: string;
+  phone?: string;
+  targetAudience?: string;
+  applyMethod?: string;
 };
 
 const filters = ["전체", "교통", "주거", "생활지원"] as const;
-const lifeImage = require("../../assets/thumbnails/digital-care.jpg");
 
-const lifeItems: LifeItem[] = [
-  {
-    title: "시니어 교통카드 지원",
-    organization: "서울시",
-    period: "상시 신청",
-    category: "교통",
-    icon: "bus",
-    iconColor: "#2f72dc",
-    iconBackground: "#e8f1ff",
-    image: lifeImage,
-  },
-  {
-    title: "어르신 콜택시 이용 안내",
-    organization: "강남구",
-    period: "2025.09 - 12",
-    category: "교통",
-    icon: "taxi",
-    iconColor: "#e08a2b",
-    iconBackground: "#fff4e6",
-    image: require("../../assets/thumbnails/hiking.jpg"),
-  },
-  {
-    title: "주택 수리 지원사업",
-    organization: "국토교통부",
-    period: "2025.05 - 08",
-    category: "주거",
-    icon: "hammer-wrench",
-    iconColor: "#e2536b",
-    iconBackground: "#ffeaf0",
-    image: require("../../assets/thumbnails/family.jpg"),
-  },
-  {
-    title: "공공임대주택 입주 안내",
-    organization: "LH",
-    period: "상시 모집",
-    category: "주거",
-    icon: "home-city",
-    iconColor: "#3977ee",
-    iconBackground: "#e9f0ff",
-    image: require("../../assets/thumbnails/benefit-counseling.jpg"),
-  },
-  {
-    title: "도시락 배달 서비스",
-    organization: "강남시니어복지관",
-    period: "주 5회 지원",
-    category: "생활지원",
-    icon: "food-variant",
-    iconColor: "#1ebc91",
-    iconBackground: "#e5faf4",
-    image: require("../../assets/thumbnails/board-game.jpg"),
-  },
-  {
-    title: "가사·간병 방문 지원",
-    organization: "보건복지부",
-    period: "상시 신청",
-    category: "생활지원",
-    icon: "hand-heart",
-    iconColor: "#8752cf",
-    iconBackground: "#f2eaff",
-    image: require("../../assets/thumbnails/job-counseling.jpg"),
-  },
-];
+const categoryStyle: Record<LifeCategory, Pick<LifeItem, "icon" | "iconColor" | "iconBackground">> = {
+  "교통": { icon: "bus", iconColor: "#2f72dc", iconBackground: "#e8f1ff" },
+  "주거": { icon: "home-city", iconColor: "#3977ee", iconBackground: "#e9f0ff" },
+  "생활지원": { icon: "hand-heart", iconColor: "#8752cf", iconBackground: "#f2eaff" },
+};
 
 export function LifeConvenienceScreen({ navigation }: Props) {
   const [activeFilter, setActiveFilter] = useState<(typeof filters)[number]>("전체");
+  const { items, loading, error } = useListings("life");
+  const lifeItems: LifeItem[] = items.map((l, i) => ({
+    title: l.title,
+    organization: l.orgName,
+    period: l.period ?? "",
+    category: l.category ?? "",
+    ...(categoryStyle[l.category as LifeCategory] ?? categoryStyle["생활지원"]),
+    image: listingImage(l, i),
+      content: l.content,
+      phone: l.phone,
+      targetAudience: l.targetAudience,
+      applyMethod: l.applyMethod,
+  }));
   const visibleItems = lifeItems.filter((item) => activeFilter === "전체" || item.category === activeFilter);
 
   return (
@@ -121,6 +84,7 @@ export function LifeConvenienceScreen({ navigation }: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
+        <ListState loading={loading} error={error} empty={!loading && !error && visibleItems.length === 0} />
         {visibleItems.map((item) => (
           <Pressable
             key={item.title}

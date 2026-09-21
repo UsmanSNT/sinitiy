@@ -5,50 +5,40 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
+import { useListings } from "../lib/useListings";
+import { listingImage } from "../lib/listingImage";
+import { ListState } from "../components/ListState";
+
 
 type Props = NativeStackScreenProps<RootStackParamList, "EducationCulture">;
 type EducationItem = {
   title: string;
   organization: string;
   period: string;
-  category: "교육" | "문화·여가" | "행사";
+  category: string;
   image: ImageSourcePropType;
+  content?: string;
+  phone?: string;
+  targetAudience?: string;
+  applyMethod?: string;
 };
 
 const filters = ["전체", "교육", "문화·여가", "행사"] as const;
-const educationItems: EducationItem[] = [
-  {
-    title: "시니어 스마트폰 교육",
-    organization: "서초시립경로교육원",
-    period: "05.20",
-    category: "교육",
-    image: require("../../assets/thumbnails/digital-care.jpg"),
-  },
-  {
-    title: "시니어 요가 교실",
-    organization: "강남구",
-    period: "05.25",
-    category: "문화·여가",
-    image: require("../../assets/thumbnails/hiking.jpg"),
-  },
-  {
-    title: "전통문화 체험 행사",
-    organization: "서울역사박물관",
-    period: "06.10",
-    category: "행사",
-    image: require("../../assets/thumbnails/family.jpg"),
-  },
-  {
-    title: "시니어 영화 관람 프로그램",
-    organization: "강남시니어센터",
-    period: "05.28",
-    category: "문화·여가",
-    image: require("../../assets/thumbnails/board-game.jpg"),
-  },
-];
 
 export function EducationCultureScreen({ navigation }: Props) {
   const [activeFilter, setActiveFilter] = useState<(typeof filters)[number]>("전체");
+  const { items, loading, error } = useListings("education");
+  const educationItems: EducationItem[] = items.map((l, i) => ({
+    title: l.title,
+    organization: l.orgName,
+    period: l.period ?? "",
+    category: l.category ?? "",
+    image: listingImage(l, i),
+      content: l.content,
+      phone: l.phone,
+      targetAudience: l.targetAudience,
+      applyMethod: l.applyMethod,
+  }));
   const visibleItems = educationItems.filter((item) => activeFilter === "전체" || item.category === activeFilter);
 
   return (
@@ -83,6 +73,7 @@ export function EducationCultureScreen({ navigation }: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
+        <ListState loading={loading} error={error} empty={!loading && !error && visibleItems.length === 0} />
         {visibleItems.map((item) => (
           <Pressable
             key={item.title}
