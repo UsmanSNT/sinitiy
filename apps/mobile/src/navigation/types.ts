@@ -9,6 +9,14 @@ export type RootStackParamList = {
   NewPost: undefined;
   JobWelfare: undefined;
   JobDetail: { title: string; organization: string; period: string; image: ImageSourcePropType };
+  HealthMedical: undefined;
+  HealthDetail: {
+    title: string;
+    organization: string;
+    period: string;
+    category: string;
+    image: ImageSourcePropType;
+  };
 };
 
 export type MainTabParamList = {

@@ -16,6 +16,8 @@ import { PostDetailScreen } from "./src/screens/PostDetailScreen";
 import { NewPostScreen } from "./src/screens/NewPostScreen";
 import { JobWelfareScreen } from "./src/screens/JobWelfareScreen";
 import { JobDetailScreen } from "./src/screens/JobDetailScreen";
+import { HealthMedicalScreen } from "./src/screens/HealthMedicalScreen";
+import { HealthDetailScreen } from "./src/screens/HealthDetailScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -35,6 +37,8 @@ function App() {
             <Stack.Screen name="NewPost" component={NewPostScreen} />
             <Stack.Screen name="JobWelfare" component={JobWelfareScreen} />
             <Stack.Screen name="JobDetail" component={JobDetailScreen} />
+            <Stack.Screen name="HealthMedical" component={HealthMedicalScreen} />
+            <Stack.Screen name="HealthDetail" component={HealthDetailScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>

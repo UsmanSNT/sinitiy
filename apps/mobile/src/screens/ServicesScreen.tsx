@@ -59,7 +59,10 @@ export function ServicesScreen() {
           <Pressable
             key={item.title}
             style={styles.row}
-            onPress={() => item.title === "일자리·복지" && navigation.navigate("JobWelfare")}
+            onPress={() => {
+              if (item.title === "일자리·복지") navigation.navigate("JobWelfare");
+              if (item.title === "건강·의료") navigation.navigate("HealthMedical");
+            }}
           >
             <View style={[styles.iconBox, { backgroundColor: item.bg }]}>{item.icon}</View>
             <View style={styles.rowText}>
