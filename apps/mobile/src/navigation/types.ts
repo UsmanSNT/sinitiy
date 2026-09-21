@@ -1,10 +1,11 @@
 import type { ImageSourcePropType } from "react-native";
+import type { NavigatorScreenParams } from "@react-navigation/native";
 
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
   Signup: undefined;
-  Main: undefined;
+  Main: NavigatorScreenParams<MainTabParamList> | undefined;
   PostDetail: { postId: string };
   NewPost: undefined;
   JobWelfare: undefined;
