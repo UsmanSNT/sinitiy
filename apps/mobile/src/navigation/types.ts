@@ -26,6 +26,15 @@ export type RootStackParamList = {
     category: string;
     image: ImageSourcePropType;
   };
+  LifeConvenience: undefined;
+  LifeConvenienceDetail: {
+    title: string;
+    organization: string;
+    period: string;
+    category: string;
+    image: ImageSourcePropType;
+  };
+  Notifications: undefined;
   PartnerInfo: undefined;
   PartnerDetail: {
     title: string;

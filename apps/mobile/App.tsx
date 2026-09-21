@@ -20,6 +20,9 @@ import { HealthMedicalScreen } from "./src/screens/HealthMedicalScreen";
 import { HealthDetailScreen } from "./src/screens/HealthDetailScreen";
 import { EducationCultureScreen } from "./src/screens/EducationCultureScreen";
 import { EducationDetailScreen } from "./src/screens/EducationDetailScreen";
+import { LifeConvenienceScreen } from "./src/screens/LifeConvenienceScreen";
+import { LifeConvenienceDetailScreen } from "./src/screens/LifeConvenienceDetailScreen";
+import { NotificationsScreen } from "./src/screens/NotificationsScreen";
 import { PartnerInfoScreen } from "./src/screens/PartnerInfoScreen";
 import { PartnerDetailScreen } from "./src/screens/PartnerDetailScreen";
 import { InterestSettingsScreen } from "./src/screens/InterestSettingsScreen";
@@ -48,6 +51,9 @@ function App() {
             <Stack.Screen name="HealthDetail" component={HealthDetailScreen} />
             <Stack.Screen name="EducationCulture" component={EducationCultureScreen} />
             <Stack.Screen name="EducationDetail" component={EducationDetailScreen} />
+            <Stack.Screen name="LifeConvenience" component={LifeConvenienceScreen} />
+            <Stack.Screen name="LifeConvenienceDetail" component={LifeConvenienceDetailScreen} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
             <Stack.Screen name="PartnerInfo" component={PartnerInfoScreen} />
             <Stack.Screen name="PartnerDetail" component={PartnerDetailScreen} />
             <Stack.Screen name="InterestSettings" component={InterestSettingsScreen} />

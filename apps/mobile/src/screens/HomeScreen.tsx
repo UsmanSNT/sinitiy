@@ -31,7 +31,9 @@ export function HomeScreen() {
             <Text style={styles.greeting}>안녕하세요!</Text>
             <Text style={styles.name}>{user ? `${user.name}님` : "방문자님"} 😊</Text>
           </View>
-          <BellIcon color={colors.white} />
+          <Pressable accessibilityLabel="알림" hitSlop={12} onPress={() => navigation.navigate("Notifications")}>
+            <BellIcon color={colors.white} />
+          </Pressable>
         </View>
         <Text style={styles.subtitle}>오늘도 건강한 하루 되세요.</Text>
       </View>
@@ -62,7 +64,9 @@ export function HomeScreen() {
       <View style={styles.noticeBar}>
         <View style={styles.noticeHeader}>
           <Text style={styles.noticeTitle}>오늘의 알림</Text>
-          <Text style={styles.noticeMore}>전체보기 ›</Text>
+          <Pressable onPress={() => navigation.navigate("Notifications")}>
+            <Text style={styles.noticeMore}>전체보기 ›</Text>
+          </Pressable>
         </View>
         {notices.map((n) => (
           <View key={n.text} style={styles.noticeCard}>
