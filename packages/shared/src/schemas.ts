@@ -60,10 +60,14 @@ export const reportSchema = z.object({
 export type ReportInput = z.infer<typeof reportSchema>;
 
 export const createListingSchema = z.object({
-  listingType: z.enum(["job", "health", "education"]),
+  listingType: z.enum(["job", "health", "education", "life"]),
   title: z.string().min(1).max(200),
   images: z.array(z.string().url()).default([]),
   content: z.string().min(1),
+  category: z.string().max(50).optional(),
+  region: z.string().max(50).optional(),
+  summary: z.string().max(200).optional(),
+  period: z.string().max(100).optional(),
   targetAudience: z.string().min(1),
   applyMethod: z.string().min(1),
   phone: z.string().min(9),

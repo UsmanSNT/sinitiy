@@ -19,7 +19,7 @@ adminRouter.get("/users", async (req, res) => {
 
 adminRouter.patch("/users/:id/status", async (req, res) => {
   const { status } = req.body as { status: "active" | "suspended" };
-  const user = await prisma.user.update({ where: { id: req.params.id }, data: { status } });
+  const user = await prisma.user.update({ where: { id: req.params.id }, data: { status: status as any } });
   return res.json(user);
 });
 
@@ -34,7 +34,7 @@ adminRouter.get("/posts", async (_req, res) => {
 
 adminRouter.patch("/posts/:id/status", async (req, res) => {
   const { status } = req.body as { status: "visible" | "hidden" | "deleted" };
-  const post = await prisma.post.update({ where: { id: req.params.id }, data: { status } });
+  const post = await prisma.post.update({ where: { id: req.params.id }, data: { status: status as any } });
   return res.json(post);
 });
 
@@ -48,8 +48,11 @@ adminRouter.get("/listings", async (_req, res) => {
 });
 
 adminRouter.patch("/listings/:id/status", async (req, res) => {
-  const { status } = req.body as { status: "active" | "closed" | "hidden" };
-  const listing = await prisma.listing.update({ where: { id: req.params.id }, data: { status } });
+  const { status } = req.body as { status: string };
+  if (!["active", "closed", "hidden", "pending", "rejected"].includes(status)) {
+    return res.status(400).json({ message: "잘못된 요청입니다" });
+  }
+  const listing = await prisma.listing.update({ where: { id: req.params.id }, data: { status: status as any } });
   return res.json(listing);
 });
 

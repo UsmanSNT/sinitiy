@@ -150,12 +150,15 @@ enum ListingType {
   job
   health
   education
+  life
 }
 
 enum ListingStatus {
   active
   closed
   hidden
+  pending
+  rejected
 }
 
 model Listing {
@@ -166,6 +169,10 @@ model Listing {
   title          String
   images         String[]      @default([])
   content        String
+  category       String?
+  region         String?
+  summary        String?
+  period         String?
   targetAudience String
   applyMethod    String
   phone          String
@@ -176,7 +183,7 @@ model Listing {
   updatedAt      DateTime      @updatedAt
 
   @@map("listings")
-  @@index([listingType])
+  @@index([listingType, status])
   @@index([orgId])
 }
 

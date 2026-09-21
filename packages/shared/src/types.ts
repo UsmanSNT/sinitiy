@@ -57,7 +57,7 @@ export interface Comment {
   createdAt: string;
 }
 
-export type ListingType = "job" | "health" | "education";
+export type ListingType = "job" | "health" | "education" | "life";
 
 export interface Listing {
   id: string;
@@ -67,12 +67,16 @@ export interface Listing {
   title: string;
   images: string[];
   content: string;
+  category: string | null;
+  region: string | null;
+  summary: string | null;
+  period: string | null;
   targetAudience: string;
   applyMethod: string;
   phone: string;
   latitude: number | null;
   longitude: number | null;
-  status: "active" | "closed" | "hidden";
+  status: "active" | "closed" | "hidden" | "pending" | "rejected";
   createdAt: string;
 }
 
