@@ -46,6 +46,7 @@ export function HomeScreen() {
                 if (item.label === "일자리·복지") navigation.navigate("JobWelfare");
                 if (item.label === "건강·의료") navigation.navigate("HealthMedical");
                 if (item.label === "커뮤니티") navigation.navigate("Main", { screen: "Community" });
+                if (item.label === "파트너 정보") navigation.navigate("PartnerInfo");
               }}
             >
               <View style={styles.iconWrap}>
