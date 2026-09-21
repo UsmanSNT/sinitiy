@@ -120,14 +120,18 @@ between the Home card and the Community tab icon so they match.
 
 ## Navigation structure
 
-Root `Stack.Navigator` (`App.tsx`): `Splash → Signup` (default entry point for logged-out users —
-**not** Login; Login is reached only via a link from Signup, matching the design the user
-approved) `→ Main` (bottom tabs: Home / Services / Community / MyPage) with `PostDetail` and
-`NewPost` pushed on top of `Main` for the community flow.
+Root `Stack.Navigator` (`App.tsx`): `Splash → Signup` (entry screen for logged-out users; Login is
+reached via a link from Signup) `→ Main` (bottom tabs: Home / Services / Community / MyPage) with
+`PostDetail`, `NewPost`, `JobWelfare`, `JobDetail` pushed on top of `Main`.
+
+**Browse-first (Daangn-style):** login is never forced. Signup and Login both have a
+"둘러보기" (browse without signing in) button that goes straight to `Main`. Guests can read
+everything; only actions that need an account (like, comment, report, new post) send them to
+Signup/Login at that moment.
 
 ## Known non-obvious decisions (read before "fixing" these)
 
-- **Signup, not Login, is the app's root/default screen.** Login only shows a back button when
+- **Signup, not Login, is the app's root/default screen** (with a browse-without-login option). Login only shows a back button when
   reached from Signup (`navigation.canGoBack()`); as a root screen after logout it has none. This
   was an explicit design choice, not a bug.
 - **API responds only in Korean.** All `message` fields in error responses were once accidentally
