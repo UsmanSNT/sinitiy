@@ -1,11 +1,11 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { MainTabParamList } from "./types";
 import { HomeScreen } from "../screens/HomeScreen";
 import { ServicesScreen } from "../screens/ServicesScreen";
 import { CommunityScreen } from "../screens/CommunityScreen";
 import { MyPageScreen } from "../screens/MyPageScreen";
 import { HomeTabIcon, ServicesTabIcon, CommunityTabIcon, MyPageTabIcon } from "../components/TabIcons";
+import { useTabBarMetrics } from "../lib/useTabBarMetrics";
 import { colors } from "../theme";
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -25,13 +25,7 @@ const labels: Record<keyof MainTabParamList, string> = {
 };
 
 export function MainTabs() {
-  // Mobil qurilmaning o'z tugmalar paneli (home indicator/nav bar)dan
-  // yuqoriroqqa chiqishi uchun xavfsiz zona (safe area) hisobga olinadi.
-  const insets = useSafeAreaInsets();
-  // Veb brauzerda safe-area qiymati odatda 0 qaytadi, shuning uchun
-  // haqiqiy mobil brauzerlarda yozuv kesilib qolmasligi uchun minimal
-  // qiymat yetarlicha katta qilib olinadi.
-  const bottomPad = Math.max(insets.bottom, 16);
+  const { basePad, bottomPad, height } = useTabBarMetrics();
 
   return (
     <Tab.Navigator
@@ -41,10 +35,10 @@ export function MainTabs() {
         tabBarInactiveTintColor: colors.gray,
         tabBarLabel: labels[route.name as keyof MainTabParamList],
         tabBarIcon: ({ color }) => icons[route.name as keyof MainTabParamList]({ color }),
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: "600", includeFontPadding: false },
         tabBarStyle: {
-          height: 56 + bottomPad,
-          paddingTop: 6,
+          height,
+          paddingTop: basePad,
           paddingBottom: bottomPad,
         },
       })}

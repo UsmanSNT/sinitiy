@@ -10,6 +10,7 @@ import { api } from "../lib/api";
 import { listingTypeLabel, statusColor, statusLabel } from "../lib/listingMeta";
 import { ListState } from "../components/ListState";
 import { colors } from "../theme";
+import { BottomNav } from "../components/BottomNav";
 
 type Props = NativeStackScreenProps<RootStackParamList, "MyListings">;
 
@@ -81,6 +82,7 @@ export function MyListingsScreen({ navigation }: Props) {
           <Text style={styles.addButtonText}>새 공고 등록</Text>
         </Pressable>
       </View>
+      <BottomNav active="MyPage" />
     </SafeAreaView>
   );
 }
@@ -88,19 +90,19 @@ export function MyListingsScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#f6f8fb" },
   header: { height: 52, flexDirection: "row", alignItems: "center", paddingHorizontal: 14, backgroundColor: colors.white },
-  headerTitle: { flex: 1, marginLeft: 7, fontSize: 18, fontWeight: "800", color: colors.navy },
+  headerTitle: { flex: 1, marginLeft: 7, fontSize: 20, fontWeight: "800", color: colors.navy },
   list: { padding: 15, gap: 10 },
   card: { backgroundColor: colors.white, borderRadius: 12, borderWidth: 1, borderColor: "#e7ebf0", padding: 14 },
   cardTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  type: { fontSize: 11, color: "#6b7688", fontWeight: "700" },
+  type: { fontSize: 13, color: "#6b7688", fontWeight: "700" },
   badge: { borderRadius: 10, paddingHorizontal: 9, paddingVertical: 3 },
-  badgeText: { fontSize: 11, fontWeight: "800" },
-  title: { marginTop: 8, fontSize: 15, fontWeight: "800", color: colors.navy },
-  meta: { marginTop: 4, fontSize: 11, color: "#8390a2" },
-  rejected: { marginTop: 8, fontSize: 11, color: "#d4483f" },
+  badgeText: { fontSize: 13, fontWeight: "800" },
+  title: { marginTop: 8, fontSize: 17, fontWeight: "800", color: colors.navy },
+  meta: { marginTop: 4, fontSize: 13, color: "#8390a2" },
+  rejected: { marginTop: 8, fontSize: 13, color: "#d4483f" },
   deleteBtn: { alignSelf: "flex-end", marginTop: 6 },
-  deleteText: { fontSize: 12, color: "#8390a2", textDecorationLine: "underline" },
+  deleteText: { fontSize: 14, color: "#8390a2", textDecorationLine: "underline" },
   footer: { padding: 15, backgroundColor: colors.white, borderTopWidth: 1, borderTopColor: "#edf0f4" },
   addButton: { backgroundColor: colors.brand, borderRadius: 999, paddingVertical: 14, alignItems: "center" },
-  addButtonText: { color: colors.white, fontSize: 15, fontWeight: "700" },
+  addButtonText: { color: colors.white, fontSize: 17, fontWeight: "700" },
 });

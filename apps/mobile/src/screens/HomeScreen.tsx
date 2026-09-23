@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
@@ -22,28 +22,32 @@ const notices = [
 export function HomeScreen() {
   const { user } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  // Kartalar balandligi ekran balandligining foizi sifatida hisoblanadi (aspectRatio emas) -
+  // Yoga'da aspectRatio + justifyContent:"center" birikmasi Android'da kontentni pastga
+  // surib, tepa/pastki bo'shliqni notekis qilib qo'yardi (aniq balandlik bu muammoni oldini oladi).
+  const { height: windowHeight } = useWindowDimensions();
+  const cardHeight = Math.round(Math.min(Math.max(windowHeight * 0.145, 108), 150));
 
   return (
     <View style={styles.screen}>
-      <View style={styles.top}>
-        <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.greeting}>안녕하세요!</Text>
-            <Text style={styles.name}>{user ? `${user.name}님` : "방문자님"} 😊</Text>
-          </View>
-          <Pressable accessibilityLabel="알림" hitSlop={12} onPress={() => navigation.navigate("Notifications")}>
-            <BellIcon color={colors.white} />
-          </Pressable>
-        </View>
-        <Text style={styles.subtitle}>오늘도 건강한 하루 되세요.</Text>
+      <View style={styles.bellRow}>
+        <Pressable accessibilityLabel="알림" hitSlop={12} onPress={() => navigation.navigate("Notifications")}>
+          <BellIcon color={colors.white} size={26} />
+        </Pressable>
       </View>
 
-      <View style={styles.gridWrap}>
+      <View style={styles.middleWrap}>
+        <View style={styles.greetingBlock}>
+          <Text style={styles.greeting}>안녕하세요!</Text>
+          <Text style={styles.name}>{user ? `${user.name}님` : "방문자님"} 😊</Text>
+          <Text style={styles.subtitle}>오늘도 건강한 하루 되세요.</Text>
+        </View>
+
         <View style={styles.grid}>
           {serviceItems.map((item) => (
             <Pressable
               key={item.label}
-              style={({ pressed }) => [styles.card, pressed && { opacity: 0.78 }]}
+              style={({ pressed }) => [styles.card, { height: cardHeight }, pressed && { opacity: 0.78 }]}
               onPress={() => {
                 if (item.label === "일자리·복지") navigation.navigate("JobWelfare");
                 if (item.label === "건강·의료") navigation.navigate("HealthMedical");
@@ -84,12 +88,16 @@ export function HomeScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "rgb(24, 47, 83)" },
-  top: { paddingHorizontal: 20, paddingTop: 50 },
-  headerTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  greeting: { color: "rgba(255,255,255,0.75)", fontSize: 15 },
-  name: { color: colors.white, fontSize: 21, fontWeight: "700", marginTop: 4 },
-  subtitle: { color: "rgba(255,255,255,0.7)", fontSize: 12, marginTop: 8 },
-  gridWrap: { flex: 1, paddingHorizontal: 20, justifyContent: "center" },
+  // Qo'ng'iroqcha ekran tepasida, o'z holicha qoladi - pastdagi matn bloki bilan
+  // endi bir qatorda emas, alohida joylashadi (navbar ko'rinishidan chiqarish uchun).
+  bellRow: { paddingHorizontal: 20, paddingTop: 56, alignItems: "flex-end" },
+  // Matn bloki va kartalar birgalikda qolgan bo'shliqda markazlashadi -
+  // shu bilan matn har doim kartalar ustida, ularga yaqin turadi.
+  middleWrap: { flex: 1, paddingHorizontal: 20, justifyContent: "center" },
+  greetingBlock: { marginBottom: 24 },
+  greeting: { color: "rgba(255,255,255,0.75)", fontSize: 16 },
+  name: { color: colors.white, fontSize: 24, fontWeight: "700", marginTop: 5 },
+  subtitle: { color: "rgba(255,255,255,0.7)", fontSize: 13, marginTop: 9 },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -97,7 +105,6 @@ const styles = StyleSheet.create({
   },
   card: {
     width: "48%",
-    aspectRatio: 1.25,
     backgroundColor: colors.white,
     borderRadius: 16,
     borderWidth: 1,
@@ -111,8 +118,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 6,
   },
-  cardLabel: { fontSize: 13, fontWeight: "700", color: colors.navy, textAlign: "center" },
-  cardSub: { fontSize: 10, color: colors.gray, marginTop: 2, textAlign: "center" },
+  cardLabel: { fontSize: 13, fontWeight: "700", color: colors.navy, textAlign: "center", includeFontPadding: false },
+  cardSub: { fontSize: 10, color: colors.gray, marginTop: 2, textAlign: "center", includeFontPadding: false },
   noticeBar: {
     backgroundColor: "#f7f8fa",
     borderTopLeftRadius: 22,
@@ -133,16 +140,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    paddingVertical: 9,
-    paddingHorizontal: 12,
-    marginBottom: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
+    paddingVertical: 11,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8ebf0",
   },
   noticeTag: { fontSize: 12, fontWeight: "700", width: 34 },
   noticeText: { flex: 1, fontSize: 13, color: colors.navy, fontWeight: "500" },

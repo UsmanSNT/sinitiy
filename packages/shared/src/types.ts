@@ -103,6 +103,10 @@ export interface PartnerCompany {
   address: string;
   phone: string;
   homepage: string | null;
+  category: string | null;
+  service: string | null;
+  description: string | null;
+  recommended: boolean;
 }
 
 export type NotificationType = "comment" | "like" | "ad_approved" | "ad_rejected" | "announcement";

@@ -5,6 +5,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
+import { BottomNav } from "../components/BottomNav";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Notifications">;
 type NoticeTag = "행사" | "공지" | "매체";
@@ -80,6 +81,7 @@ export function NotificationsScreen({ navigation }: Props) {
           ))}
         </ScrollView>
       )}
+      <BottomNav active="Home" />
     </SafeAreaView>
   );
 }
@@ -87,19 +89,19 @@ export function NotificationsScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white },
   header: { height: 52, flexDirection: "row", alignItems: "center", paddingHorizontal: 14 },
-  headerTitle: { flex: 1, marginLeft: 7, fontSize: 18, fontWeight: "800", color: colors.navy },
-  markAll: { fontSize: 12, fontWeight: "700", color: "#66758a" },
+  headerTitle: { flex: 1, marginLeft: 7, fontSize: 20, fontWeight: "800", color: colors.navy },
+  markAll: { fontSize: 14, fontWeight: "700", color: "#66758a" },
   list: { paddingHorizontal: 16, paddingBottom: 22 },
   row: { minHeight: 68, flexDirection: "row", alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#edf0f4", paddingVertical: 12 },
   pressed: { opacity: 0.7 },
-  tag: { width: 34, fontSize: 12, fontWeight: "800" },
+  tag: { width: 40, fontSize: 14, fontWeight: "800" },
   rowCopy: { flex: 1, minWidth: 0, paddingHorizontal: 8 },
-  rowTitle: { fontSize: 13, fontWeight: "600", color: colors.navy },
+  rowTitle: { fontSize: 17, fontWeight: "600", color: colors.navy },
   rowTitleUnread: { fontWeight: "800" },
-  rowDate: { marginTop: 5, fontSize: 11, color: "#8390a2" },
+  rowDate: { marginTop: 5, fontSize: 13, color: "#8390a2" },
   unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: "#3d5ee1" },
   unreadSpacer: { width: 8, height: 8 },
   empty: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 32 },
-  emptyTitle: { marginTop: 12, fontSize: 15, fontWeight: "800", color: colors.navy },
-  emptyCopy: { marginTop: 6, fontSize: 12, color: "#8995a5", textAlign: "center", lineHeight: 18 },
+  emptyTitle: { marginTop: 12, fontSize: 17, fontWeight: "800", color: colors.navy },
+  emptyCopy: { marginTop: 6, fontSize: 14, color: "#8995a5", textAlign: "center", lineHeight: 20 },
 });

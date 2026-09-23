@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   categoryChipActive: { backgroundColor: colors.navy, borderColor: colors.navy },
-  categoryText: { fontSize: 13, color: colors.gray },
+  categoryText: { fontSize: 14, color: colors.gray },
   categoryTextActive: { color: colors.white, fontWeight: "700" },
   input: {
     borderWidth: 1,

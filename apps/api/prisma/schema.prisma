@@ -212,13 +212,17 @@ model AdRequest {
 }
 
 model PartnerCompany {
-  id        String   @id @default(cuid())
-  name      String
-  location  String?
-  address   String
-  phone     String
-  homepage  String?
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  name        String
+  location    String?
+  address     String
+  phone       String
+  homepage    String?
+  category    String?
+  service     String?
+  description String?
+  recommended Boolean  @default(false)
+  createdAt   DateTime @default(now())
 
   @@map("partner_companies")
 }

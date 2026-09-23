@@ -10,6 +10,7 @@ import { api } from "../lib/api";
 import { listingTypeLabel, statusColor, statusLabel } from "../lib/listingMeta";
 import { ListState } from "../components/ListState";
 import { colors } from "../theme";
+import { BottomNav } from "../components/BottomNav";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AdminListings">;
 const tabs = [
@@ -89,6 +90,7 @@ export function AdminListingsScreen({ navigation }: Props) {
           );
         })}
       </ScrollView>
+      <BottomNav active="MyPage" />
     </SafeAreaView>
   );
 }
@@ -96,25 +98,25 @@ export function AdminListingsScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#f6f8fb" },
   header: { height: 52, flexDirection: "row", alignItems: "center", paddingHorizontal: 14, backgroundColor: colors.white },
-  headerTitle: { flex: 1, marginLeft: 7, fontSize: 18, fontWeight: "800", color: colors.navy },
+  headerTitle: { flex: 1, marginLeft: 7, fontSize: 20, fontWeight: "800", color: colors.navy },
   tabs: { flexDirection: "row", gap: 7, paddingHorizontal: 16, paddingBottom: 12, backgroundColor: colors.white, borderBottomWidth: 1, borderBottomColor: "#edf0f4" },
   tab: { height: 30, paddingHorizontal: 14, borderRadius: 15, alignItems: "center", justifyContent: "center" },
   tabActive: { backgroundColor: "#2368bc" },
-  tabText: { fontSize: 12, fontWeight: "700", color: "#8792a4" },
+  tabText: { fontSize: 14, fontWeight: "700", color: "#8792a4" },
   tabTextActive: { color: colors.white },
   list: { padding: 15, gap: 10 },
   card: { backgroundColor: colors.white, borderRadius: 12, borderWidth: 1, borderColor: "#e7ebf0", padding: 14 },
   cardTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  type: { fontSize: 11, color: "#6b7688", fontWeight: "700" },
+  type: { fontSize: 13, color: "#6b7688", fontWeight: "700" },
   badge: { borderRadius: 10, paddingHorizontal: 9, paddingVertical: 3 },
-  badgeText: { fontSize: 11, fontWeight: "800" },
-  title: { marginTop: 8, fontSize: 15, fontWeight: "800", color: colors.navy },
-  meta: { marginTop: 5, fontSize: 11, color: "#8390a2" },
-  content: { marginTop: 8, fontSize: 12, color: colors.navy, lineHeight: 18 },
+  badgeText: { fontSize: 13, fontWeight: "800" },
+  title: { marginTop: 8, fontSize: 17, fontWeight: "800", color: colors.navy },
+  meta: { marginTop: 5, fontSize: 13, color: "#8390a2" },
+  content: { marginTop: 8, fontSize: 14, color: colors.navy, lineHeight: 20 },
   actions: { flexDirection: "row", justifyContent: "flex-end", gap: 8, marginTop: 12 },
   actionBtn: { borderRadius: 999, paddingHorizontal: 18, paddingVertical: 8 },
   approveBtn: { backgroundColor: colors.brand },
-  approveText: { color: colors.white, fontSize: 13, fontWeight: "700" },
+  approveText: { color: colors.white, fontSize: 14, fontWeight: "700" },
   rejectBtn: { borderWidth: 1, borderColor: "#e3b5b2" },
-  rejectText: { color: "#d4483f", fontSize: 13, fontWeight: "700" },
+  rejectText: { color: "#d4483f", fontSize: 14, fontWeight: "700" },
 });

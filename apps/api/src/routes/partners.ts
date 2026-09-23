@@ -10,19 +10,21 @@ partnersRouter.get("/", async (_req, res) => {
 });
 
 partnersRouter.post("/", requireAuth, requireRole("admin"), async (req, res) => {
-  const { name, location, address, phone, homepage } = req.body;
+  const { name, location, address, phone, homepage, category, service, description, recommended } = req.body;
   if (!name || !address || !phone) {
     return res.status(400).json({ message: "잘못된 요청입니다" });
   }
-  const item = await prisma.partnerCompany.create({ data: { name, location, address, phone, homepage } });
+  const item = await prisma.partnerCompany.create({
+    data: { name, location, address, phone, homepage, category, service, description, recommended },
+  });
   return res.status(201).json(item);
 });
 
 partnersRouter.put("/:id", requireAuth, requireRole("admin"), async (req, res) => {
-  const { name, location, address, phone, homepage } = req.body;
+  const { name, location, address, phone, homepage, category, service, description, recommended } = req.body;
   const item = await prisma.partnerCompany.update({
     where: { id: req.params.id },
-    data: { name, location, address, phone, homepage },
+    data: { name, location, address, phone, homepage, category, service, description, recommended },
   });
   return res.json(item);
 });

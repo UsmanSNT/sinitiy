@@ -8,6 +8,7 @@ import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { categoriesByType, listingTypeLabel } from "../lib/listingMeta";
 import { colors } from "../theme";
+import { RegionPicker } from "../components/RegionPicker";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ListingForm">;
 
@@ -19,6 +20,7 @@ export function ListingFormScreen({ navigation }: Props) {
   const [form, setForm] = useState({ title: "", region: "", period: "", content: "", targetAudience: "", applyMethod: "", phone: "" });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [regionPickerOpen, setRegionPickerOpen] = useState(false);
 
   const update = (key: keyof typeof form) => (value: string) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -87,7 +89,14 @@ export function ListingFormScreen({ navigation }: Props) {
           )}
 
           <Field label="제목" value={form.title} onChangeText={update("title")} placeholder="공고 제목" />
-          <Field label="지역" value={form.region} onChangeText={update("region")} placeholder="예: 서울 강남구" />
+
+          <Text style={styles.label}>지역</Text>
+          <Pressable style={styles.input} onPress={() => setRegionPickerOpen(true)}>
+            <Text style={form.region ? styles.regionValue : styles.regionPlaceholder}>
+              {form.region || "지역을 선택해주세요"}
+            </Text>
+          </Pressable>
+
           <Field label="기간" value={form.period} onChangeText={update("period")} placeholder="예: 2025.09 - 10 또는 상시 모집" />
           <Field label="내용" value={form.content} onChangeText={update("content")} placeholder="공고 내용을 입력하세요" multiline />
           <Field label="지원 대상" value={form.targetAudience} onChangeText={update("targetAudience")} placeholder="예: 만 60세 이상" />
@@ -104,6 +113,13 @@ export function ListingFormScreen({ navigation }: Props) {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+
+      <RegionPicker
+        visible={regionPickerOpen}
+        value={form.region || null}
+        onSelect={(region) => update("region")(region ?? "")}
+        onClose={() => setRegionPickerOpen(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -125,18 +141,20 @@ function Field({ label, multiline, ...props }: { label: string; multiline?: bool
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white },
   header: { height: 52, flexDirection: "row", alignItems: "center", paddingHorizontal: 14 },
-  headerTitle: { flex: 1, marginLeft: 7, fontSize: 18, fontWeight: "800", color: colors.navy },
+  headerTitle: { flex: 1, marginLeft: 7, fontSize: 20, fontWeight: "800", color: colors.navy },
   content: { padding: 18, paddingBottom: 30 },
-  label: { marginTop: 16, marginBottom: 7, fontSize: 12, fontWeight: "800", color: colors.navy },
+  label: { marginTop: 16, marginBottom: 7, fontSize: 14, fontWeight: "800", color: colors.navy },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 7 },
   chip: { paddingHorizontal: 13, height: 32, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: "#f0f3f7" },
   chipActive: { backgroundColor: "#2368bc" },
-  chipText: { fontSize: 12, fontWeight: "700", color: "#7b8797" },
+  chipText: { fontSize: 14, fontWeight: "700", color: "#7b8797" },
   chipTextActive: { color: colors.white },
   input: { borderWidth: 1, borderColor: "#dfe5eb", borderRadius: 8, paddingHorizontal: 12, paddingVertical: 11, fontSize: 14, color: colors.navy },
   inputMulti: { minHeight: 110, textAlignVertical: "top" },
+  regionValue: { fontSize: 14, color: colors.navy },
+  regionPlaceholder: { fontSize: 14, color: colors.gray },
   error: { marginTop: 14, color: "#ef4444", fontSize: 13 },
-  notice: { marginTop: 14, fontSize: 11, color: colors.gray },
+  notice: { marginTop: 14, fontSize: 13, color: colors.gray },
   footer: { padding: 15, borderTopWidth: 1, borderTopColor: "#edf0f4" },
   submit: { backgroundColor: colors.brand, borderRadius: 999, paddingVertical: 14, alignItems: "center" },
   submitText: { color: colors.white, fontSize: 15, fontWeight: "700" },

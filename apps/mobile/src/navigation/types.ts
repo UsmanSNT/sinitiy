@@ -9,7 +9,17 @@ export type RootStackParamList = {
   PostDetail: { postId: string };
   NewPost: undefined;
   JobWelfare: undefined;
-  JobDetail: { title: string; organization: string; period: string; image: ImageSourcePropType };
+  JobDetail: {
+    title: string;
+    organization: string;
+    period: string;
+    category?: string;
+    image: ImageSourcePropType;
+    content?: string;
+    phone?: string;
+    targetAudience?: string;
+    applyMethod?: string;
+  };
   HealthMedical: undefined;
   HealthDetail: {
     title: string;
@@ -56,6 +66,11 @@ export type RootStackParamList = {
     service: string;
     category: string;
     image: ImageSourcePropType;
+    location: string | null;
+    address: string;
+    phone: string;
+    homepage: string | null;
+    description: string | null;
   };
   InterestSettings: undefined;
   NotificationSettings: undefined;

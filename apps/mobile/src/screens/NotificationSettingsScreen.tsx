@@ -5,6 +5,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
+import { BottomNav } from "../components/BottomNav";
 
 type Props = NativeStackScreenProps<RootStackParamList, "NotificationSettings">;
 const options = [
@@ -21,17 +22,20 @@ export function NotificationSettingsScreen({ navigation }: Props) {
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}><Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}><MaterialIcons name="chevron-left" size={28} color={colors.navy} /></Pressable><Text style={styles.headerTitle}>알림 설정</Text><View style={styles.spacer} /></View>
-      <Text style={styles.guide}>원하는 알림을 선택해주세요.</Text>
-      <View style={styles.list}>{options.map((item) => (
-        <View key={item.key} style={styles.row}><MaterialCommunityIcons name={item.icon} size={20} color="#657b9d" /><View style={styles.copy}><Text style={styles.title}>{item.title}</Text><Text style={styles.subtitle}>{item.subtitle}</Text></View><Switch value={values[item.key]} onValueChange={(value) => setValues((current) => ({ ...current, [item.key]: value }))} trackColor={{ false: "#d8dee7", true: "#2d79dc" }} thumbColor={colors.white} /></View>
-      ))}</View>
+      <View style={styles.body}>
+        <Text style={styles.guide}>원하는 알림을 선택해주세요.</Text>
+        <View style={styles.list}>{options.map((item) => (
+          <View key={item.key} style={styles.row}><MaterialCommunityIcons name={item.icon} size={20} color="#657b9d" /><View style={styles.copy}><Text style={styles.title}>{item.title}</Text><Text style={styles.subtitle}>{item.subtitle}</Text></View><Switch value={values[item.key]} onValueChange={(value) => setValues((current) => ({ ...current, [item.key]: value }))} trackColor={{ false: "#d8dee7", true: "#2d79dc" }} thumbColor={colors.white} /></View>
+        ))}</View>
+      </View>
+      <BottomNav active="MyPage" />
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.white }, header: { height: 52, flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14 },
-  headerTitle: { fontSize: 17, fontWeight: "800", color: colors.navy }, spacer: { width: 28 }, guide: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 13, fontSize: 12, color: "#8995a5" },
+  headerTitle: { fontSize: 20, fontWeight: "800", color: colors.navy }, spacer: { width: 28 }, body: { flex: 1 }, guide: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 13, fontSize: 14, color: "#8995a5" },
   list: { paddingHorizontal: 18 }, row: { minHeight: 66, flexDirection: "row", alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#edf0f4" },
-  copy: { flex: 1, paddingHorizontal: 12 }, title: { fontSize: 13, fontWeight: "800", color: colors.navy }, subtitle: { marginTop: 4, fontSize: 10, color: "#8995a5" },
+  copy: { flex: 1, paddingHorizontal: 12 }, title: { fontSize: 17, fontWeight: "800", color: colors.navy }, subtitle: { marginTop: 4, fontSize: 13, color: "#8995a5" },
 });

@@ -11,7 +11,11 @@ const fallbacks: ImageSourcePropType[] = [
   require("../../assets/thumbnails/job-counseling.jpg"),
 ];
 
+export function fallbackImage(index: number): ImageSourcePropType {
+  return fallbacks[index % fallbacks.length];
+}
+
 export function listingImage(listing: Listing, index: number): ImageSourcePropType {
   if (listing.images[0]) return { uri: listing.images[0] };
-  return fallbacks[index % fallbacks.length];
+  return fallbackImage(index);
 }

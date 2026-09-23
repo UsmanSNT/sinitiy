@@ -5,8 +5,12 @@ const prisma = new PrismaClient();
 
 
 // Namunaviy tashkilotlar va e'lonlar (ilovadagi mock ma'lumotlarga mos). Har ishga tushganda qayta yaratiladi.
-type Row = { org: string; listingType: "health" | "education" | "life"; category: string; region: string; title: string; period: string; content: string; phone: string; targetAudience: string; applyMethod: string };
+type Row = { org: string; listingType: "job" | "health" | "education" | "life"; category: string; region: string; title: string; period: string; content: string; phone: string; targetAudience: string; applyMethod: string };
 const rows: Row[] = [
+  { org: "서울시", listingType: "job", category: "일자리", region: "서울", title: "시니어 인턴십 참여자 모집", period: "2025.05.20 - 06.30", content: "시니어의 경험과 노하우를 활용한 사회활동에 함께할 참여자를 모집합니다. 지원자격과 일정을 확인하고 지금 신청해 보세요.", phone: "02-2133-7970", targetAudience: "만 60세 이상 시니어", applyMethod: "온라인 신청" },
+  { org: "보건복지부", listingType: "job", category: "일자리", region: "전국", title: "노인일자리 및 사회활동 지원사업", period: "2025.05.15 - 06.15", content: "노인일자리 및 사회활동 지원사업 참여자를 모집합니다. 지역 시니어클럽을 통해 신청할 수 있습니다.", phone: "129", targetAudience: "만 65세 이상", applyMethod: "지역 시니어클럽 방문" },
+  { org: "보건복지부", listingType: "job", category: "복지정책", region: "전국", title: "기초연금 신청 안내", period: "상시", content: "만 65세 이상 어르신 중 소득인정액이 기준 이하인 분께 기초연금을 지급합니다.", phone: "1355", targetAudience: "만 65세 이상", applyMethod: "주민센터 방문 또는 온라인 신청" },
+  { org: "강남구", listingType: "job", category: "일자리", region: "서울 강남구", title: "경력·노하우 활용 인력 모집", period: "2025.05.10 - 05.31", content: "경력과 노하우를 활용해 지역사회에 기여할 시니어 인력을 모집합니다.", phone: "02-3423-5000", targetAudience: "만 60세 이상 시니어", applyMethod: "방문 신청 후 서류 접수" },
   { org: "강남구보건소", listingType: "health", category: "병원", region: "서울 강남구", title: "강남시니어 건강검진센터", period: "무료 건강검진 안내", content: "만 60세 이상 시니어를 대상으로 무료 건강검진을 지원합니다. 건강한 노후를 위한 정밀검진, 지금 신청하세요!", phone: "02-987-6543", targetAudience: "만 60세 이상 주민", applyMethod: "전화 신청" },
   { org: "서울시", listingType: "health", category: "예방·검진", region: "서울", title: "독감 예방접종 지원사업", period: "2025.09 - 10", content: "독감 예방접종 비용을 지원합니다. 가까운 지정 의료기관에서 접종하세요.", phone: "02-120", targetAudience: "만 65세 이상", applyMethod: "지정 의료기관 방문" },
   { org: "보건소", listingType: "health", category: "건강정보", region: "전국", title: "치매 예방 프로그램", period: "상시 모집", content: "치매 예방 인지 훈련 프로그램입니다. 가까운 보건소에서 참여할 수 있습니다.", phone: "1899-9988", targetAudience: "만 60세 이상", applyMethod: "보건소 방문 또는 전화" },
@@ -27,10 +31,13 @@ async function seedListings() {
   const orgIds: Record<string, string> = {};
 
   for (const [n, orgName] of orgNames.entries()) {
-    const email = `seed-org-${n + 1}@sinity.local`;
+    // Email orgName'ning o'zidan (indeksdan emas) hosil qilinadi - shu bilan rows ro'yxati
+    // tartibi o'zgarganda (masalan yangi qator qo'shilganda) eski email boshqa nomga
+    // "surilib" qolmaydi (bu avval organization nomlari aralashib ketishiga sabab bo'lgan).
+    const email = `seed-org-${Buffer.from(orgName).toString("hex")}@sinity.local`;
     const user = await prisma.user.upsert({
       where: { email },
-      update: {},
+      update: { name: orgName, organizationProfile: { update: { orgName } } },
       create: {
         email,
         name: orgName,
@@ -50,6 +57,23 @@ async function seedListings() {
   console.log("Seed listings:", rows.length);
 }
 
+const partners = [
+  { name: "행복한 요양원", category: "제휴혜택", service: "요양·돌봄 서비스", recommended: true, location: "서울 강남구", address: "서울 강남구 테헤란로 123", phone: "02-111-2222", homepage: "https://www.happycare.co.kr", description: "쾌적한 환경과 전문적인 돌봄으로 시니어의 행복한 노후를 함께합니다." },
+  { name: "시니어 여행센터", category: "추천서비스", service: "여행·레저 맞춤 상품", recommended: false, location: "서울 종로구", address: "서울 종로구 종로 45", phone: "02-222-3333", homepage: null, description: "시니어 맞춤형 국내외 여행 상품을 안내해 드립니다." },
+  { name: "시니어 여행사", category: "추천서비스", service: "관광·테마 여행 상품", recommended: false, location: "부산 해운대구", address: "부산 해운대구 해운대로 200", phone: "051-333-4444", homepage: null, description: "편안한 일정의 테마 여행을 함께합니다." },
+  { name: "건강검진센터", category: "제휴혜택", service: "건강·의료 제휴 프로그램", recommended: false, location: "전국", address: "서울 서초구 서초대로 77", phone: "1588-5555", homepage: null, description: "제휴 회원을 위한 건강검진 할인 프로그램을 제공합니다." },
+];
+
+// PartnerCompany'da unique kalit yo'q - nom bo'yicha topib yangilanadi, admin qo'shgan hamkorlar o'chirilmaydi.
+async function seedPartners() {
+  for (const p of partners) {
+    const existing = await prisma.partnerCompany.findFirst({ where: { name: p.name } });
+    if (existing) await prisma.partnerCompany.update({ where: { id: existing.id }, data: p });
+    else await prisma.partnerCompany.create({ data: p });
+  }
+  console.log("Seed partners:", partners.length);
+}
+
 async function main() {
   const names = ["자유게시판", "동네소식", "취미생활"];
   for (const name of names) {
@@ -57,6 +81,7 @@ async function main() {
   }
   console.log("Seed done:", names.join(", "));
   await seedListings();
+  await seedPartners();
 }
 
 main().finally(() => prisma.$disconnect());
