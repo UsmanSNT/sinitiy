@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
+import { comingSoon } from "../lib/actions";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CustomerCenter">;
 const PHONE = "02-1234-5678";
@@ -23,7 +24,7 @@ export function CustomerCenterScreen({ navigation }: Props) {
       <View style={styles.header}><Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}><MaterialIcons name="chevron-left" size={28} color={colors.navy} /></Pressable><Text style={styles.headerTitle}>고객센터</Text><View style={styles.spacer} /></View>
       <View style={styles.body}>
         <View style={styles.card}>{rows.map((item, index) => (
-          <Pressable key={item.title} onPress={() => item.phone && Linking.openURL(`tel:${PHONE}`)} style={[styles.row, index < rows.length - 1 && styles.divider]}>
+          <Pressable key={item.title} onPress={() => (item.phone ? Linking.openURL(`tel:${PHONE}`) : comingSoon())} style={[styles.row, index < rows.length - 1 && styles.divider]}>
             <View style={styles.iconBox}><MaterialCommunityIcons name={item.icon} size={21} color="#5b73a0" /></View>
             <View style={styles.copy}><Text style={styles.title}>{item.title}</Text>{item.subtitle ? <Text style={styles.subtitle}>{item.subtitle}</Text> : null}</View><MaterialIcons name="chevron-right" size={22} color="#a4adba" />
           </Pressable>

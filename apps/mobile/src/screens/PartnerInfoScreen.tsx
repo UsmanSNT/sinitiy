@@ -10,6 +10,7 @@ import { fallbackImage } from "../lib/listingImage";
 import { matchesRegionFilter } from "../lib/regionMatch";
 import { ListState } from "../components/ListState";
 import { BottomNav } from "../components/BottomNav";
+import { comingSoon } from "../lib/actions";
 import { RegionPicker } from "../components/RegionPicker";
 import { OptionSheet } from "../components/OptionSheet";
 
@@ -70,7 +71,7 @@ export function PartnerInfoScreen({ navigation }: Props) {
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
         </Pressable>
         <Text style={styles.headerTitle}>파트너 정보</Text>
-        <Pressable accessibilityLabel="검색" hitSlop={12}>
+        <Pressable accessibilityLabel="검색" hitSlop={12} onPress={comingSoon}>
           <MaterialIcons name="search" size={23} color={colors.navy} />
         </Pressable>
       </View>

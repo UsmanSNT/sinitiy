@@ -21,7 +21,7 @@ export function MyPageScreen() {
     { icon: "heart", color: "#ef4b9a", background: "#ffe7f3", title: "내 관심정보", subtitle: "관심 분야를 설정해요", onPress: () => navigation.navigate("InterestSettings") },
     { icon: "bell", color: "#f07a3e", background: "#fff0e7", title: "알림 설정", subtitle: "푸시 알림을 관리해요", onPress: () => navigation.navigate("NotificationSettings") },
     { icon: "bullhorn", color: "#a94fc4", background: "#f5e9fa", title: "추천 서비스·제휴 혜택", subtitle: "나에게 맞는 추천을 확인해요", onPress: () => navigation.navigate("PartnerInfo") },
-    { icon: "briefcase", color: "#18a9a1", background: "#e2f8f6", title: "내 활동", subtitle: "작성한 글과 댓글, 좋아요 내역", onPress: () => navigation.navigate("Main", { screen: "Community" }) },
+    { icon: "briefcase", color: "#18a9a1", background: "#e2f8f6", title: "내 활동", subtitle: "작성한 글과 댓글, 좋아요 내역", onPress: () => navigation.navigate("MyActivity") },
     { icon: "face-agent", color: "#5479b8", background: "#eaf0fb", title: "고객센터", subtitle: "문의하기, FAQ", onPress: () => navigation.navigate("CustomerCenter") },
   ];
 
@@ -65,7 +65,7 @@ export function MyPageScreen() {
     <ScrollView style={styles.screen} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={styles.profile}>
         <View style={styles.avatar}><MaterialIcons name="person" size={36} color="#7c899a" /></View>
-        <View style={styles.profileCopy}><Text style={styles.name}>{user.name}님</Text><Text style={styles.phone}>{user.phone ?? user.email}</Text></View>
+        <View style={styles.profileCopy}><Text style={styles.name}>{user.name}님</Text><Text style={styles.phone}>{user.organizationProfile ? `${user.organizationProfile.orgName} · ` : ""}{user.phone ?? user.email}</Text></View>
         <Pressable accessibilityLabel="관심정보 설정" hitSlop={12} onPress={() => navigation.navigate("InterestSettings")}><MaterialIcons name="settings" size={22} color="#536b9c" /></Pressable>
       </View>
       {renderMenu(menuItems)}

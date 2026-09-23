@@ -75,6 +75,7 @@ export type RootStackParamList = {
   InterestSettings: undefined;
   NotificationSettings: undefined;
   CustomerCenter: undefined;
+  MyActivity: undefined;
 };
 
 export type MainTabParamList = {

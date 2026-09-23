@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -42,7 +43,8 @@ async function seedListings() {
         email,
         name: orgName,
         userType: "organization",
-        passwordHash: await bcrypt.hash("seed-org-not-for-login", 10),
+        // Tasodifiy parol: seed tashkilotlari faqat e'lon egasi sifatida kerak, ularga hech kim kira olmasligi lozim.
+        passwordHash: await bcrypt.hash(randomBytes(32).toString("hex"), 10),
         organizationProfile: { create: { businessNumber: `000-00-${String(n + 1).padStart(5, "0")}`, orgName, verified: true } },
       },
     });

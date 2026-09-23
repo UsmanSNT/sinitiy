@@ -3,15 +3,19 @@ import { FlatList, Image, ImageSourcePropType, Pressable, StyleSheet, Text, View
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { PaginatedResult, Post } from "@sinity/shared";
+import type { Category, PaginatedResult, Post } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
+import { comingSoon } from "../lib/actions";
 
 type CommunityPost = Post & { thumbnail?: ImageSourcePropType; sample?: boolean };
 
-const tabs = ["전체", "자유게시판", "동네모임"] as const;
+// Tablar serverdagi kategoriyalardan olinadi (qattiq yozilgan nomlar bazadagisi bilan mos
+// kelmay, masalan "동네모임" tabida "동네소식" postlari hech qachon chiqmasdi).
+const ALL = "전체";
+const defaultTabs = [ALL, "자유게시판", "동네소식", "취미생활"];
 const fallbackImages = [
   require("../../assets/thumbnails/hiking.jpg"),
   require("../../assets/thumbnails/board-game.jpg"),
@@ -20,13 +24,13 @@ const fallbackImages = [
 const samplePosts: CommunityPost[] = [
   {
     id: "sample-hiking", authorId: "sample", authorName: "서초 산우회", categoryId: "club",
-    categoryName: "동네모임", title: "동네 산책 함께해요!", content: "이번 주말, 가까운 공원에서 함께 걸어요.",
+    categoryName: "동네소식", title: "동네 산책 함께해요!", content: "이번 주말, 가까운 공원에서 함께 걸어요.",
     images: [], thumbnail: fallbackImages[0], likeCount: 12, commentCount: 5, reportCount: 0,
     status: "visible", createdAt: new Date().toISOString(), sample: true,
   },
   {
     id: "sample-board", authorId: "sample", authorName: "행복한 모임", categoryId: "club",
-    categoryName: "동네모임", title: "바둑 동호회 회원 모집", content: "초보자도 환영합니다. 편하게 오세요.",
+    categoryName: "취미생활", title: "바둑 동호회 회원 모집", content: "초보자도 환영합니다. 편하게 오세요.",
     images: [], thumbnail: fallbackImages[1], likeCount: 8, commentCount: 3, reportCount: 0,
     status: "visible", createdAt: new Date().toISOString(), sample: true,
   },
@@ -42,17 +46,21 @@ export function CommunityScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { user } = useAuth();
   const [posts, setPosts] = useState<CommunityPost[]>(samplePosts);
-  const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>("전체");
+  const [tabs, setTabs] = useState<string[]>(defaultTabs);
+  const [activeTab, setActiveTab] = useState(ALL);
 
   const load = useCallback(() => {
     api.get<PaginatedResult<Post>>("/posts")
       .then((res) => setPosts(res.items.length ? res.items : samplePosts))
       .catch(() => setPosts(samplePosts));
+    api.get<Category[]>("/categories")
+      .then((cats) => cats.length && setTabs([ALL, ...cats.map((c) => c.name)]))
+      .catch(() => {});
   }, []);
   useFocusEffect(useCallback(() => load(), [load]));
 
   const visiblePosts = useMemo(
-    () => posts.filter((post) => activeTab === "전체" || post.categoryName === activeTab),
+    () => posts.filter((post) => activeTab === ALL || post.categoryName === activeTab),
     [activeTab, posts]
   );
 
@@ -66,7 +74,7 @@ export function CommunityScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>커뮤니티</Text>
         <View style={styles.headerActions}>
-          <Pressable accessibilityLabel="검색" hitSlop={12}>
+          <Pressable accessibilityLabel="검색" hitSlop={12} onPress={comingSoon}>
             <MaterialIcons name="search" size={23} color={colors.navy} />
           </Pressable>
           <Pressable accessibilityLabel="글쓰기" hitSlop={12} onPress={writePost}>

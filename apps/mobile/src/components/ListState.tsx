@@ -10,5 +10,5 @@ export function ListState({ loading, error, empty }: Props) {
 }
 
 const styles = StyleSheet.create({
-  text: { textAlign: "center", color: "#8390a2", fontSize: 12, marginTop: 40 },
+  text: { textAlign: "center", color: "#8390a2", fontSize: 14, lineHeight: 20, marginTop: 40, paddingHorizontal: 20 },
 });

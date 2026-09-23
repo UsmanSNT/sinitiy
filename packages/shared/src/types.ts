@@ -57,6 +57,14 @@ export interface Comment {
   createdAt: string;
 }
 
+export interface MyComment {
+  id: string;
+  postId: string;
+  postTitle: string;
+  content: string;
+  createdAt: string;
+}
+
 export type ListingType = "job" | "health" | "education" | "life";
 
 export interface Listing {

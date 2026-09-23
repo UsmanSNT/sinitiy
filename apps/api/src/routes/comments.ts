@@ -46,7 +46,7 @@ commentsRouter.post("/", requireAuth, async (req, res) => {
         userId: post.authorId,
         type: "comment",
         refId: post.id,
-        message: `${comment.author.name} sizning postingizga izoh qoldirdi`,
+        message: `${comment.author.name}님이 회원님의 게시글에 댓글을 남겼습니다`,
       },
     });
   }

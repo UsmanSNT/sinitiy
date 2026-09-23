@@ -146,13 +146,13 @@ export function SignupScreen({ navigation }: Props) {
         {userType === "organization" && (
           <>
             <IconInput
-              icon="user"
+              icon="badge"
               placeholder="사업자번호"
               value={form.businessNumber}
               onChangeText={(v) => update("businessNumber", v)}
             />
             <IconInput
-              icon="user"
+              icon="business"
               placeholder="기관명"
               value={form.orgName}
               onChangeText={(v) => update("orgName", v)}

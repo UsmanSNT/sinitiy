@@ -31,6 +31,7 @@ import { PartnerDetailScreen } from "./src/screens/PartnerDetailScreen";
 import { InterestSettingsScreen } from "./src/screens/InterestSettingsScreen";
 import { NotificationSettingsScreen } from "./src/screens/NotificationSettingsScreen";
 import { CustomerCenterScreen } from "./src/screens/CustomerCenterScreen";
+import { MyActivityScreen } from "./src/screens/MyActivityScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -65,6 +66,7 @@ function App() {
             <Stack.Screen name="InterestSettings" component={InterestSettingsScreen} />
             <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
             <Stack.Screen name="CustomerCenter" component={CustomerCenterScreen} />
+            <Stack.Screen name="MyActivity" component={MyActivityScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>

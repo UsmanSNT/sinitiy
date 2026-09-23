@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
+import { showApplyInfo } from "../lib/actions";
 
 type Props = NativeStackScreenProps<RootStackParamList, "LifeConvenienceDetail">;
 const PHONE = "02-567-8901";
@@ -58,7 +59,7 @@ export function LifeConvenienceDetailScreen({ navigation, route }: Props) {
           <MaterialIcons name="call" size={19} color="#1768b5" />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>
-        <Pressable style={styles.applyButton}>
+        <Pressable style={styles.applyButton} onPress={() => showApplyInfo(applyMethod, phoneNumber)}>
           <Text style={styles.applyButtonText}>신청하기</Text>
         </Pressable>
       </View>

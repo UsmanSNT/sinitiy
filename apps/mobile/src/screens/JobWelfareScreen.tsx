@@ -10,6 +10,7 @@ import { listingImage } from "../lib/listingImage";
 import { matchesRegionFilter } from "../lib/regionMatch";
 import { ListState } from "../components/ListState";
 import { BottomNav } from "../components/BottomNav";
+import { comingSoon } from "../lib/actions";
 import { RegionPicker } from "../components/RegionPicker";
 import { OptionSheet } from "../components/OptionSheet";
 
@@ -60,7 +61,7 @@ export function JobWelfareScreen({ navigation }: Props) {
           <MaterialIcons name="chevron-left" size={26} color={colors.navy} />
         </Pressable>
         <Text style={styles.title}>일자리 · 복지</Text>
-        <Pressable accessibilityLabel="검색" hitSlop={12}><MaterialIcons name="search" size={22} color={colors.navy} /></Pressable>
+        <Pressable accessibilityLabel="검색" hitSlop={12} onPress={comingSoon}><MaterialIcons name="search" size={22} color={colors.navy} /></Pressable>
       </View>
       <View style={styles.filters}>
         {filters.map((filter) => (

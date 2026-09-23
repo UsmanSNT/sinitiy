@@ -14,6 +14,7 @@ import { useAuth } from "../context/AuthContext";
 import { BackButton } from "../components/BackButton";
 import { IconInput } from "../components/IconInput";
 import { SocialButton, KakaoIcon, NaverIcon, GoogleIcon } from "../components/SocialButton";
+import { comingSoon } from "../lib/actions";
 import { colors } from "../theme";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
@@ -72,7 +73,7 @@ export function LoginScreen({ navigation }: Props) {
         <View style={styles.form}>
           <IconInput
             icon="mail"
-            placeholder="휴대폰 번호 또는 아이디"
+            placeholder="이메일"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -95,7 +96,7 @@ export function LoginScreen({ navigation }: Props) {
               </View>
               <Text style={styles.checkboxLabel}>자동 로그인</Text>
             </Pressable>
-            <Pressable>
+            <Pressable onPress={comingSoon}>
               <Text style={styles.findPassword}>비밀번호 찾기</Text>
             </Pressable>
           </View>
@@ -115,7 +116,7 @@ export function LoginScreen({ navigation }: Props) {
           </Pressable>
         </View>
       ) : (
-        <Text style={styles.simpleNotice}>간편 로그인은 준비 중입니다. 아래 SNS 계정을 이용해주세요.</Text>
+        <Text style={styles.simpleNotice}>간편 로그인은 준비 중입니다.</Text>
       )}
 
       <Pressable onPress={() => navigation.replace("Main")} style={styles.skipButton}>
@@ -125,13 +126,13 @@ export function LoginScreen({ navigation }: Props) {
       <Text style={styles.divider}>또는 간편로그인으로 시작하기</Text>
 
       <View style={styles.socialList}>
-        <SocialButton icon={<KakaoIcon />} label="카카오로 시작하기" bg="#FEE500" color="#391B1B" />
-        <SocialButton icon={<NaverIcon />} label="네이버로 시작하기" bg="#03C75A" color="#ffffff" />
-        <SocialButton icon={<GoogleIcon />} label="구글로 시작하기" bg="#ffffff" color={colors.navy} bordered />
+        <SocialButton icon={<KakaoIcon />} label="카카오로 시작하기" bg="#FEE500" color="#391B1B" onPress={comingSoon} />
+        <SocialButton icon={<NaverIcon />} label="네이버로 시작하기" bg="#03C75A" color="#ffffff" onPress={comingSoon} />
+        <SocialButton icon={<GoogleIcon />} label="구글로 시작하기" bg="#ffffff" color={colors.navy} bordered onPress={comingSoon} />
       </View>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>이미 계정이 없으신가요? </Text>
+        <Text style={styles.footerText}>아직 계정이 없으신가요?</Text>
         <Pressable onPress={goToSignup}>
           <Text style={styles.link}>회원가입</Text>
         </Pressable>

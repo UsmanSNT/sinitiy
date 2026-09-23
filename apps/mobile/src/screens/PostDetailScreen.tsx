@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -31,22 +32,35 @@ export function PostDetailScreen({ route, navigation }: Props) {
   const [reporting, setReporting] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reportSent, setReportSent] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   const load = useCallback(() => {
-    api.get<Post>(`/posts/${postId}`).then(setPost);
-    api.get<Comment[]>(`/comments/post/${postId}`).then(setComments);
-  }, [postId]);
+    setLoadError(false);
+    api.get<Post>(`/posts/${postId}`).then(setPost).catch(() => setLoadError(true));
+    api.get<Comment[]>(`/comments/post/${postId}`).then(setComments).catch(() => setLoadError(true));
+    // Like holati serverdan olinadi - aks holda qayta kirganda tugma "bosilmagan" ko'rinib,
+    // keyingi bosish like'ni olib tashlab qo'yardi.
+    if (user) api.get<{ liked: boolean }>(`/likes/${postId}`).then((r) => setLiked(r.liked)).catch(() => {});
+  }, [postId, user]);
 
   useFocusEffect(load);
+
+  function showError(err: any) {
+    Alert.alert("오류", err?.message ?? "요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
+  }
 
   async function toggleLike() {
     if (!user) {
       navigation.navigate("Signup");
       return;
     }
-    const res = await api.post<{ liked: boolean; likeCount: number }>(`/likes/${postId}`);
-    setLiked(res.liked);
-    setPost((p) => (p ? { ...p, likeCount: res.likeCount } : p));
+    try {
+      const res = await api.post<{ liked: boolean; likeCount: number }>(`/likes/${postId}`);
+      setLiked(res.liked);
+      setPost((p) => (p ? { ...p, likeCount: res.likeCount } : p));
+    } catch (err) {
+      showError(err);
+    }
   }
 
   async function submitComment() {
@@ -55,9 +69,13 @@ export function PostDetailScreen({ route, navigation }: Props) {
       navigation.navigate("Signup");
       return;
     }
-    await api.post("/comments", { postId, content: commentText });
-    setCommentText("");
-    load();
+    try {
+      await api.post("/comments", { postId, content: commentText });
+      setCommentText("");
+      load();
+    } catch (err) {
+      showError(err);
+    }
   }
 
   async function submitReport() {
@@ -66,17 +84,21 @@ export function PostDetailScreen({ route, navigation }: Props) {
       navigation.navigate("Signup");
       return;
     }
-    await api.post("/reports", { targetType: "post", targetId: postId, reason: reportReason });
-    setReporting(false);
-    setReportReason("");
-    setReportSent(true);
+    try {
+      await api.post("/reports", { targetType: "post", targetId: postId, reason: reportReason });
+      setReporting(false);
+      setReportReason("");
+      setReportSent(true);
+    } catch (err) {
+      showError(err);
+    }
   }
 
   if (!post) {
     return (
       <SafeAreaView style={styles.safeArea} edges={["top"]}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.loading}>불러오는 중...</Text>
+        <Text style={styles.loading}>{loadError ? "게시글을 불러오지 못했습니다." : "불러오는 중..."}</Text>
       </SafeAreaView>
     );
   }

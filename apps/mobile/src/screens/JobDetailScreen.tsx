@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
+import { showApplyInfo } from "../lib/actions";
 
 type Props = NativeStackScreenProps<RootStackParamList, "JobDetail">;
 
@@ -61,8 +62,8 @@ export function JobDetailScreen({ navigation, route }: Props) {
           <MaterialIcons name="call" size={18} color={colors.navy} />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>
-        <Pressable style={styles.goButton}>
-          <Text style={styles.goButtonText}>바로가기</Text>
+        <Pressable style={styles.goButton} onPress={() => showApplyInfo(applyMethod, phoneNumber)}>
+          <Text style={styles.goButtonText}>신청하기</Text>
         </Pressable>
       </View>
       <BottomNav active="Services" />

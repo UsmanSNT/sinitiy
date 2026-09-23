@@ -4,6 +4,13 @@ import { requireAuth } from "../auth/middleware";
 
 export const likesRouter = Router();
 
+likesRouter.get("/:postId", requireAuth, async (req, res) => {
+  const existing = await prisma.like.findUnique({
+    where: { postId_userId: { postId: req.params.postId, userId: req.auth!.userId } },
+  });
+  return res.json({ liked: Boolean(existing) });
+});
+
 likesRouter.post("/:postId", requireAuth, async (req, res) => {
   const { postId } = req.params;
   const userId = req.auth!.userId;
