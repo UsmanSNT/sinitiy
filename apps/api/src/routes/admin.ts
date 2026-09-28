@@ -2,8 +2,24 @@ import { Router } from "express";
 import { prisma } from "../prisma";
 import { requireAuth, requireRole } from "../auth/middleware";
 import { serializeListing } from "./listings";
+import { postInclude, serializePost } from "./posts";
 
 export const adminRouter = Router();
+
+// Parol hash va boshqa ichki maydonlar tashqariga chiqmasligi uchun faqat kerakli maydonlar qaytariladi.
+function serializeAdminUser(user: any) {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    phone: user.phone,
+    userType: user.userType,
+    status: user.status,
+    createdAt: user.createdAt,
+    orgName: user.organizationProfile?.orgName ?? null,
+    verified: user.organizationProfile?.verified ?? null,
+  };
+}
 
 adminRouter.use(requireAuth, requireRole("admin"));
 
@@ -15,28 +31,38 @@ adminRouter.get("/users", async (req, res) => {
     include: { organizationProfile: true },
     orderBy: { createdAt: "desc" },
   });
-  return res.json(users);
+  return res.json(users.map(serializeAdminUser));
 });
 
 adminRouter.patch("/users/:id/status", async (req, res) => {
-  const { status } = req.body as { status: "active" | "suspended" };
-  const user = await prisma.user.update({ where: { id: req.params.id }, data: { status: status as any } });
-  return res.json(user);
+  const { status } = req.body as { status: string };
+  if (!["active", "suspended"].includes(status)) return res.status(400).json({ message: "잘못된 요청입니다" });
+  const target = await prisma.user.findUnique({ where: { id: req.params.id } });
+  if (!target) return res.status(404).json({ message: "사용자를 찾을 수 없습니다" });
+  if (target.userType === "admin") return res.status(403).json({ message: "관리자 계정은 정지할 수 없습니다" });
+  const user = await prisma.user.update({
+    where: { id: req.params.id },
+    data: { status: status as any },
+    include: { organizationProfile: true },
+  });
+  return res.json(serializeAdminUser(user));
 });
 
 // Foydalanuvchi/tashkilot postlarini boshqarish
 adminRouter.get("/posts", async (_req, res) => {
   const posts = await prisma.post.findMany({
-    include: { author: true, category: true, _count: { select: { likes: true, comments: true, reports: true } } },
+    where: { status: { not: "deleted" } },
+    include: postInclude,
     orderBy: { createdAt: "desc" },
   });
-  return res.json(posts);
+  return res.json(posts.map(serializePost));
 });
 
 adminRouter.patch("/posts/:id/status", async (req, res) => {
-  const { status } = req.body as { status: "visible" | "hidden" | "deleted" };
-  const post = await prisma.post.update({ where: { id: req.params.id }, data: { status: status as any } });
-  return res.json(post);
+  const { status } = req.body as { status: string };
+  if (!["visible", "hidden", "deleted"].includes(status)) return res.status(400).json({ message: "잘못된 요청입니다" });
+  const post = await prisma.post.update({ where: { id: req.params.id }, data: { status: status as any }, include: postInclude });
+  return res.json(serializePost(post));
 });
 
 // Tashkilot e'lonlarini boshqarish

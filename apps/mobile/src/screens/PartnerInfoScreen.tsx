@@ -13,6 +13,7 @@ import { BottomNav } from "../components/BottomNav";
 import { comingSoon } from "../lib/actions";
 import { RegionPicker } from "../components/RegionPicker";
 import { OptionSheet } from "../components/OptionSheet";
+import { AdBanner } from "../components/AdBanner";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PartnerInfo">;
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>["name"];
@@ -101,6 +102,7 @@ export function PartnerInfoScreen({ navigation }: Props) {
       </View>
 
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
+        <AdBanner />
         <ListState loading={loading} error={error} empty={!loading && !error && visiblePartners.length === 0} />
         {visiblePartners.map((item) => (
           <Pressable

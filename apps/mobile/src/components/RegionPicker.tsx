@@ -35,7 +35,7 @@ export function RegionPicker({ visible, value, onSelect, onClose }: Props) {
   const region = activeSido ? KOREA_REGIONS.find((r) => r.sido === activeSido) : null;
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={close}>
+    <Modal visible={visible} transparent statusBarTranslucent navigationBarTranslucent animationType="slide" onRequestClose={close}>
       <Pressable style={styles.backdrop} onPress={close} />
       <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 16) }]}>
         <View style={styles.header}>

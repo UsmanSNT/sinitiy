@@ -1,5 +1,6 @@
 import type { ImageSourcePropType } from "react-native";
 import type { NavigatorScreenParams } from "@react-navigation/native";
+import type { AdRequest } from "@sinity/shared";
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -19,6 +20,8 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
+    from?: keyof MainTabParamList;
   };
   HealthMedical: undefined;
   HealthDetail: {
@@ -31,6 +34,8 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
+    from?: keyof MainTabParamList;
   };
   EducationCulture: undefined;
   EducationDetail: {
@@ -43,6 +48,8 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
+    from?: keyof MainTabParamList;
   };
   LifeConvenience: undefined;
   LifeConvenienceDetail: {
@@ -55,11 +62,20 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
+    from?: keyof MainTabParamList;
   };
   Notifications: undefined;
   MyListings: undefined;
   ListingForm: undefined;
   AdminListings: undefined;
+  AdminReports: undefined;
+  AdminPosts: undefined;
+  AdminUsers: undefined;
+  AdminAds: undefined;
+  MyAds: undefined;
+  AdForm: undefined;
+  AdDetail: { ad: AdRequest; color: string };
   PartnerInfo: undefined;
   PartnerDetail: {
     title: string;

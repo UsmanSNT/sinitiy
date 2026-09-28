@@ -29,11 +29,25 @@ reportsRouter.get("/", requireAuth, requireRole("admin"), async (_req, res) => {
     include: { reporter: true, post: true, comment: true },
     orderBy: { createdAt: "desc" },
   });
-  return res.json(reports);
+  return res.json(
+    reports.map((r) => ({
+      id: r.id,
+      targetType: r.targetType,
+      reason: r.reason,
+      status: r.status,
+      createdAt: r.createdAt,
+      reporterName: r.reporter.name,
+      postId: r.postId ?? r.comment?.postId ?? null,
+      postTitle: r.post?.title ?? null,
+      postStatus: r.post?.status ?? null,
+      commentContent: r.comment?.content ?? null,
+    }))
+  );
 });
 
 reportsRouter.patch("/:id", requireAuth, requireRole("admin"), async (req, res) => {
-  const { status } = req.body as { status: "pending" | "reviewed" | "dismissed" };
-  const report = await prisma.report.update({ where: { id: req.params.id }, data: { status } });
+  const { status } = req.body as { status: string };
+  if (!["pending", "reviewed", "dismissed"].includes(status)) return res.status(400).json({ message: "잘못된 요청입니다" });
+  const report = await prisma.report.update({ where: { id: req.params.id }, data: { status: status as any } });
   return res.json(report);
 });

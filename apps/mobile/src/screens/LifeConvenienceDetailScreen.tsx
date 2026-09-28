@@ -63,7 +63,7 @@ export function LifeConvenienceDetailScreen({ navigation, route }: Props) {
           <Text style={styles.applyButtonText}>신청하기</Text>
         </Pressable>
       </View>
-      <BottomNav active="Services" />
+      <BottomNav active={route.params.from ?? "Services"} />
     </SafeAreaView>
   );
 }

@@ -88,6 +88,45 @@ export interface Listing {
   createdAt: string;
 }
 
+// Admin ekranlari uchun (parol va ichki maydonlarsiz).
+export interface AdminUser {
+  id: string;
+  email: string;
+  name: string;
+  phone: string | null;
+  userType: UserType;
+  status: "active" | "suspended";
+  createdAt: string;
+  orgName: string | null;
+  verified: boolean | null;
+}
+
+export interface AdminReport {
+  id: string;
+  targetType: "post" | "comment";
+  reason: string;
+  status: "pending" | "reviewed" | "dismissed";
+  createdAt: string;
+  reporterName: string;
+  postId: string | null;
+  postTitle: string | null;
+  postStatus: Post["status"] | null;
+  commentContent: string | null;
+}
+
+// Bosh sahifadagi "오늘의 알림" lentasi: admin 공지, tashkilot 동네소식 postlari va tasdiqlangan e'lonlar.
+export type FeedKind = "notice" | "news" | "listing";
+
+export interface FeedItem {
+  id: string;
+  kind: FeedKind;
+  source: string;
+  title: string;
+  createdAt: string;
+  postId?: string;
+  listing?: Listing;
+}
+
 export type AdRequestStatus = "pending" | "approved" | "rejected";
 
 export interface AdRequest {

@@ -66,7 +66,7 @@ export function JobDetailScreen({ navigation, route }: Props) {
           <Text style={styles.goButtonText}>신청하기</Text>
         </Pressable>
       </View>
-      <BottomNav active="Services" />
+      <BottomNav active={route.params.from ?? "Services"} />
     </SafeAreaView>
   );
 }

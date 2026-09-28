@@ -1,46 +1,42 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import type { FeedItem } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
+import { ListState } from "../components/ListState";
+import { feedTag, feedTime, loadFeedReadIds, markFeedRead, openFeedItem, useFeed } from "../lib/feed";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Notifications">;
-type NoticeTag = "행사" | "공지" | "매체";
-type NoticeItem = {
-  id: string;
-  tag: NoticeTag;
-  title: string;
-  date: string;
-  unread: boolean;
-};
 
-const tagColors: Record<NoticeTag, string> = {
-  행사: "#3d5ee1",
-  공지: colors.accent,
-  매체: "#e08a2b",
-};
-
-const initialNotices: NoticeItem[] = [
-  { id: "1", tag: "행사", title: "시니티 요가 교실 참여자 모집", date: "05.20", unread: true },
-  { id: "2", tag: "공지", title: "건강검진 지원 안내", date: "05.18", unread: true },
-  { id: "3", tag: "매체", title: "동네모임 new 글이 올라왔어요!", date: "05.17", unread: true },
-  { id: "4", tag: "행사", title: "시니어 스마트폰 교육 신청 마감 안내", date: "05.15", unread: false },
-  { id: "5", tag: "공지", title: "시니어 교통카드 지원 일정 변경", date: "05.12", unread: false },
-  { id: "6", tag: "매체", title: "관심 지역의 새 글이 등록되었습니다", date: "05.10", unread: false },
-];
+// Teg nomlari feedTag() qaytaradigan label'lar bilan bir xil.
+const filters = ["전체", "공지", "소식", "일자리", "건강", "교육", "생활"] as const;
 
 export function NotificationsScreen({ navigation }: Props) {
-  const [notices, setNotices] = useState(initialNotices);
+  const { items, loading, error } = useFeed(50);
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const [activeFilter, setActiveFilter] = useState<(typeof filters)[number]>("전체");
+  const visibleItems = items.filter((item) => activeFilter === "전체" || feedTag(item).label === activeFilter);
 
-  function markAllRead() {
-    setNotices((current) => current.map((item) => ({ ...item, unread: false })));
+  // Bosh sahifadan ochilgan yangilik ham o'qilgan bo'ladi, shuning uchun har safar qaytganda qayta o'qiladi.
+  useFocusEffect(
+    useCallback(() => {
+      loadFeedReadIds().then(setReadIds);
+    }, [])
+  );
+
+  function saveRead(ids: string[]) {
+    setReadIds((current) => new Set([...current, ...ids]));
+    markFeedRead(ids);
   }
 
-  function markRead(id: string) {
-    setNotices((current) => current.map((item) => (item.id === id ? { ...item, unread: false } : item)));
+  function openItem(item: FeedItem) {
+    saveRead([item.id]);
+    openFeedItem(navigation, item);
   }
 
   return (
@@ -50,35 +46,53 @@ export function NotificationsScreen({ navigation }: Props) {
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
         </Pressable>
         <Text style={styles.headerTitle}>알림</Text>
-        <Pressable accessibilityLabel="모두 읽음" hitSlop={12} onPress={markAllRead}>
+        <Pressable accessibilityLabel="모두 읽음" hitSlop={12} onPress={() => saveRead(visibleItems.map((i) => i.id))}>
           <Text style={styles.markAll}>모두 읽음</Text>
         </Pressable>
       </View>
 
-      {notices.length === 0 ? (
+      <View style={styles.filterBar}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+          {filters.map((filter) => (
+            <Pressable key={filter} onPress={() => setActiveFilter(filter)} style={[styles.filter, activeFilter === filter && styles.filterActive]}>
+              <Text style={[styles.filterText, activeFilter === filter && styles.filterTextActive]}>{filter}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+
+      {loading || error ? (
+        <ListState loading={loading} error={error} empty={false} />
+      ) : visibleItems.length === 0 ? (
         <View style={styles.empty}>
           <MaterialIcons name="notifications-none" size={42} color="#c5ced9" />
-          <Text style={styles.emptyTitle}>새로운 알림이 없습니다</Text>
-          <Text style={styles.emptyCopy}>행사·공지·매체의 새 소식이 오면 여기에 표시됩니다.</Text>
+          <Text style={styles.emptyTitle}>{activeFilter === "전체" ? "새로운 알림이 없습니다" : "이 분류의 소식이 아직 없습니다"}</Text>
+          <Text style={styles.emptyCopy}>기관과 시니티의 새 소식이 오면 여기에 표시됩니다.</Text>
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
-          {notices.map((item) => (
-            <Pressable
-              key={item.id}
-              style={({ pressed }) => [styles.row, pressed && styles.pressed]}
-              onPress={() => markRead(item.id)}
-            >
-              <Text style={[styles.tag, { color: tagColors[item.tag] }]}>{item.tag}</Text>
-              <View style={styles.rowCopy}>
-                <Text style={[styles.rowTitle, item.unread && styles.rowTitleUnread]} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text style={styles.rowDate}>{item.date}</Text>
-              </View>
-              {item.unread ? <View style={styles.unreadDot} /> : <View style={styles.unreadSpacer} />}
-            </Pressable>
-          ))}
+          {visibleItems.map((item) => {
+            const tag = feedTag(item);
+            const unread = !readIds.has(item.id);
+            return (
+              <Pressable
+                key={item.id}
+                style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+                onPress={() => openItem(item)}
+              >
+                <Text style={[styles.tag, { color: tag.color }]}>{tag.label}</Text>
+                <View style={styles.rowCopy}>
+                  <Text style={[styles.rowTitle, unread && styles.rowTitleUnread]} numberOfLines={1}>
+                    {item.title}
+                  </Text>
+                  <Text style={styles.rowDate} numberOfLines={1}>
+                    {item.source} · {feedTime(item.createdAt)}
+                  </Text>
+                </View>
+                {unread ? <View style={styles.unreadDot} /> : <View style={styles.unreadSpacer} />}
+              </Pressable>
+            );
+          })}
         </ScrollView>
       )}
       <BottomNav active="Home" />
@@ -91,10 +105,16 @@ const styles = StyleSheet.create({
   header: { height: 52, flexDirection: "row", alignItems: "center", paddingHorizontal: 14 },
   headerTitle: { flex: 1, marginLeft: 7, fontSize: 20, fontWeight: "800", color: colors.navy },
   markAll: { fontSize: 14, fontWeight: "700", color: "#66758a" },
+  filterBar: { borderBottomWidth: 1, borderBottomColor: "#edf0f4" },
+  filters: { flexDirection: "row", gap: 7, paddingHorizontal: 16, paddingBottom: 13 },
+  filter: { minWidth: 49, height: 30, paddingHorizontal: 13, alignItems: "center", justifyContent: "center", borderRadius: 15 },
+  filterActive: { backgroundColor: "#2368bc" },
+  filterText: { fontSize: 13, fontWeight: "700", color: "#8792a4" },
+  filterTextActive: { color: colors.white },
   list: { paddingHorizontal: 16, paddingBottom: 22 },
   row: { minHeight: 68, flexDirection: "row", alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#edf0f4", paddingVertical: 12 },
   pressed: { opacity: 0.7 },
-  tag: { width: 40, fontSize: 14, fontWeight: "800" },
+  tag: { width: 48, fontSize: 14, fontWeight: "800" },
   rowCopy: { flex: 1, minWidth: 0, paddingHorizontal: 8 },
   rowTitle: { fontSize: 17, fontWeight: "600", color: colors.navy },
   rowTitleUnread: { fontWeight: "800" },

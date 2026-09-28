@@ -62,11 +62,12 @@ adRequestsRouter.get("/", requireAuth, requireRole("admin"), async (_req, res) =
 });
 
 adRequestsRouter.patch("/:id", requireAuth, requireRole("admin"), async (req, res) => {
-  const { status, adminNote } = req.body as { status: "approved" | "rejected"; adminNote?: string };
+  const { status, adminNote } = req.body as { status: string; adminNote?: string };
+  if (!["approved", "rejected"].includes(status)) return res.status(400).json({ message: "잘못된 요청입니다" });
 
   const ad = await prisma.adRequest.update({
     where: { id: req.params.id },
-    data: { status, adminNote },
+    data: { status: status as "approved" | "rejected", adminNote: adminNote?.trim() || null },
     include: { org: true },
   });
 
@@ -77,10 +78,21 @@ adRequestsRouter.patch("/:id", requireAuth, requireRole("admin"), async (req, re
       refId: ad.id,
       message:
         status === "approved"
-          ? `"${ad.title}" reklamangiz tasdiqlandi`
-          : `"${ad.title}" reklamangiz rad etildi`,
+          ? `"${ad.title}" 광고가 승인되었습니다`
+          : `"${ad.title}" 광고가 반려되었습니다`,
     },
   });
 
   return res.json(serialize(ad));
+});
+
+// Tashkilot o'z so'rovini (istalgan holatda) bekor qiladi, admin esa istalganini o'chiradi.
+adRequestsRouter.delete("/:id", requireAuth, requireRole("organization", "admin"), async (req, res) => {
+  const ad = await prisma.adRequest.findUnique({ where: { id: req.params.id } });
+  if (!ad) return res.status(404).json({ message: "찾을 수 없습니다" });
+  if (req.auth!.userType === "organization" && ad.orgId !== req.auth!.userId) {
+    return res.status(403).json({ message: "권한이 없습니다" });
+  }
+  await prisma.adRequest.delete({ where: { id: ad.id } });
+  return res.status(204).send();
 });

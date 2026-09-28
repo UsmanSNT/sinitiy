@@ -13,6 +13,7 @@ import { adRequestsRouter } from "./routes/adRequests";
 import { notificationsRouter } from "./routes/notifications";
 import { partnersRouter } from "./routes/partners";
 import { adminRouter } from "./routes/admin";
+import { feedRouter } from "./routes/feed";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use("/api/ad-requests", adRequestsRouter);
 app.use("/api/notifications", notificationsRouter);
 app.use("/api/partners", partnersRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/feed", feedRouter);
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(err);

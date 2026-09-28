@@ -58,7 +58,7 @@ export function HealthDetailScreen({ navigation, route }: Props) {
           <Text style={styles.mapButtonText}>지도보기</Text>
         </Pressable>
       </View>
-      <BottomNav active="Services" />
+      <BottomNav active={route.params.from ?? "Services"} />
     </SafeAreaView>
   );
 }

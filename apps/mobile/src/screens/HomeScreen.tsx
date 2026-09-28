@@ -1,10 +1,12 @@
+import { useCallback, useState } from "react";
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 import { BellIcon, BriefcaseIcon, HeartbeatIcon, FamilyIcon, MegaphoneIcon } from "../components/HomeIcons";
 import type { RootStackParamList } from "../navigation/types";
+import { feedTag, feedTime, loadFeedReadIds, markFeedRead, openFeedItem, useFeed } from "../lib/feed";
 
 const serviceItems = [
   { Icon: BriefcaseIcon, iconColor: "#3fae5c", label: "일자리·복지", sub: "취업·복지 정보" },
@@ -13,15 +15,20 @@ const serviceItems = [
   { Icon: MegaphoneIcon, iconColor: "#e08a2b", label: "파트너 정보", sub: "추천 서비스" },
 ];
 
-const notices = [
-  { tag: "행사", tagColor: "#3d5ee1", text: "시니티 요가 교실 참여자 모집", date: "05.20" },
-  { tag: "공지", tagColor: colors.accent, text: "건강검진 지원 안내", date: "05.18" },
-  { tag: "매체", tagColor: "#e08a2b", text: "동네모임 new 글이 올라왔어요!", date: "05.17" },
-];
-
 export function HomeScreen() {
   const { user } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  // 알림 ekrani bilan bir xil 50 ta yangilik olinadi: pastda eng oxirgi 3 tasi ko'rinadi,
+  // qo'ng'iroqchadagi son esa 알림 ekranidagi ko'k nuqtalar soni bilan bir xil chiqadi.
+  const { items: feed, loading: noticesLoading } = useFeed(50);
+  const notices = feed.slice(0, 3);
+  const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  useFocusEffect(
+    useCallback(() => {
+      loadFeedReadIds().then(setReadIds);
+    }, [])
+  );
+  const unreadCount = feed.filter((item) => !readIds.has(item.id)).length;
   // Kartalar balandligi ekran balandligining foizi sifatida hisoblanadi (aspectRatio emas) -
   // Yoga'da aspectRatio + justifyContent:"center" birikmasi Android'da kontentni pastga
   // surib, tepa/pastki bo'shliqni notekis qilib qo'yardi (aniq balandlik bu muammoni oldini oladi).
@@ -31,8 +38,17 @@ export function HomeScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.bellRow}>
-        <Pressable accessibilityLabel="알림" hitSlop={12} onPress={() => navigation.navigate("Notifications")}>
+        <Pressable
+          accessibilityLabel={unreadCount ? `알림, 읽지 않은 소식 ${unreadCount}개` : "알림"}
+          hitSlop={12}
+          onPress={() => navigation.navigate("Notifications")}
+        >
           <BellIcon color={colors.white} size={26} />
+          {unreadCount > 0 ? (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{unreadCount > 99 ? "99+" : unreadCount}</Text>
+            </View>
+          ) : null}
         </Pressable>
       </View>
 
@@ -72,15 +88,27 @@ export function HomeScreen() {
             <Text style={styles.noticeMore}>전체보기 ›</Text>
           </Pressable>
         </View>
-        {notices.map((n) => (
-          <View key={n.text} style={styles.noticeCard}>
-            <Text style={[styles.noticeTag, { color: n.tagColor }]}>{n.tag}</Text>
-            <Text style={styles.noticeText} numberOfLines={1}>
-              {n.text}
-            </Text>
-            <Text style={styles.noticeDate}>{n.date}</Text>
-          </View>
-        ))}
+        {!noticesLoading && notices.length === 0 ? (
+          <Text style={styles.noticeEmpty}>새로운 소식이 없습니다</Text>
+        ) : null}
+        {notices.map((n) => {
+          const tag = feedTag(n);
+          return (
+            <Pressable
+              key={n.id}
+              style={({ pressed }) => [styles.noticeCard, pressed && { opacity: 0.6 }]}
+              onPress={() => {
+                markFeedRead([n.id]).finally(() => openFeedItem(navigation, n, { viaList: true }));
+              }}
+            >
+              <Text style={[styles.noticeTag, { color: tag.color }]}>{tag.label}</Text>
+              <Text style={styles.noticeText} numberOfLines={1}>
+                {n.title}
+              </Text>
+              <Text style={styles.noticeDate}>{feedTime(n.createdAt)}</Text>
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
@@ -91,6 +119,21 @@ const styles = StyleSheet.create({
   // Qo'ng'iroqcha ekran tepasida, o'z holicha qoladi - pastdagi matn bloki bilan
   // endi bir qatorda emas, alohida joylashadi (navbar ko'rinishidan chiqarish uchun).
   bellRow: { paddingHorizontal: 20, paddingTop: 56, alignItems: "flex-end" },
+  badge: {
+    position: "absolute",
+    top: -7,
+    right: -9,
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    backgroundColor: "#e2536b",
+    borderWidth: 2,
+    borderColor: "rgb(24, 47, 83)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  badgeText: { color: colors.white, fontSize: 11, fontWeight: "800", includeFontPadding: false },
   // Matn bloki va kartalar birgalikda qolgan bo'shliqda markazlashadi -
   // shu bilan matn har doim kartalar ustida, ularga yaqin turadi.
   middleWrap: { flex: 1, paddingHorizontal: 20, justifyContent: "center" },
@@ -144,7 +187,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#e8ebf0",
   },
-  noticeTag: { fontSize: 12, fontWeight: "700", width: 34 },
+  noticeTag: { fontSize: 12, fontWeight: "700", width: 40 },
   noticeText: { flex: 1, fontSize: 13, color: colors.navy, fontWeight: "500" },
   noticeDate: { fontSize: 11, color: colors.gray },
+  noticeEmpty: { fontSize: 13, color: colors.gray, paddingVertical: 11 },
 });
