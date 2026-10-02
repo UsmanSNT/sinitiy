@@ -1,11 +1,11 @@
 import { StyleSheet, Text } from "react-native";
 
-type Props = { loading: boolean; error: boolean; empty: boolean };
+type Props = { loading: boolean; error: boolean; empty: boolean; searching?: boolean };
 
-export function ListState({ loading, error, empty }: Props) {
+export function ListState({ loading, error, empty, searching }: Props) {
   if (loading) return <Text style={styles.text}>불러오는 중...</Text>;
   if (error) return <Text style={styles.text}>목록을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</Text>;
-  if (empty) return <Text style={styles.text}>등록된 정보가 없습니다.</Text>;
+  if (empty) return <Text style={styles.text}>{searching ? "검색 결과가 없습니다." : "등록된 정보가 없습니다."}</Text>;
   return null;
 }
 

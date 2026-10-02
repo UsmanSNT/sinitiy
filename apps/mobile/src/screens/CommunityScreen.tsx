@@ -8,7 +8,8 @@ import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
-import { comingSoon } from "../lib/actions";
+import { SearchBar } from "../components/SearchBar";
+import { matchesQuery } from "../lib/search";
 
 type CommunityPost = Post & { thumbnail?: ImageSourcePropType; sample?: boolean };
 
@@ -48,6 +49,8 @@ export function CommunityScreen() {
   const [posts, setPosts] = useState<CommunityPost[]>(samplePosts);
   const [tabs, setTabs] = useState<string[]>(defaultTabs);
   const [activeTab, setActiveTab] = useState(ALL);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   const load = useCallback(() => {
     api.get<PaginatedResult<Post>>("/posts")
@@ -60,8 +63,13 @@ export function CommunityScreen() {
   useFocusEffect(useCallback(() => load(), [load]));
 
   const visiblePosts = useMemo(
-    () => posts.filter((post) => activeTab === ALL || post.categoryName === activeTab),
-    [activeTab, posts]
+    () =>
+      posts.filter(
+        (post) =>
+          (activeTab === ALL || post.categoryName === activeTab) &&
+          matchesQuery(query, post.title, post.content, post.authorName)
+      ),
+    [activeTab, posts, query]
   );
 
   function writePost() {
@@ -74,7 +82,7 @@ export function CommunityScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>커뮤니티</Text>
         <View style={styles.headerActions}>
-          <Pressable accessibilityLabel="검색" hitSlop={12} onPress={comingSoon}>
+          <Pressable accessibilityLabel="검색" hitSlop={12} onPress={() => { setSearchOpen((v) => !v); setQuery(""); }}>
             <MaterialIcons name="search" size={23} color={colors.navy} />
           </Pressable>
           <Pressable accessibilityLabel="글쓰기" hitSlop={12} onPress={writePost}>
@@ -82,6 +90,7 @@ export function CommunityScreen() {
           </Pressable>
         </View>
       </View>
+      <SearchBar visible={searchOpen} value={query} onChangeText={setQuery} />
       <View style={styles.tabs}>
         {tabs.map((tab) => (
           <Pressable key={tab} onPress={() => setActiveTab(tab)} style={styles.tab}>
@@ -95,7 +104,7 @@ export function CommunityScreen() {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<Text style={styles.empty}>아직 게시글이 없습니다.</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>{query.trim() ? "검색 결과가 없습니다." : "아직 게시글이 없습니다."}</Text>}
         renderItem={({ item, index }) => {
           const source = item.thumbnail ?? (item.images[0] ? { uri: item.images[0] } : fallbackImages[index % 3]);
           return (

@@ -10,7 +10,8 @@ import { fallbackImage } from "../lib/listingImage";
 import { matchesRegionFilter } from "../lib/regionMatch";
 import { ListState } from "../components/ListState";
 import { BottomNav } from "../components/BottomNav";
-import { comingSoon } from "../lib/actions";
+import { SearchBar } from "../components/SearchBar";
+import { matchesQuery } from "../lib/search";
 import { RegionPicker } from "../components/RegionPicker";
 import { OptionSheet } from "../components/OptionSheet";
 import { AdBanner } from "../components/AdBanner";
@@ -45,6 +46,8 @@ export function PartnerInfoScreen({ navigation }: Props) {
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
   const [regionOpen, setRegionOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const { items, loading, error } = usePartners();
   const partners: PartnerItem[] = items.map((p, i) => ({
     title: p.name,
@@ -62,7 +65,8 @@ export function PartnerInfoScreen({ navigation }: Props) {
   const visiblePartners = partners.filter(
     (item) =>
       (activeFilter === "전체" || item.category === activeFilter) &&
-      matchesRegionFilter(regionFilter, item.location)
+      matchesRegionFilter(regionFilter, item.location) &&
+      matchesQuery(query, item.title, item.service, item.category)
   );
 
   return (
@@ -72,11 +76,12 @@ export function PartnerInfoScreen({ navigation }: Props) {
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
         </Pressable>
         <Text style={styles.headerTitle}>파트너 정보</Text>
-        <Pressable accessibilityLabel="검색" hitSlop={12} onPress={comingSoon}>
+        <Pressable accessibilityLabel="검색" hitSlop={12} onPress={() => { setSearchOpen((v) => !v); setQuery(""); }}>
           <MaterialIcons name="search" size={23} color={colors.navy} />
         </Pressable>
       </View>
 
+      <SearchBar visible={searchOpen} value={query} onChangeText={setQuery} />
       <View style={styles.filters}>
         {filters.map((filter) => (
           <Pressable key={filter} onPress={() => setActiveFilter(filter)} style={[styles.filter, activeFilter === filter && styles.filterActive]}>
@@ -103,7 +108,7 @@ export function PartnerInfoScreen({ navigation }: Props) {
 
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
         <AdBanner />
-        <ListState loading={loading} error={error} empty={!loading && !error && visiblePartners.length === 0} />
+        <ListState loading={loading} error={error} empty={!loading && !error && visiblePartners.length === 0} searching={query.trim() !== ""} />
         {visiblePartners.map((item) => (
           <Pressable
             key={item.title}

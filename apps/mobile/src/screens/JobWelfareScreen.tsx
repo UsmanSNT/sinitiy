@@ -10,7 +10,8 @@ import { listingImage } from "../lib/listingImage";
 import { matchesRegionFilter } from "../lib/regionMatch";
 import { ListState } from "../components/ListState";
 import { BottomNav } from "../components/BottomNav";
-import { comingSoon } from "../lib/actions";
+import { SearchBar } from "../components/SearchBar";
+import { matchesQuery } from "../lib/search";
 import { RegionPicker } from "../components/RegionPicker";
 import { OptionSheet } from "../components/OptionSheet";
 
@@ -35,6 +36,8 @@ export function JobWelfareScreen({ navigation }: Props) {
   const [regionFilter, setRegionFilter] = useState<string | null>(null);
   const [regionOpen, setRegionOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const { items, loading, error } = useListings("job");
   const jobItems: JobItem[] = items.map((l, i) => ({
     title: l.title,
@@ -51,7 +54,8 @@ export function JobWelfareScreen({ navigation }: Props) {
   const visibleItems = jobItems.filter(
     (item) =>
       (activeFilter === "전체" || item.category === activeFilter) &&
-      matchesRegionFilter(regionFilter, item.region)
+      matchesRegionFilter(regionFilter, item.region) &&
+      matchesQuery(query, item.title, item.organization, item.category)
   );
 
   return (
@@ -61,8 +65,9 @@ export function JobWelfareScreen({ navigation }: Props) {
           <MaterialIcons name="chevron-left" size={26} color={colors.navy} />
         </Pressable>
         <Text style={styles.title}>일자리 · 복지</Text>
-        <Pressable accessibilityLabel="검색" hitSlop={12} onPress={comingSoon}><MaterialIcons name="search" size={22} color={colors.navy} /></Pressable>
+        <Pressable accessibilityLabel="검색" hitSlop={12} onPress={() => { setSearchOpen((v) => !v); setQuery(""); }}><MaterialIcons name="search" size={22} color={colors.navy} /></Pressable>
       </View>
+      <SearchBar visible={searchOpen} value={query} onChangeText={setQuery} />
       <View style={styles.filters}>
         {filters.map((filter) => (
           <Pressable key={filter} onPress={() => setActiveFilter(filter)} style={[styles.filter, activeFilter === filter && styles.filterActive]}>
@@ -86,7 +91,7 @@ export function JobWelfareScreen({ navigation }: Props) {
         </Pressable>
       </View>
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
-        <ListState loading={loading} error={error} empty={!loading && !error && visibleItems.length === 0} />
+        <ListState loading={loading} error={error} empty={!loading && !error && visibleItems.length === 0} searching={query.trim() !== ""} />
         {visibleItems.map((item) => (
           <Pressable
             key={item.title}
