@@ -1,10 +1,11 @@
-import { Image, Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
+import { callPhone, openHomepage, openMap } from "../lib/links";
 
 type Props = NativeStackScreenProps<RootStackParamList, "PartnerDetail">;
 
@@ -32,37 +33,37 @@ export function PartnerDetailScreen({ navigation, route }: Props) {
 
         <View style={styles.body}>
           {description ? <Text style={styles.description}>{description}</Text> : null}
-          <View style={styles.infoRow}>
+          <Pressable style={styles.infoRow} onPress={() => callPhone(phone)}>
             <Text style={styles.infoLabel}>전화</Text>
-            <Text style={styles.infoValue}>{phone}</Text>
-          </View>
-          <View style={styles.infoRow}>
+            <Text style={styles.linkValue}>{phone}</Text>
+          </Pressable>
+          <Pressable style={styles.infoRow} onPress={() => openMap(address)}>
             <Text style={styles.infoLabel}>주소</Text>
-            <Text style={styles.infoValue}>{address}</Text>
-          </View>
+            <Text style={styles.linkValue}>{address}</Text>
+          </Pressable>
           {homepage ? (
-            <View style={styles.infoRow}>
+            <Pressable style={styles.infoRow} onPress={() => openHomepage(homepage)}>
               <Text style={styles.infoLabel}>홈페이지</Text>
               <Text style={styles.linkValue}>{homepage.replace(/^https?:\/\//, "")}</Text>
-            </View>
+            </Pressable>
           ) : null}
         </View>
       </ScrollView>
 
       <View style={styles.actions}>
-        <Pressable style={styles.callButton} onPress={() => Linking.openURL(`tel:${phone}`)}>
+        <Pressable style={styles.callButton} onPress={() => callPhone(phone)}>
           <MaterialIcons name="call" size={19} color="#1768b5" />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>
+        <Pressable style={styles.callButton} onPress={() => openMap(address)}>
+          <MaterialIcons name="place" size={19} color="#1768b5" />
+          <Text style={styles.callButtonText}>지도보기</Text>
+        </Pressable>
         {homepage ? (
-          <Pressable style={styles.webButton} onPress={() => Linking.openURL(homepage)}>
+          <Pressable style={styles.webButton} onPress={() => openHomepage(homepage)}>
             <Text style={styles.webButtonText}>홈페이지</Text>
           </Pressable>
-        ) : (
-          <Pressable style={styles.webButton} onPress={() => Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(address)}`)}>
-            <Text style={styles.webButtonText}>지도보기</Text>
-          </Pressable>
-        )}
+        ) : null}
       </View>
       <BottomNav active="Services" />
     </SafeAreaView>
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
   infoValue: { flex: 1, fontSize: 15, color: colors.navy },
   linkValue: { flex: 1, fontSize: 15, fontWeight: "700", color: "#2874bd" },
   actions: { flexDirection: "row", gap: 10, padding: 14, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.white },
-  callButton: { flex: 1, flexDirection: "row", gap: 7, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "#2674bd", borderRadius: 7, paddingVertical: 13 },
+  callButton: { flex: 1, flexDirection: "row", gap: 5, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "#2674bd", borderRadius: 7, paddingVertical: 13 },
   callButtonText: { fontSize: 16, fontWeight: "800", color: "#1768b5" },
   webButton: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#2c8be5", borderRadius: 7, paddingVertical: 13 },
   webButtonText: { fontSize: 16, fontWeight: "800", color: colors.white },
