@@ -25,7 +25,13 @@ working inside `apps/mobile`.
 - Icons: use `@expo/vector-icons` (MaterialIcons/MaterialCommunityIcons/FontAwesome5/...) by
   name. Never hand-write `react-native-svg` icon paths.
 - API error messages must be in **Korean**.
-- Signup, not Login, is the app's default/root screen.
+- The app **opens on Home** and never forces login. Guest actions send users to `Login` at that
+  moment (it returns to the opener). Don't make Signup/Login the root screen again.
+- Import `expo-notifications` only via `src/lib/notifications.ts` — importing it directly crashes
+  Expo Go on Android, which is the usual dev/test target.
+- Uploaded images are stored as **relative** paths (`/api/uploads/...`); render with `imageUri()`.
+  Listing and ad forms have no image field yet (their API schemas still accept only full URLs).
 - The Home screen must fit one mobile viewport with no scrolling.
 - Every push to `main` **auto-deploys to a live shared demo server** — commit only
   working, type-checked changes (`npx tsc --noEmit` in `apps/api` and `apps/mobile`).
+  Photo uploads need nginx `client_max_body_size 10m` on the server (see `DEPLOYMENT.md`).

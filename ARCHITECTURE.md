@@ -34,13 +34,17 @@ this was a deliberate simplification after a compiled-JS + `@sinity/shared`'s TS
   org name, address) for organization accounts.
 - `Category` — community post categories, admin-manageable.
 - `Post`, `Comment`, `Like`, `Report` (post/comment reports) — the community feature.
-- `Listing` (`job` | `health` | `education`) — organization-authored listings, with optional
-  lat/lng for a future map integration.
-- `AdRequest` — organizations submit ads; admin approves/rejects; approval creates a
-  `Notification` for the org.
-- `PartnerCompany` — admin-curated partner directory entries.
-- `Notification` — in-app notifications (comment replies, ad approval/rejection); no push
-  delivery is wired up yet (planned: Firebase Cloud Messaging).
+- `Listing` (`job` | `health` | `education` | `life`) — organization-authored listings with a
+  `status` (`pending` → admin sets `active`, or `rejected`; `closed`/`hidden` afterwards). Optional
+  lat/lng exist but are unused: maps open by address text (`lib/links.ts`).
+- `AdRequest` — organizations submit banner ads; admin approves (live in `AdBanner`) or
+  rejects/takes down; the decision creates a `Notification` and a `system` push for the org.
+- `PartnerCompany` — admin-curated partner directory entries (call, map, homepage actions).
+- `Notification` — written for comments, likes and ad decisions. **No screen reads
+  `/api/notifications` yet**: the app's 알림 screen shows the public `/api/feed` (admin notices,
+  organization news, active listings) with read-state kept on the device.
+- `PushToken` (Expo push token → user) and `User.notificationPrefs` (JSON of per-category toggles;
+  missing key = enabled) back the push pipeline.
 - `AdminSetting` — free-form key/value store for site settings.
 
 All API error `message` strings must be **Korean** (see README's "known decisions" — this was
@@ -48,10 +52,10 @@ fixed once already after an Uzbek string leaked into a production error toast).
 
 ## Frontend structure (`apps/mobile`)
 
-- **Navigation**: one root `Stack.Navigator` (`App.tsx`) containing `Splash`, `Login`, `Signup`,
-  `Main` (a `createBottomTabNavigator` with Home/Services/Community/MyPage), plus `PostDetail`
-  and `NewPost` pushed on top of `Main` for the community flow. See README's "Navigation
-  structure" for the Signup-is-root detail.
+- **Navigation**: one root `Stack.Navigator` (`App.tsx`). `Splash` always continues to `Main`
+  (a `createBottomTabNavigator` with Home/Services/Community/MyPage); every other screen is
+  pushed on top, and `Login`/`Signup` only appear when an action needs an account. See README's
+  "Navigation structure" for the full list and the browse-first rules.
 - **Auth**: `src/context/AuthContext.tsx` holds the current user + loading state, persists the
   JWT in `@react-native-async-storage/async-storage` (works on web too, backed by
   `localStorage`).
@@ -64,6 +68,30 @@ fixed once already after an Uzbek string leaked into a production error toast).
 - **Icons**: see README's "Icon system" section — `@expo/vector-icons` only, never hand-drawn
   SVG paths.
 
+## Cross-cutting features and why they look the way they do
+
+- **Photo upload** (`POST /api/uploads`): base64 JSON instead of multipart, so web and native share
+  one code path through `ApiClient` and the API needs no extra dependency. Files go to
+  `apps/api/uploads/` (gitignored, survives `git reset --hard` deploys) and are served by Express at
+  `/api/uploads`. Posts store the *relative* path (`uploadedImagePath` in `packages/shared`). The router is
+  mounted **before** the global `express.json()` (100kb) because it needs its own 8MB limit; nginx must
+  also allow it (`client_max_body_size`, see `DEPLOYMENT.md`).
+- **Push notifications**: the app registers an Expo push token after login and the API sends through
+  Expo's Push Service (which relays to FCM/APNs). `sendPush()` never throws into the request that
+  triggered it, filters by the user's category toggles (`system` ignores them), skips suspended users
+  and deletes tokens Expo reports as `DeviceNotRegistered`. Triggers today: comment, like
+  (deduplicated per liker), admin-authored post (공지, broadcast), ad review result. Expo Go on
+  Android can't receive remote push, so the app loads `expo-notifications` only outside Expo Go.
+- **Admin statistics** (`GET /api/admin/stats`): one request of counts and a 7-day series bucketed
+  by Asia/Seoul date; computed on demand (no caching/materialized tables). The 통계 screen links
+  pending counts to the review screens.
+- **Search/filters**: client-side over the fetched list (`lib/search.ts`, `lib/regionMatch.ts`),
+  which is fine at the current size (API caps lists at 50 per request). Move to server-side
+  `q`/`region` params (already supported by `GET /api/listings`) if lists outgrow that.
+- **Authorization**: `requireAuth` re-checks `User.status` on every request (suspension is
+  immediate); `requireRole` gates organization/admin routes; admin menu items are additionally
+  hidden in the UI by `userType`, but the API is the source of truth.
+
 ## Deployment model (summary — full detail in `DEPLOYMENT.md`)
 
 `git push` to `main` → GitHub Actions SSHes into the one VPS that also hosts unrelated client
@@ -74,3 +102,7 @@ export → copies it into `/var/www/sinity-web`, served by nginx on port **8090*
 configured for Sinity yet; access is by IP:port. This is explicitly a **staging/demo
 environment for team review before a Play Store release**, not the production Play Store build
 pipeline (that will need EAS Build + a signed AAB later).
+
+Runtime state that is *not* in git and must survive/move with the server: `apps/api/.env`,
+`apps/api/uploads/` (user photos) and the nginx site config (including the upload size limit).
+
