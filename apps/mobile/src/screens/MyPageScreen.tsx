@@ -104,7 +104,6 @@ export function MyPageScreen() {
       <View style={styles.profile}>
         <View style={styles.avatar}><MaterialIcons name="person" size={36} color="#7c899a" /></View>
         <View style={styles.profileCopy}><Text style={styles.name}>{user.name}님</Text><Text style={styles.phone}>{user.organizationProfile ? `${user.organizationProfile.orgName} · ` : ""}{user.phone ?? user.email}</Text></View>
-        <Pressable accessibilityLabel="관심정보 설정" hitSlop={12} onPress={() => navigation.navigate("InterestSettings")}><MaterialIcons name="settings" size={22} color="#536b9c" /></Pressable>
       </View>
       {renderMenu(menuItems)}
       <Pressable onPress={handleLogout} style={styles.logoutRow}><MaterialIcons name="logout" size={20} color="#dd6570" /><Text style={styles.logoutText}>로그아웃</Text></Pressable>
