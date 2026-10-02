@@ -33,7 +33,7 @@ export function LoginScreen({ navigation }: Props) {
     setSubmitting(true);
     try {
       await login(email, password);
-      navigation.replace("Main");
+      leave();
     } catch (err: any) {
       setError(err?.message ?? "로그인에 실패했습니다");
     } finally {
@@ -41,9 +41,14 @@ export function LoginScreen({ navigation }: Props) {
     }
   }
 
-  function goToSignup() {
+  // Login ochilgan joyga (masalan, post sahifasiga) qaytadi; stek bo'sh bo'lsa Home'ga.
+  function leave() {
     if (navigation.canGoBack()) navigation.goBack();
-    else navigation.replace("Signup");
+    else navigation.replace("Main");
+  }
+
+  function goToSignup() {
+    navigation.replace("Signup");
   }
 
   return (
@@ -119,7 +124,7 @@ export function LoginScreen({ navigation }: Props) {
         <Text style={styles.simpleNotice}>간편 로그인은 준비 중입니다.</Text>
       )}
 
-      <Pressable onPress={() => navigation.replace("Main")} style={styles.skipButton}>
+      <Pressable onPress={leave} style={styles.skipButton}>
         <Text style={styles.skipText}>로그인하지 않고 둘러보기</Text>
       </Pressable>
 

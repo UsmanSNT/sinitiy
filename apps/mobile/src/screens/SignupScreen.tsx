@@ -41,6 +41,11 @@ export function SignupScreen({ navigation }: Props) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  function leave() {
+    if (navigation.canGoBack()) navigation.goBack();
+    else navigation.replace("Main");
+  }
+
   async function handleSubmit() {
     setError(null);
 
@@ -71,7 +76,7 @@ export function SignupScreen({ navigation }: Props) {
       const data = await api.post<{ accessToken: string }>("/auth/signup", payload);
       await setToken(data.accessToken);
       await refresh();
-      navigation.replace("Main");
+      leave();
     } catch (err: any) {
       setError(err?.message ?? "회원가입에 실패했습니다");
     } finally {
@@ -181,14 +186,14 @@ export function SignupScreen({ navigation }: Props) {
           )}
         </Pressable>
 
-        <Pressable onPress={() => navigation.replace("Main")} style={styles.skipButton}>
+        <Pressable onPress={leave} style={styles.skipButton}>
           <Text style={styles.skipText}>가입하지 않고 둘러보기</Text>
         </Pressable>
       </View>
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>이미 계정이 있으신가요? </Text>
-        <Pressable onPress={() => navigation.navigate("Login")}>
+        <Pressable onPress={() => navigation.replace("Login")}>
           <Text style={styles.link}>로그인</Text>
         </Pressable>
       </View>

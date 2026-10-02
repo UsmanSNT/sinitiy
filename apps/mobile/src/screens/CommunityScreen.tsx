@@ -66,7 +66,7 @@ export function CommunityScreen() {
 
   function writePost() {
     if (user) navigation.navigate("NewPost");
-    else navigation.navigate("Signup");
+    else navigation.navigate("Login");
   }
 
   return (

@@ -30,7 +30,7 @@ export function NewPostScreen({ navigation }: Props) {
 
   useEffect(() => {
     if (!user) {
-      navigation.replace("Signup");
+      navigation.replace("Login");
       return;
     }
     api.get<Category[]>("/categories").then((cats) => {

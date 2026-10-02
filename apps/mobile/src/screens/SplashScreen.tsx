@@ -8,15 +8,16 @@ import { colors } from "../theme";
 type Props = NativeStackScreenProps<RootStackParamList, "Splash">;
 
 export function SplashScreen({ navigation }: Props) {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
 
+  // Login majburiy emas: har doim to'g'ri Home'ga o'tadi, login faqat kerak bo'lganda so'raladi.
   useEffect(() => {
     if (loading) return;
     const timer = setTimeout(() => {
-      navigation.replace(user ? "Main" : "Signup");
+      navigation.replace("Main");
     }, 1300);
     return () => clearTimeout(timer);
-  }, [loading, user, navigation]);
+  }, [loading, navigation]);
 
   return (
     <View style={styles.container}>

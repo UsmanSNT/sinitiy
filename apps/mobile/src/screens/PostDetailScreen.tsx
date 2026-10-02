@@ -51,7 +51,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
 
   async function toggleLike() {
     if (!user) {
-      navigation.navigate("Signup");
+      navigation.navigate("Login");
       return;
     }
     try {
@@ -66,7 +66,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
   async function submitComment() {
     if (!commentText.trim()) return;
     if (!user) {
-      navigation.navigate("Signup");
+      navigation.navigate("Login");
       return;
     }
     try {
@@ -81,7 +81,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
   async function submitReport() {
     if (!reportReason.trim()) return;
     if (!user) {
-      navigation.navigate("Signup");
+      navigation.navigate("Login");
       return;
     }
     try {
@@ -127,7 +127,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
               </Text>
             </Pressable>
             <Pressable
-              onPress={() => (user ? setReporting((v) => !v) : navigation.navigate("Signup"))}
+              onPress={() => (user ? setReporting((v) => !v) : navigation.navigate("Login"))}
               style={styles.actionBtn}
             >
               <Text style={styles.actionTextMuted}>신고하기</Text>
@@ -174,7 +174,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
               </Pressable>
             </>
           ) : (
-            <Pressable onPress={() => navigation.navigate("Signup")} style={styles.loginPrompt}>
+            <Pressable onPress={() => navigation.navigate("Login")} style={styles.loginPrompt}>
               <Text style={styles.loginPromptText}>댓글을 쓰려면 로그인 또는 회원가입이 필요합니다.</Text>
             </Pressable>
           )}
