@@ -3,7 +3,10 @@
  * @format
  */
 
-import { NavigationContainer } from "@react-navigation/native";
+import { useEffect } from "react";
+import { NavigationContainer, createNavigationContainerRef } from "@react-navigation/native";
+import type { NotificationResponse } from "expo-notifications";
+import { useLastNotificationResponse } from "./src/lib/notifications";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -42,13 +45,33 @@ import { MyActivityScreen } from "./src/screens/MyActivityScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const navigationRef = createNavigationContainerRef<RootStackParamList>();
+
+// Push bosilganda tegishli postga o'tadi (ilova yopiq yoki ochiq bo'lishidan qat'i nazar).
+// Sovuq ishga tushishda navigatsiya hali tayyor bo'lmasligi mumkin - shuning uchun onReady'da ham urinamiz,
+// bir xil bildirishnomaga ikki marta o'tmaslik uchun id bo'yicha eslab qolamiz.
+let handledNotificationId: string | null = null;
+
+function openFromNotification(response: NotificationResponse | null | undefined) {
+  if (!response || !navigationRef.isReady()) return;
+  const id = response.notification.request.identifier;
+  if (id === handledNotificationId) return;
+  const postId = response.notification.request.content.data?.postId;
+  if (typeof postId !== "string") return;
+  handledNotificationId = id;
+  navigationRef.navigate("PostDetail", { postId });
+}
 
 function App() {
+  const lastNotification = useLastNotificationResponse();
+  useEffect(() => {
+    openFromNotification(lastNotification);
+  }, [lastNotification]);
   return (
     <SafeAreaProvider>
       <AuthProvider>
         <StatusBar barStyle="light-content" />
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef} onReady={() => openFromNotification(lastNotification)}>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Splash" component={SplashScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />

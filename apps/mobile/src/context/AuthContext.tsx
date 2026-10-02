@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import type { AuthUser } from "@sinity/shared";
 import { api, loadToken, setToken } from "../lib/api";
+import { registerPushToken, unregisterPushToken } from "../lib/push";
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -37,6 +38,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refresh();
   }, []);
 
+  // Login bo'lgach (yoki ilova ochilganda saqlangan sessiya tiklangach) qurilmani push uchun ro'yxatdan o'tkazamiz.
+  useEffect(() => {
+    if (user) registerPushToken();
+  }, [user?.id]);
+
   async function login(email: string, password: string) {
     const data = await api.post<{ user: AuthUser; accessToken: string }>("/auth/login", {
       email,
@@ -47,6 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
+    await unregisterPushToken();
     await setToken(null);
     setUser(null);
   }

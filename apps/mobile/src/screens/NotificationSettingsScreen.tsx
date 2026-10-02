@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { Pressable, StyleSheet, Switch, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Alert, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
+import { useAuth } from "../context/AuthContext";
+import { api } from "../lib/api";
 
 type Props = NativeStackScreenProps<RootStackParamList, "NotificationSettings">;
 const options = [
@@ -18,14 +20,36 @@ const options = [
 ] as const;
 
 export function NotificationSettingsScreen({ navigation }: Props) {
+  const { user } = useAuth();
   const [values, setValues] = useState<Record<string, boolean>>(() => Object.fromEntries(options.map((item) => [item.key, true])));
+
+  // Sozlamalar akkauntga bog'langan (serverda): qurilma almashganda ham saqlanadi.
+  useEffect(() => {
+    if (!user) return;
+    api.get<Record<string, boolean>>("/me/notification-settings").then(setValues).catch(() => {});
+  }, [user]);
+
+  async function toggle(key: string, value: boolean) {
+    if (!user) {
+      navigation.navigate("Login");
+      return;
+    }
+    setValues((current) => ({ ...current, [key]: value }));
+    try {
+      await api.put("/me/notification-settings", { [key]: value });
+    } catch (err: any) {
+      setValues((current) => ({ ...current, [key]: !value }));
+      Alert.alert("오류", err?.message ?? "설정을 저장하지 못했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  }
+
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
       <View style={styles.header}><Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}><MaterialIcons name="chevron-left" size={28} color={colors.navy} /></Pressable><Text style={styles.headerTitle}>알림 설정</Text><View style={styles.spacer} /></View>
       <View style={styles.body}>
-        <Text style={styles.guide}>원하는 알림을 선택해주세요.</Text>
+        <Text style={styles.guide}>{user ? "원하는 알림을 선택해주세요." : "로그인하면 알림을 설정할 수 있습니다."}</Text>
         <View style={styles.list}>{options.map((item) => (
-          <View key={item.key} style={styles.row}><MaterialCommunityIcons name={item.icon} size={20} color="#657b9d" /><View style={styles.copy}><Text style={styles.title}>{item.title}</Text><Text style={styles.subtitle}>{item.subtitle}</Text></View><Switch value={values[item.key]} onValueChange={(value) => setValues((current) => ({ ...current, [item.key]: value }))} trackColor={{ false: "#d8dee7", true: "#2d79dc" }} thumbColor={colors.white} /></View>
+          <View key={item.key} style={styles.row}><MaterialCommunityIcons name={item.icon} size={20} color="#657b9d" /><View style={styles.copy}><Text style={styles.title}>{item.title}</Text><Text style={styles.subtitle}>{item.subtitle}</Text></View><Switch value={values[item.key]} onValueChange={(value) => toggle(item.key, value)} trackColor={{ false: "#d8dee7", true: "#2d79dc" }} thumbColor={colors.white} /></View>
         ))}</View>
       </View>
       <BottomNav active="MyPage" />

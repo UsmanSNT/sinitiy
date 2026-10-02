@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { createAdRequestSchema } from "@sinity/shared";
 import { prisma } from "../prisma";
+import { sendPush } from "../push";
 import { requireAuth, requireRole } from "../auth/middleware";
 
 export const adRequestsRouter = Router();
@@ -71,17 +72,12 @@ adRequestsRouter.patch("/:id", requireAuth, requireRole("admin"), async (req, re
     include: { org: true },
   });
 
+  const message =
+    status === "approved" ? `"${ad.title}" 광고가 승인되었습니다` : `"${ad.title}" 광고가 반려되었습니다`;
   await prisma.notification.create({
-    data: {
-      userId: ad.orgId,
-      type: status === "approved" ? "ad_approved" : "ad_rejected",
-      refId: ad.id,
-      message:
-        status === "approved"
-          ? `"${ad.title}" 광고가 승인되었습니다`
-          : `"${ad.title}" 광고가 반려되었습니다`,
-    },
+    data: { userId: ad.orgId, type: status === "approved" ? "ad_approved" : "ad_rejected", refId: ad.id, message },
   });
+  void sendPush([ad.orgId], "system", { title: "광고 심사 결과", body: message, data: { adId: ad.id } });
 
   return res.json(serialize(ad));
 });

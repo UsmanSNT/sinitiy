@@ -114,3 +114,23 @@ they use the platform-aware default in `apps/mobile/src/lib/api.ts`, or their ow
   marta deploy qilishdan OLDIN serverdagi `/etc/nginx/sites-available/sinity` ga (server blokiga)
   `client_max_body_size 10m;` qo'shib, `nginx -t && systemctl reload nginx` qiling. Aks holda rasm
   yuklash 413 xato beradi. Bu fayl repoda yo'q, deploy workflow unga tegmaydi.
+
+## Push bildirishnomalar (Expo Push Service → FCM)
+
+Kod tayyor: ilova token oladi → `POST /api/me/push-token` → server `apps/api/src/push.ts` orqali
+Expo Push API'ga yuboradi (izoh, like, admin 공지, reklama natijasi; kategoriya sozlamalari
+`/api/me/notification-settings` da, akkauntga bog'langan). O'lik tokenlar (`DeviceNotRegistered`)
+avtomatik o'chiriladi. **Haqiqiy qurilmaga yetkazish uchun bir martalik sozlash kerak:**
+
+1. `cd apps/mobile && npx eas-cli init` - `app.json` ga `extra.eas.projectId` yozadi (hozir yo'q,
+   shuning uchun ilova token olmaydi va push jimgina o'chiq turadi).
+2. Firebase loyihasi yarating, Android ilovasini `com.sinitymobile` paketi bilan qo'shing,
+   `google-services.json` ni yuklab `app.json` → `android.googleServicesFile` ga ulang va FCM V1
+   kalitini `eas credentials` orqali EAS'ga yuklang.
+3. Dev/production build qiling (`eas build`). **Expo Go (Android) masofaviy push'ni qo'llamaydi** -
+   shu sabab `src/lib/notifications.ts` Expo Go'da modulni yuklamaydi va push o'chiq turadi.
+4. `.env` da `EXPO_PUSH_URL` ni faqat testda soxta serverga yo'naltirish uchun ishlating (standart:
+   `https://exp.host/--/api/v2/push/send`).
+
+Migratsiya `push_tokens` jadvali va `users.notificationPrefs` ustunini qo'shadi (deploy'da
+`prisma migrate deploy` o'zi qo'llaydi).

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createPostSchema } from "@sinity/shared";
 import { prisma } from "../prisma";
 import { requireAuth } from "../auth/middleware";
+import { sendPush } from "../push";
 
 export const postsRouter = Router();
 
@@ -81,6 +82,11 @@ postsRouter.post("/", requireAuth, async (req, res) => {
     },
     include: postInclude,
   });
+
+  // Admin yozgan post - 공지: hamma qurilmalarga (sozlamasi yoqilganlarga) yuboriladi.
+  if (req.auth!.userType === "admin") {
+    void sendPush("all", "notice", { title: "시니티 공지", body: post.title, data: { postId: post.id } });
+  }
 
   return res.status(201).json(serializePost(post));
 });

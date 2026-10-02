@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createCommentSchema } from "@sinity/shared";
 import { prisma } from "../prisma";
 import { requireAuth } from "../auth/middleware";
+import { sendPush } from "../push";
 
 export const commentsRouter = Router();
 
@@ -39,16 +40,13 @@ commentsRouter.post("/", requireAuth, async (req, res) => {
     include: { author: true },
   });
 
-  // Post egasiga push-uchun notification yozuvi (haqiqiy push FCM integratsiyasi keyingi bosqichda).
+  // Post egasiga notification yozuvi va push.
   if (post.authorId !== req.auth!.userId) {
+    const message = `${comment.author.name}님이 회원님의 게시글에 댓글을 남겼습니다`;
     await prisma.notification.create({
-      data: {
-        userId: post.authorId,
-        type: "comment",
-        refId: post.id,
-        message: `${comment.author.name}님이 회원님의 게시글에 댓글을 남겼습니다`,
-      },
+      data: { userId: post.authorId, type: "comment", refId: post.id, message },
     });
+    void sendPush([post.authorId], "comment", { title: "새 댓글", body: message, data: { postId: post.id } });
   }
 
   return res.status(201).json({

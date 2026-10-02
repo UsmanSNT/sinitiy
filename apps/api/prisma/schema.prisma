@@ -26,6 +26,8 @@ model User {
   phone                String?
   userType             UserType
   status               UserStatus @default(active)
+  // Push kategoriyalari bo'yicha sozlama: {"comment": false, ...}. Yo'q kalit = yoqilgan.
+  notificationPrefs    Json      @default("{}")
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -35,6 +37,7 @@ model User {
   likes                Like[]
   reports              Report[]
   notifications        Notification[]
+  pushTokens           PushToken[]
 
   @@map("users")
 }
@@ -254,4 +257,17 @@ model AdminSetting {
   value String
 
   @@map("admin_settings")
+}
+
+// Expo push token (ExponentPushToken[...]); bir qurilma bitta tokenga ega, akkaunt almashsa egasi yangilanadi.
+model PushToken {
+  token     String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("push_tokens")
+  @@index([userId])
 }
