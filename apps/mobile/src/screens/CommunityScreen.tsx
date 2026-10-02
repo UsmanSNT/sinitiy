@@ -8,6 +8,7 @@ import type { RootStackParamList } from "../navigation/types";
 import { api, imageUri } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
+import { AppHeader } from "../components/AppHeader";
 import { SearchBar } from "../components/SearchBar";
 import { matchesQuery } from "../lib/search";
 
@@ -79,6 +80,7 @@ export function CommunityScreen() {
 
   return (
     <View style={styles.container}>
+      <AppHeader />
       <View style={styles.header}>
         <Text style={styles.title}>커뮤니티</Text>
         <View style={styles.headerActions}>
@@ -134,7 +136,7 @@ export function CommunityScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f8fafc" },
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 18, paddingTop: 54, paddingBottom: 8, backgroundColor: colors.white },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 52, paddingHorizontal: 18, backgroundColor: colors.white },
   title: { fontSize: 20, fontWeight: "800", color: colors.navy },
   headerActions: { flexDirection: "row", alignItems: "center", gap: 18 },
   tabs: { flexDirection: "row", backgroundColor: colors.white, borderBottomWidth: 1, borderBottomColor: "#eef1f5" },

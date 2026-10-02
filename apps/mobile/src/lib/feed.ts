@@ -63,6 +63,25 @@ export async function loadFeedReadIds(): Promise<Set<string>> {
   }
 }
 
+// AppHeader qo'ng'iroqchasi uchun: o'qilmagan yangiliklar soni (Home va 알림 ekranidagi bilan bir xil hisob).
+// `enabled=false` bo'lsa so'rov yuborilmaydi (ekran sonni o'zi hisoblab prop sifatida beradi).
+export function useUnreadCount(enabled: boolean) {
+  const [count, setCount] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      if (!enabled) return;
+      let alive = true;
+      Promise.all([api.get<FeedItem[]>("/feed?limit=50"), loadFeedReadIds()])
+        .then(([items, read]) => alive && setCount(items.filter((i) => !read.has(i.id)).length))
+        .catch(() => {});
+      return () => {
+        alive = false;
+      };
+    }, [enabled])
+  );
+  return count;
+}
+
 export async function markFeedRead(ids: string[]): Promise<Set<string>> {
   const next = new Set([...(await loadFeedReadIds()), ...ids]);
   await AsyncStorage.setItem(READ_KEY, JSON.stringify([...next].slice(-MAX_READ_IDS))).catch(() => {});

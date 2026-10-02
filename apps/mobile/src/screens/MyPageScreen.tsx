@@ -6,6 +6,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
+import { AppHeader } from "../components/AppHeader";
 
 type IconName = "heart" | "bell" | "bullhorn" | "briefcase" | "face-agent" | "clipboard-text" | "shield-check" | "account-group" | "alert-octagon" | "file-document-multiple" | "account-cog" | "bullhorn-variant" | "chart-box";
 
@@ -76,6 +77,7 @@ export function MyPageScreen() {
   if (!user) {
     return (
       <View style={styles.guestContainer}>
+        <AppHeader />
         <ScrollView contentContainerStyle={styles.guestContent} showsVerticalScrollIndicator={false}>
           <View style={styles.guestHero}>
             <View style={styles.guestAvatar}><MaterialIcons name="person" size={40} color="#7c899a" /></View>
@@ -100,7 +102,9 @@ export function MyPageScreen() {
   }
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <View style={styles.screen}>
+    <AppHeader />
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={styles.profile}>
         <View style={styles.avatar}><MaterialIcons name="person" size={36} color="#7c899a" /></View>
         <View style={styles.profileCopy}><Text style={styles.name}>{user.name}님</Text><Text style={styles.phone}>{user.organizationProfile ? `${user.organizationProfile.orgName} · ` : ""}{user.phone ?? user.email}</Text></View>
@@ -108,11 +112,12 @@ export function MyPageScreen() {
       {renderMenu(menuItems)}
       <Pressable onPress={handleLogout} style={styles.logoutRow}><MaterialIcons name="logout" size={20} color="#dd6570" /><Text style={styles.logoutText}>로그아웃</Text></Pressable>
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f6f8fb" }, content: { paddingHorizontal: 15, paddingTop: 52, paddingBottom: 28 },
+  screen: { flex: 1, backgroundColor: "#f6f8fb" }, content: { paddingHorizontal: 15, paddingTop: 8, paddingBottom: 28 },
   profile: { flexDirection: "row", alignItems: "center", paddingHorizontal: 5, paddingBottom: 18 },
   avatar: { width: 54, height: 54, borderRadius: 27, alignItems: "center", justifyContent: "center", backgroundColor: "#e8edf3" },
   profileCopy: { flex: 1, paddingLeft: 13 }, name: { fontSize: 20, fontWeight: "800", color: colors.navy }, phone: { marginTop: 4, fontSize: 13, color: "#7d8998" },
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
   menuIcon: { width: 39, height: 39, borderRadius: 12, alignItems: "center", justifyContent: "center" }, menuCopy: { flex: 1, minWidth: 0, paddingHorizontal: 11 },
   menuTitle: { fontSize: 17, fontWeight: "800", color: colors.navy }, menuSubtitle: { marginTop: 3, fontSize: 13, color: "#8995a5" },
   logoutRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 14, padding: 17, borderRadius: 10, backgroundColor: colors.white }, logoutText: { fontSize: 15, color: "#cc5965" },
-  guestContainer: { flex: 1, backgroundColor: "#f6f8fb" }, guestContent: { paddingHorizontal: 15, paddingTop: 64, paddingBottom: 20 },
+  guestContainer: { flex: 1, backgroundColor: "#f6f8fb" }, guestContent: { paddingHorizontal: 15, paddingTop: 8, paddingBottom: 20 },
   guestHero: { alignItems: "center", paddingHorizontal: 10, paddingBottom: 26 },
   guestAvatar: { width: 72, height: 72, borderRadius: 36, alignItems: "center", justifyContent: "center", backgroundColor: "#e8edf3", marginBottom: 16 },
   guestTitle: { fontSize: 22, fontWeight: "800", color: colors.navy, textAlign: "center", lineHeight: 30 },

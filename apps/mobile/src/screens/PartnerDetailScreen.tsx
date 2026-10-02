@@ -2,6 +2,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-nati
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppHeader } from "../components/AppHeader";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
@@ -13,7 +14,8 @@ export function PartnerDetailScreen({ navigation, route }: Props) {
   const { title, service, category, image, location, address, phone, homepage, description } = route.params;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <View style={styles.header}>
         <Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}>
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />

@@ -17,6 +17,8 @@ import type { Category } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api, imageUri, uploadImage } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { AppHeader } from "../components/AppHeader";
+import { BottomNav } from "../components/BottomNav";
 import { BackButton } from "../components/BackButton";
 import { colors } from "../theme";
 
@@ -91,7 +93,8 @@ export function NewPostScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <ScrollView contentContainerStyle={styles.container}>
         <BackButton onPress={() => navigation.goBack()} />
         <Text style={styles.title}>글쓰기</Text>
@@ -171,6 +174,7 @@ export function NewPostScreen({ navigation }: Props) {
           )}
         </Pressable>
       </ScrollView>
+      <BottomNav active="Community" />
     </SafeAreaView>
   );
 }

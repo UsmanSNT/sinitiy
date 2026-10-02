@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
+import { AppHeader } from "../components/AppHeader";
 
 const services = [
   {
@@ -49,6 +50,7 @@ export function ServicesScreen() {
 
   return (
     <View style={styles.screen}>
+      <AppHeader />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>서비스</Text>
         <MaterialIcons name="search" size={24} color={colors.navy} />
@@ -87,9 +89,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 12,
+    height: 52,
+    paddingHorizontal: 18,
   },
   headerTitle: { fontSize: 20, fontWeight: "700", color: colors.navy },
   list: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 20, gap: 16 },

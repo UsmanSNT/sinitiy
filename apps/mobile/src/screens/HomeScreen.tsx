@@ -4,7 +4,8 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
-import { BellIcon, BriefcaseIcon, HeartbeatIcon, FamilyIcon, MegaphoneIcon } from "../components/HomeIcons";
+import { AppHeader } from "../components/AppHeader";
+import { BriefcaseIcon, HeartbeatIcon, FamilyIcon, MegaphoneIcon } from "../components/HomeIcons";
 import type { RootStackParamList } from "../navigation/types";
 import { feedTag, feedTime, loadFeedReadIds, markFeedRead, openFeedItem, useFeed } from "../lib/feed";
 
@@ -37,20 +38,7 @@ export function HomeScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bellRow}>
-        <Pressable
-          accessibilityLabel={unreadCount ? `알림, 읽지 않은 소식 ${unreadCount}개` : "알림"}
-          hitSlop={12}
-          onPress={() => navigation.navigate("Notifications")}
-        >
-          <BellIcon color={colors.white} size={26} />
-          {unreadCount > 0 ? (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{unreadCount > 99 ? "99+" : unreadCount}</Text>
-            </View>
-          ) : null}
-        </Pressable>
-      </View>
+      <AppHeader dark unreadCount={unreadCount} />
 
       <View style={styles.middleWrap}>
         <View style={styles.greetingBlock}>
@@ -116,24 +104,6 @@ export function HomeScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "rgb(24, 47, 83)" },
-  // Qo'ng'iroqcha ekran tepasida, o'z holicha qoladi - pastdagi matn bloki bilan
-  // endi bir qatorda emas, alohida joylashadi (navbar ko'rinishidan chiqarish uchun).
-  bellRow: { paddingHorizontal: 20, paddingTop: 56, alignItems: "flex-end" },
-  badge: {
-    position: "absolute",
-    top: -7,
-    right: -9,
-    minWidth: 20,
-    height: 20,
-    borderRadius: 10,
-    paddingHorizontal: 5,
-    backgroundColor: "#e2536b",
-    borderWidth: 2,
-    borderColor: "rgb(24, 47, 83)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  badgeText: { color: colors.white, fontSize: 11, fontWeight: "800", includeFontPadding: false },
   // Matn bloki va kartalar birgalikda qolgan bo'shliqda markazlashadi -
   // shu bilan matn har doim kartalar ustida, ularga yaqin turadi.
   middleWrap: { flex: 1, paddingHorizontal: 20, justifyContent: "center" },

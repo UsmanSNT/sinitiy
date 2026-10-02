@@ -2,6 +2,7 @@ import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppHeader } from "../components/AppHeader";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
@@ -20,7 +21,8 @@ const rows: Array<{ icon: "frequently-asked-questions" | "message-outline" | "ph
 
 export function CustomerCenterScreen({ navigation }: Props) {
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <View style={styles.header}><Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}><MaterialIcons name="chevron-left" size={28} color={colors.navy} /></Pressable><Text style={styles.headerTitle}>고객센터</Text><View style={styles.spacer} /></View>
       <View style={styles.body}>
         <View style={styles.card}>{rows.map((item, index) => (

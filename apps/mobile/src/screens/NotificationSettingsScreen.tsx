@@ -3,6 +3,7 @@ import { Alert, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppHeader } from "../components/AppHeader";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
@@ -44,7 +45,8 @@ export function NotificationSettingsScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <View style={styles.header}><Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}><MaterialIcons name="chevron-left" size={28} color={colors.navy} /></Pressable><Text style={styles.headerTitle}>알림 설정</Text><View style={styles.spacer} /></View>
       <View style={styles.body}>
         <Text style={styles.guide}>{user ? "원하는 알림을 선택해주세요." : "로그인하면 알림을 설정할 수 있습니다."}</Text>

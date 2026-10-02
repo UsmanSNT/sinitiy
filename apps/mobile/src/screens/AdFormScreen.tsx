@@ -3,6 +3,8 @@ import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, Sc
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BottomNav } from "../components/BottomNav";
+import { AppHeader } from "../components/AppHeader";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
@@ -49,7 +51,8 @@ export function AdFormScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <View style={styles.header}>
         <Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}>
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
@@ -74,6 +77,7 @@ export function AdFormScreen({ navigation }: Props) {
           </Pressable>
         </View>
       </KeyboardAvoidingView>
+      <BottomNav active="MyPage" />
     </SafeAreaView>
   );
 }

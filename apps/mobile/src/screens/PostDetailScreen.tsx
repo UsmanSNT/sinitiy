@@ -18,6 +18,8 @@ import type { Comment, Post } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api, imageUri } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { AppHeader } from "../components/AppHeader";
+import { BottomNav } from "../components/BottomNav";
 import { BackButton } from "../components/BackButton";
 import { colors } from "../theme";
 
@@ -97,15 +99,19 @@ export function PostDetailScreen({ route, navigation }: Props) {
 
   if (!post) {
     return (
-      <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <SafeAreaView style={styles.safeArea} edges={[]}>
+        <AppHeader />
         <BackButton onPress={() => navigation.goBack()} />
         <Text style={styles.loading}>{loadError ? "게시글을 불러오지 못했습니다." : "불러오는 중..."}</Text>
+        <View style={{ flex: 1 }} />
+        <BottomNav active="Community" />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -184,6 +190,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
           )}
         </View>
       </KeyboardAvoidingView>
+      <BottomNav active="Community" />
     </SafeAreaView>
   );
 }

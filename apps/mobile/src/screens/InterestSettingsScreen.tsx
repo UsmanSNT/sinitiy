@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppHeader } from "../components/AppHeader";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
@@ -19,7 +20,8 @@ export function InterestSettingsScreen({ navigation }: Props) {
   const [selected, setSelected] = useState<string[]>(["일자리", "병원·건강", "교육·문화", "문화·여가"]);
   const toggle = (label: string) => setSelected((current) => current.includes(label) ? current.filter((item) => item !== label) : [...current, label]);
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <View style={styles.header}><Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}><MaterialIcons name="chevron-left" size={28} color={colors.navy} /></Pressable><Text style={styles.headerTitle}>관심정보 설정</Text><View style={styles.spacer} /></View>
       <View style={styles.content}><Text style={styles.guide}>관심 있는 분야를 선택해주세요.{"\n"}맞춤 정보를 추천해드립니다.</Text>
         <View style={styles.grid}>{interests.map((item) => { const active = selected.includes(item.label); return (

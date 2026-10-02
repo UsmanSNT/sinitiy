@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { FeedItem } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
+import { AppHeader } from "../components/AppHeader";
 import { BottomNav } from "../components/BottomNav";
 import { ListState } from "../components/ListState";
 import { feedTag, feedTime, loadFeedReadIds, markFeedRead, openFeedItem, useFeed } from "../lib/feed";
@@ -40,7 +41,8 @@ export function NotificationsScreen({ navigation }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader unreadCount={items.filter((i) => !readIds.has(i.id)).length} />
       <View style={styles.header}>
         <Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}>
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />

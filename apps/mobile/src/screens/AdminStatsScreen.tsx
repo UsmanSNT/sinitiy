@@ -4,6 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppHeader } from "../components/AppHeader";
 import type { AdminStats } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
@@ -59,7 +60,8 @@ export function AdminStatsScreen({ navigation }: Props) {
   const maxDaily = stats ? Math.max(1, ...stats.daily.flatMap((d) => [d.users, d.posts])) : 1;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.safeArea} edges={[]}>
+      <AppHeader />
       <View style={styles.header}>
         <Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}>
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
