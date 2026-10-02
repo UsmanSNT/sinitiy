@@ -89,6 +89,73 @@ adminRouter.patch("/listings/:id/status", async (req, res) => {
   return res.json(serializeListing(listing));
 });
 
+// 통계: hammasi bitta so'rovda (admin bosh sahifasi uchun), og'ir hisob-kitob yo'q - faqat count va oxirgi 7 kun.
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function kstDate(date: Date) {
+  return new Date(date.getTime() + KST_OFFSET_MS).toISOString().slice(0, 10);
+}
+
+adminRouter.get("/stats", async (_req, res) => {
+  const now = Date.now();
+  // 7 ta kalendar kun (bugun bilan) - Koreya vaqti bo'yicha, chunki foydalanuvchilar o'sha yerda.
+  const days = Array.from({ length: 7 }, (_, i) => kstDate(new Date(now - (6 - i) * DAY_MS)));
+  const since = new Date(new Date(`${days[0]}T00:00:00+09:00`));
+
+  const [byType, suspended, newUsers, newPosts, posts, hiddenPosts, comments, likes, listingsByStatus, activeByType, ads, pendingReports, devices] =
+    await Promise.all([
+      prisma.user.groupBy({ by: ["userType"], _count: true }),
+      prisma.user.count({ where: { status: "suspended" } }),
+      prisma.user.findMany({ where: { createdAt: { gte: since } }, select: { createdAt: true } }),
+      prisma.post.findMany({ where: { createdAt: { gte: since }, status: { not: "deleted" } }, select: { createdAt: true } }),
+      prisma.post.count({ where: { status: "visible" } }),
+      prisma.post.count({ where: { status: "hidden" } }),
+      prisma.comment.count(),
+      prisma.like.count(),
+      prisma.listing.groupBy({ by: ["status"], _count: true }),
+      prisma.listing.groupBy({ by: ["listingType"], where: { status: "active" }, _count: true }),
+      prisma.adRequest.groupBy({ by: ["status"], _count: true }),
+      prisma.report.count({ where: { status: "pending" } }),
+      prisma.pushToken.count(),
+    ]);
+
+  const count = <T extends string>(rows: Array<Record<string, any>>, key: string, value: T) =>
+    rows.find((r) => r[key] === value)?._count ?? 0;
+  const perDay = (rows: Array<{ createdAt: Date }>, day: string) => rows.filter((r) => kstDate(r.createdAt) === day).length;
+
+  return res.json({
+    users: {
+      total: byType.reduce((sum, r) => sum + r._count, 0),
+      individual: count(byType, "userType", "individual"),
+      organization: count(byType, "userType", "organization"),
+      suspended,
+      newLast7Days: newUsers.length,
+    },
+    content: { posts, hiddenPosts, comments, likes },
+    listings: {
+      active: count(listingsByStatus, "status", "active"),
+      pending: count(listingsByStatus, "status", "pending"),
+      rejected: count(listingsByStatus, "status", "rejected"),
+      closed: count(listingsByStatus, "status", "closed"),
+      byType: {
+        job: count(activeByType, "listingType", "job"),
+        health: count(activeByType, "listingType", "health"),
+        education: count(activeByType, "listingType", "education"),
+        life: count(activeByType, "listingType", "life"),
+      },
+    },
+    ads: {
+      pending: count(ads, "status", "pending"),
+      approved: count(ads, "status", "approved"),
+      rejected: count(ads, "status", "rejected"),
+    },
+    reports: { pending: pendingReports },
+    push: { devices },
+    daily: days.map((date) => ({ date, users: perDay(newUsers, date), posts: perDay(newPosts, date) })),
+  });
+});
+
 // Sayt sozlamalari
 adminRouter.get("/settings", async (_req, res) => {
   const settings = await prisma.adminSetting.findMany();

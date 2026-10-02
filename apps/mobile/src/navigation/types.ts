@@ -73,6 +73,7 @@ export type RootStackParamList = {
   AdminPosts: undefined;
   AdminUsers: undefined;
   AdminAds: undefined;
+  AdminStats: undefined;
   MyAds: undefined;
   AdForm: undefined;
   AdDetail: { ad: AdRequest; color: string };

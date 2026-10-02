@@ -7,7 +7,7 @@ import type { RootStackParamList } from "../navigation/types";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 
-type IconName = "heart" | "bell" | "bullhorn" | "briefcase" | "face-agent" | "clipboard-text" | "shield-check" | "account-group" | "alert-octagon" | "file-document-multiple" | "account-cog" | "bullhorn-variant";
+type IconName = "heart" | "bell" | "bullhorn" | "briefcase" | "face-agent" | "clipboard-text" | "shield-check" | "account-group" | "alert-octagon" | "file-document-multiple" | "account-cog" | "bullhorn-variant" | "chart-box";
 
 // Kirmagan foydalanuvchiga faqat login bilan ochiladigan, ilovada haqiqatan ishlaydigan imkoniyatlar ko'rsatiladi.
 const guestBenefits: Array<{ icon: IconName; color: string; background: string; title: string; subtitle: string }> = [
@@ -51,6 +51,7 @@ export function MyPageScreen() {
   }
   if (user?.userType === "admin") {
     menuItems.unshift(
+      { icon: "chart-box", color: "#2368bc", background: "#e8f1ff", title: "통계", subtitle: "회원·게시글·공고·광고 현황", onPress: () => navigation.navigate("AdminStats") },
       { icon: "shield-check", color: "#1a9a5a", background: "#e3f7ec", title: "공고 승인 관리", subtitle: "기관이 등록한 공고 심사", onPress: () => navigation.navigate("AdminListings") },
       { icon: "bullhorn-variant", color: "#c9661c", background: "#fff1e2", title: "광고 승인 관리", subtitle: "기관 배너 광고 심사·게시 관리", onPress: () => navigation.navigate("AdminAds") },
       { icon: "alert-octagon", color: "#d4483f", background: "#fdeaea", title: "신고 관리", subtitle: "신고된 게시글 확인 및 처리", onPress: () => navigation.navigate("AdminReports") },

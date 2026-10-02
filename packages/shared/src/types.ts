@@ -174,3 +174,15 @@ export interface PaginatedResult<T> {
   page: number;
   pageSize: number;
 }
+
+// Admin 통계 sahifasi uchun (GET /api/admin/stats).
+export interface AdminStats {
+  users: { total: number; individual: number; organization: number; suspended: number; newLast7Days: number };
+  content: { posts: number; hiddenPosts: number; comments: number; likes: number };
+  listings: { active: number; pending: number; rejected: number; closed: number; byType: Record<ListingType, number> };
+  ads: { pending: number; approved: number; rejected: number };
+  reports: { pending: number };
+  push: { devices: number };
+  // Oxirgi 7 kun (Asia/Seoul sanasi bilan), eskidan yangiga.
+  daily: Array<{ date: string; users: number; posts: number }>;
+}

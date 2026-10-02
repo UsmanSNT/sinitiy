@@ -33,6 +33,7 @@ import { AdminReportsScreen } from "./src/screens/AdminReportsScreen";
 import { AdminPostsScreen } from "./src/screens/AdminPostsScreen";
 import { AdminUsersScreen } from "./src/screens/AdminUsersScreen";
 import { AdminAdsScreen } from "./src/screens/AdminAdsScreen";
+import { AdminStatsScreen } from "./src/screens/AdminStatsScreen";
 import { MyAdsScreen } from "./src/screens/MyAdsScreen";
 import { AdFormScreen } from "./src/screens/AdFormScreen";
 import { AdDetailScreen } from "./src/screens/AdDetailScreen";
@@ -95,6 +96,7 @@ function App() {
             <Stack.Screen name="AdminPosts" component={AdminPostsScreen} />
             <Stack.Screen name="AdminUsers" component={AdminUsersScreen} />
             <Stack.Screen name="AdminAds" component={AdminAdsScreen} />
+            <Stack.Screen name="AdminStats" component={AdminStatsScreen} />
             <Stack.Screen name="MyAds" component={MyAdsScreen} />
             <Stack.Screen name="AdForm" component={AdFormScreen} />
             <Stack.Screen name="AdDetail" component={AdDetailScreen} />
