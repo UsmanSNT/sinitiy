@@ -14,10 +14,13 @@ import { notificationsRouter } from "./routes/notifications";
 import { partnersRouter } from "./routes/partners";
 import { adminRouter } from "./routes/admin";
 import { feedRouter } from "./routes/feed";
+import { uploadsRouter } from "./routes/uploads";
 
 const app = express();
 
 app.use(cors({ origin: process.env.CORS_ORIGIN ?? "http://localhost:3000", credentials: true }));
+// Global express.json() (100kb) dan OLDIN ulanadi: uploads o'zining kengaytirilgan limitini ishlatadi.
+app.use("/api/uploads", uploadsRouter);
 app.use(express.json());
 
 app.get("/health", (_req, res) => res.json({ ok: true }));
@@ -37,6 +40,9 @@ app.use("/api/admin", adminRouter);
 app.use("/api/feed", feedRouter);
 
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  if (err?.type === "entity.too.large") {
+    return res.status(413).json({ message: "요청 크기가 너무 큽니다. 5MB 이하의 이미지를 사용해주세요" });
+  }
   console.error(err);
   res.status(500).json({ message: "서버 오류가 발생했습니다" });
 });

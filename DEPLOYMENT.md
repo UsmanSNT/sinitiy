@@ -101,3 +101,16 @@ IP or port ever changes, update it in **both** `.github/workflows/deploy.yml` an
 there is no runtime config for this on web builds. (Android/iOS native builds don't need this —
 they use the platform-aware default in `apps/mobile/src/lib/api.ts`, or their own
 `EXPO_PUBLIC_API_URL` at EAS Build time once that's set up.)
+
+## Foydalanuvchi rasmlari (community postlari)
+
+- `POST /api/uploads` (base64 JSON, faqat login qilganlar, JPG/PNG/WEBP, ≤5MB) rasmni diskka
+  `/opt/sinity/apps/api/uploads/` ichiga yozadi va `/api/uploads/<fayl>` yo'lini qaytaradi. Papka
+  git'da emas (`.gitignore`), shuning uchun deploy'dagi `git reset --hard` unga tegmaydi - lekin
+  serverni boshqa joyga ko'chirsangiz, bu papkani ham ko'chiring (DB'da faqat yo'llar turadi).
+- DB'da rasm **nisbiy yo'l** sifatida saqlanadi; mobil ilova `imageUri()` (`src/lib/api.ts`) bilan
+  muhitning server manziliga ulaydi.
+- **nginx limiti:** standart `client_max_body_size` = 1MB, base64 rasm esa bundan katta. Birinchi
+  marta deploy qilishdan OLDIN serverdagi `/etc/nginx/sites-available/sinity` ga (server blokiga)
+  `client_max_body_size 10m;` qo'shib, `nginx -t && systemctl reload nginx` qiling. Aks holda rasm
+  yuklash 413 xato beradi. Bu fayl repoda yo'q, deploy workflow unga tegmaydi.

@@ -28,3 +28,14 @@ export const api = new ApiClient({
   baseUrl: API_BASE_URL,
   getToken: () => cachedToken,
 });
+
+// Serverdagi yuklangan rasmlar DB'da nisbiy yo'l (/api/uploads/..) bo'lib saqlanadi; ko'rsatishda
+// shu muhitning server manzili (10.0.2.2, staging, ...) oldiga qo'shiladi.
+export function imageUri(src: string) {
+  return src.startsWith("/") ? API_BASE_URL.replace(/\/api\/?$/, "") + src : src;
+}
+
+export async function uploadImage(base64: string, mimeType: string) {
+  const res = await api.post<{ path: string }>("/uploads", { data: base64, mimeType });
+  return res.path;
+}

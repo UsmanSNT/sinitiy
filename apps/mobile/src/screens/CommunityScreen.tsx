@@ -5,7 +5,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Category, PaginatedResult, Post } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
-import { api } from "../lib/api";
+import { api, imageUri } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 import { SearchBar } from "../components/SearchBar";
@@ -106,7 +106,7 @@ export function CommunityScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={<Text style={styles.empty}>{query.trim() ? "검색 결과가 없습니다." : "아직 게시글이 없습니다."}</Text>}
         renderItem={({ item, index }) => {
-          const source = item.thumbnail ?? (item.images[0] ? { uri: item.images[0] } : fallbackImages[index % 3]);
+          const source = item.thumbnail ?? (item.images[0] ? { uri: imageUri(item.images[0]) } : fallbackImages[index % 3]);
           return (
             <Pressable
               style={({ pressed }) => [styles.postCard, pressed && styles.pressed]}

@@ -25,3 +25,6 @@ ios/Pods/
 
 # Deploy key (never commit)
 .deploy_key_tmp/
+
+# Foydalanuvchi yuklagan rasmlar (serverda qoladi)
+apps/api/uploads/

@@ -35,11 +35,15 @@ export const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
+// Yuklangan rasm DB'da nisbiy yo'l sifatida saqlanadi (/api/uploads/<fayl>) - emulyator,
+// staging va production'da host har xil bo'lgani uchun to'liq URL saqlab bo'lmaydi.
+export const uploadedImagePath = z.string().regex(/^\/api\/uploads\/[\w-]+\.(jpg|png|webp)$/);
+
 export const createPostSchema = z.object({
   categoryId: z.string().min(1),
   title: z.string().min(1).max(200),
   content: z.string().min(1),
-  images: z.array(z.string().url()).default([]),
+  images: z.array(z.union([z.string().url(), uploadedImagePath])).max(3).default([]),
 });
 
 export type CreatePostInput = z.infer<typeof createPostSchema>;

@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import {
   Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -15,7 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { Comment, Post } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
-import { api } from "../lib/api";
+import { api, imageUri } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { BackButton } from "../components/BackButton";
 import { colors } from "../theme";
@@ -116,6 +117,9 @@ export function PostDetailScreen({ route, navigation }: Props) {
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.author}>{post.authorName}</Text>
           <Text style={styles.body}>{post.content}</Text>
+          {post.images.map((src) => (
+            <Image key={src} source={{ uri: imageUri(src) }} style={styles.image} resizeMode="cover" />
+          ))}
 
           <View style={styles.actionRow}>
             <Pressable
@@ -185,6 +189,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
+  image: { width: "100%", aspectRatio: 4 / 3, borderRadius: 14, marginTop: 14, backgroundColor: "#eef1f5" },
   safeArea: { flex: 1, backgroundColor: colors.white },
   container: { flexGrow: 1, padding: 20, paddingBottom: 40 },
   loading: { textAlign: "center", marginTop: 40, color: colors.gray },
