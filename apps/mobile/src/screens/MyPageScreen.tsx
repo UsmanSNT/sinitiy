@@ -1,7 +1,6 @@
-import { useCallback } from "react";
-import { Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { useAuth } from "../context/AuthContext";
@@ -20,15 +19,6 @@ const guestBenefits: Array<{ icon: IconName; color: string; background: string; 
 export function MyPageScreen() {
   const { user, logout } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-  // Ilova bo'yicha status bar oq (Home to'q fonga mos); bu ekran och fonli, shuning uchun
-  // fokusda to'q belgilarga o'tadi va chiqib ketganda yana oqqa qaytadi.
-  useFocusEffect(
-    useCallback(() => {
-      StatusBar.setBarStyle("dark-content");
-      return () => StatusBar.setBarStyle("light-content");
-    }, [])
-  );
 
   async function handleLogout() {
     await logout();

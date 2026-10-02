@@ -13,6 +13,7 @@ import type { UserType } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api, setToken } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { useStatusBarStyle } from "../lib/useStatusBarStyle";
 import { BackButton } from "../components/BackButton";
 import { IconInput } from "../components/IconInput";
 import { colors } from "../theme";
@@ -20,6 +21,7 @@ import { colors } from "../theme";
 type Props = NativeStackScreenProps<RootStackParamList, "Signup">;
 
 export function SignupScreen({ navigation }: Props) {
+  useStatusBarStyle("dark-content");
   const { refresh } = useAuth();
   const [userType, setUserType] = useState<Extract<UserType, "individual" | "organization">>(
     "individual"

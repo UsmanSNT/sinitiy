@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { BellIcon } from "./HomeIcons";
 import { useUnreadCount } from "../lib/feed";
+import { useStatusBarStyle } from "../lib/useStatusBarStyle";
 import { colors } from "../theme";
 
 interface Props {
@@ -22,6 +23,7 @@ export function AppHeader({ dark, unreadCount }: Props) {
   const insets = useSafeAreaInsets();
   const fetched = useUnreadCount(unreadCount === undefined);
   const unread = unreadCount ?? fetched;
+  useStatusBarStyle(dark ? "light-content" : "dark-content");
   const fg = dark ? colors.white : colors.navy;
 
   return (

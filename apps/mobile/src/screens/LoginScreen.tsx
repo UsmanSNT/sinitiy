@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { useAuth } from "../context/AuthContext";
+import { useStatusBarStyle } from "../lib/useStatusBarStyle";
 import { BackButton } from "../components/BackButton";
 import { IconInput } from "../components/IconInput";
 import { SocialButton, KakaoIcon, NaverIcon, GoogleIcon } from "../components/SocialButton";
@@ -20,6 +21,7 @@ import { colors } from "../theme";
 type Props = NativeStackScreenProps<RootStackParamList, "Login">;
 
 export function LoginScreen({ navigation }: Props) {
+  useStatusBarStyle("dark-content");
   const { login } = useAuth();
   const [tab, setTab] = useState<"general" | "simple">("general");
   const [email, setEmail] = useState("");
