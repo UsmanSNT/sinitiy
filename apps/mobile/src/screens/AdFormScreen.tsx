@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert } from "../lib/alert";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { isValidKoreanPhone } from "@sinity/shared";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomNav } from "../components/BottomNav";
 import { AppHeader } from "../components/AppHeader";
@@ -30,11 +32,13 @@ export function AdFormScreen({ navigation }: Props) {
     setError(null);
     if (!form.title.trim()) return setError("광고 제목을 입력해주세요");
     if (!form.content.trim()) return setError("광고 내용을 입력해주세요");
-    if (form.phone.replace(/\D/g, "").length < 9) return setError("문의 전화번호를 올바르게 입력해주세요");
+    if (!isValidKoreanPhone(form.phone)) return setError("문의 전화번호를 올바르게 입력해주세요");
     let homepage = form.homepage.trim();
     if (homepage && !/^https?:\/\//.test(homepage)) homepage = `https://${homepage}`;
 
+    if (submitting) return;
     setSubmitting(true);
+    let succeeded = false;
     try {
       await api.post("/ad-requests", {
         title: form.title.trim(),
@@ -42,11 +46,13 @@ export function AdFormScreen({ navigation }: Props) {
         phone: form.phone.trim(),
         homepage,
       });
+      succeeded = true;
       Alert.alert("신청 완료", "관리자 승인 후 배너로 노출됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
     } catch (err: any) {
       setError(err?.message ?? "신청에 실패했습니다");
     } finally {
-      setSubmitting(false);
+      // Muvaffaqiyatdan keyin tugma qulflangan qoladi - orqaga qaytguncha qayta bosib dublikat yaratib bo'lmaydi.
+      if (!succeeded) setSubmitting(false);
     }
   }
 

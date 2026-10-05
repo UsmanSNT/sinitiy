@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+// Aloqa telefoni: faqat raqam/tire/bo'shliq; 02-xxx-xxxx, 0xx-xxx-xxxx, 010-xxxx-xxxx (9~11 raqam, 0 bilan boshlanadi)
+// yoki 1588-xxxx kabi 8 xonali vakillik raqami. 0000000000 kabi bir xil raqamlar rad etiladi.
+export function isValidKoreanPhone(value: string): boolean {
+  const v = value.trim();
+  if (!/^[0-9\-\s]+$/.test(v)) return false;
+  const digits = v.replace(/\D/g, "");
+  if (/^(\d)\1+$/.test(digits)) return false;
+  if (/^0\d{8,10}$/.test(digits)) return true;
+  return /^1[5-8]\d{6}$/.test(digits);
+}
+const contactPhone = z.string().refine(isValidKoreanPhone, "전화번호를 올바르게 입력해주세요");
+
 // Ro'yxatdan o'tish - user_type tanlanadi, organization bo'lsa business_number majburiy.
 export const signupIndividualSchema = z.object({
   userType: z.literal("individual"),
@@ -74,7 +86,7 @@ export const createListingSchema = z.object({
   period: z.string().max(100).optional(),
   targetAudience: z.string().min(1),
   applyMethod: z.string().min(1),
-  phone: z.string().min(9),
+  phone: contactPhone,
   latitude: z.number().optional(),
   longitude: z.number().optional(),
 });
@@ -85,7 +97,7 @@ export const createAdRequestSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.string().min(1),
   images: z.array(z.string().url()).default([]),
-  phone: z.string().min(9),
+  phone: contactPhone,
   homepage: z.string().url().optional().or(z.literal("")),
 });
 

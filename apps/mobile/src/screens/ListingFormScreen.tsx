@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert } from "../lib/alert";
 import { MaterialIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BottomNav } from "../components/BottomNav";
 import { AppHeader } from "../components/AppHeader";
-import type { ListingType } from "@sinity/shared";
+import { isValidKoreanPhone, type ListingType } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { categoriesByType, listingTypeLabel } from "../lib/listingMeta";
@@ -32,9 +33,11 @@ export function ListingFormScreen({ navigation }: Props) {
     if (!form.content.trim()) return setError("내용을 입력해주세요");
     if (!form.targetAudience.trim()) return setError("지원 대상을 입력해주세요");
     if (!form.applyMethod.trim()) return setError("신청 방법을 입력해주세요");
-    if (form.phone.replace(/\D/g, "").length < 9) return setError("문의 전화번호를 올바르게 입력해주세요");
+    if (!isValidKoreanPhone(form.phone)) return setError("문의 전화번호를 올바르게 입력해주세요");
 
+    if (submitting) return;
     setSubmitting(true);
+    let succeeded = false;
     try {
       await api.post("/listings", {
         listingType,
@@ -47,11 +50,13 @@ export function ListingFormScreen({ navigation }: Props) {
         region: form.region.trim() || undefined,
         period: form.period.trim() || undefined,
       });
+      succeeded = true;
       Alert.alert("등록 완료", "관리자 승인 후 게시됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
     } catch (err: any) {
       setError(err?.message ?? "등록에 실패했습니다");
     } finally {
-      setSubmitting(false);
+      // Muvaffaqiyatdan keyin tugma qulflangan qoladi - orqaga qaytguncha qayta bosib dublikat yaratib bo'lmaydi.
+      if (!succeeded) setSubmitting(false);
     }
   }
 

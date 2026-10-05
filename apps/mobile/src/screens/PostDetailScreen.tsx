@@ -1,16 +1,6 @@
 import { useCallback, useState } from "react";
-import {
-  Alert,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert } from "../lib/alert";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -20,6 +10,7 @@ import { api, imageUri } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { AppHeader } from "../components/AppHeader";
 import { BottomNav } from "../components/BottomNav";
+import { PostImage } from "../components/PostImage";
 import { BackButton } from "../components/BackButton";
 import { colors } from "../theme";
 
@@ -124,7 +115,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
           <Text style={styles.author}>{post.authorName}</Text>
           <Text style={styles.body}>{post.content}</Text>
           {post.images.map((src) => (
-            <Image key={src} source={{ uri: imageUri(src) }} style={styles.image} resizeMode="cover" />
+            <PostImage key={src} uri={imageUri(src)} />
           ))}
 
           <View style={styles.actionRow}>
@@ -196,7 +187,6 @@ export function PostDetailScreen({ route, navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  image: { width: "100%", aspectRatio: 4 / 3, borderRadius: 14, marginTop: 14, backgroundColor: "#eef1f5" },
   safeArea: { flex: 1, backgroundColor: colors.white },
   container: { flexGrow: 1, padding: 20, paddingBottom: 40 },
   loading: { textAlign: "center", marginTop: 40, color: colors.gray },

@@ -1,4 +1,5 @@
-import { Alert, Linking } from "react-native";
+import { Linking } from "react-native";
+import { Alert } from "./alert";
 
 // Hali ulanmagan funksiyalar (SNS login, qidiruv va h.k.) bosilganda javobsiz qolmasligi uchun.
 export function comingSoon() {

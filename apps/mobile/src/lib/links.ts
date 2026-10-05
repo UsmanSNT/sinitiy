@@ -1,4 +1,5 @@
-import { Alert, Linking } from "react-native";
+import { Linking } from "react-native";
+import { Alert } from "./alert";
 
 async function open(url: string, failMessage: string) {
   try {
