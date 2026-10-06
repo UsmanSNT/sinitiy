@@ -1,6 +1,6 @@
 import type { ImageSourcePropType } from "react-native";
 import type { NavigatorScreenParams } from "@react-navigation/native";
-import type { AdRequest, Listing, Post } from "@sinity/shared";
+import type { AdRequest, Listing, PartnerCompany, Post } from "@sinity/shared";
 import type { SupportDocKind } from "../lib/supportDocs";
 
 export type RootStackParamList = {
@@ -102,6 +102,9 @@ export type RootStackParamList = {
   SupportDoc: { kind: SupportDocKind };
   Inquiry: undefined;
   AdminInquiries: undefined;
+  AdminPartners: undefined;
+  PartnerForm: { partner?: PartnerCompany } | undefined;
+  AdminNotices: undefined;
   MyActivity: undefined;
 };
 

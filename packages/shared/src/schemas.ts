@@ -129,3 +129,20 @@ export const createInquirySchema = z.object({
 });
 
 export type CreateInquiryInput = z.infer<typeof createInquirySchema>;
+
+export const partnerSchema = z.object({
+  name: z.string().trim().min(1).max(100),
+  location: z.string().max(50).optional().or(z.literal("")),
+  address: z.string().trim().min(1).max(200),
+  phone: contactPhone,
+  homepage: optionalUrl,
+  category: z.string().max(50).optional().or(z.literal("")),
+  service: z.string().max(100).optional().or(z.literal("")),
+  description: z.string().max(1000).optional().or(z.literal("")),
+  recommended: z.boolean().default(false),
+  images: imageList,
+  displayStart: dateOnly,
+  displayEnd: dateOnly,
+});
+
+export type PartnerInput = z.infer<typeof partnerSchema>;

@@ -46,6 +46,9 @@ import { MyActivityScreen } from "./src/screens/MyActivityScreen";
 import { SupportDocScreen } from "./src/screens/SupportDocScreen";
 import { InquiryScreen } from "./src/screens/InquiryScreen";
 import { AdminInquiriesScreen } from "./src/screens/AdminInquiriesScreen";
+import { AdminPartnersScreen } from "./src/screens/AdminPartnersScreen";
+import { PartnerFormScreen } from "./src/screens/PartnerFormScreen";
+import { AdminNoticesScreen } from "./src/screens/AdminNoticesScreen";
 import type { RootStackParamList } from "./src/navigation/types";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -112,6 +115,9 @@ function App() {
             <Stack.Screen name="SupportDoc" component={SupportDocScreen} />
             <Stack.Screen name="Inquiry" component={InquiryScreen} />
             <Stack.Screen name="AdminInquiries" component={AdminInquiriesScreen} />
+            <Stack.Screen name="AdminPartners" component={AdminPartnersScreen} />
+            <Stack.Screen name="PartnerForm" component={PartnerFormScreen} />
+            <Stack.Screen name="AdminNotices" component={AdminNoticesScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>

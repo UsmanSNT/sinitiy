@@ -235,6 +235,10 @@ model PartnerCompany {
   service     String?
   description String?
   recommended Boolean  @default(false)
+  images      String[] @default([])
+  // Ko'rsatish davri (null - cheklovsiz); davrdan tashqari hamkor foydalanuvchilarga ko'rinmaydi.
+  displayStart DateTime?
+  displayEnd   DateTime?
   createdAt   DateTime @default(now())
 
   @@map("partner_companies")

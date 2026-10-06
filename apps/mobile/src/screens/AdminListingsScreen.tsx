@@ -55,6 +55,9 @@ export function AdminListingsScreen({ navigation }: Props) {
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
         </Pressable>
         <Text style={styles.headerTitle}>공고 승인 관리</Text>
+        <Pressable accessibilityLabel="새 공고" hitSlop={12} onPress={() => navigation.navigate("ListingForm")}>
+          <MaterialIcons name="add" size={26} color={colors.navy} />
+        </Pressable>
       </View>
 
       <View style={styles.tabs}>
@@ -81,6 +84,9 @@ export function AdminListingsScreen({ navigation }: Props) {
               <Text style={styles.meta}>{item.orgName} · {item.period ?? "기간 미정"}</Text>
               <Text style={styles.content} numberOfLines={3}>{item.content}</Text>
               <Text style={styles.meta}>대상: {item.targetAudience} · 신청: {item.applyMethod} · {item.phone}</Text>
+              <Pressable onPress={() => navigation.navigate("ListingForm", { listing: item })} hitSlop={8} style={{ alignSelf: "flex-start", marginTop: 6 }}>
+                <Text style={{ fontSize: 14, color: "#2368bc", fontWeight: "700", textDecorationLine: "underline" }}>내용 수정</Text>
+              </Pressable>
               {item.status === "rejected" && item.rejectReason ? <Text style={styles.meta}>반려 사유: {item.rejectReason}</Text> : null}
               {rejectingId === item.id ? (
                 <View>

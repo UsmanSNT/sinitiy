@@ -161,9 +161,20 @@ export interface PartnerCompany {
   service: string | null;
   description: string | null;
   recommended: boolean;
+  images: string[];
+  displayStart: string | null;
+  displayEnd: string | null;
 }
 
-export type NotificationType = "comment" | "like" | "ad_approved" | "ad_rejected" | "announcement";
+export type NotificationType =
+  | "comment"
+  | "like"
+  | "ad_approved"
+  | "ad_rejected"
+  | "announcement"
+  | "inquiry_answered"
+  | "listing_approved"
+  | "listing_rejected";
 
 export interface AppNotification {
   id: string;

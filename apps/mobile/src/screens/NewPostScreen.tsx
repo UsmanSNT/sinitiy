@@ -75,7 +75,8 @@ export function NewPostScreen({ navigation, route }: Props) {
       <AppHeader />
       <ScrollView contentContainerStyle={styles.container}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.title}>{editing ? "글 수정" : "글쓰기"}</Text>
+        <Text style={styles.title}>{editing ? "글 수정" : user?.userType === "admin" ? "공지 작성" : "글쓰기"}</Text>
+        {user?.userType === "admin" && !editing ? <Text style={styles.adminNote}>관리자가 쓴 글은 공지로 표시되고, 모든 사용자에게 알림이 전송됩니다.</Text> : null}
 
         <View style={styles.categoryRow}>
           {categories.map((c) => (
@@ -162,6 +163,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   textArea: { minHeight: 160 },
+  adminNote: { fontSize: 13, color: "#6b7688", lineHeight: 19, marginTop: -8, marginBottom: 14 },
   regionRow: { flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1, borderColor: colors.border, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 13, marginBottom: 12 },
   regionText: { flex: 1, fontSize: 15, color: colors.navy },
   error: { color: "#ef4444", fontSize: 13, marginBottom: 8 },

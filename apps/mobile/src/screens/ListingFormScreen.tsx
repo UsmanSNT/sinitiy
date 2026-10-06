@@ -9,6 +9,7 @@ import { AppHeader } from "../components/AppHeader";
 import { isValidKoreanPhone, type ListingType } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import { categoriesByType, listingTypeLabel } from "../lib/listingMeta";
 import { colors } from "../theme";
 import { RegionPicker } from "../components/RegionPicker";
@@ -20,6 +21,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "ListingForm">;
 const types: ListingType[] = ["health", "education", "life", "job"];
 
 export function ListingFormScreen({ navigation, route }: Props) {
+  const { user } = useAuth();
   const editing = route.params?.listing;
   const [listingType, setListingType] = useState<ListingType>(editing?.listingType ?? "health");
   const [category, setCategory] = useState(editing?.category ?? "");
@@ -77,7 +79,7 @@ export function ListingFormScreen({ navigation, route }: Props) {
       if (editing) await api.put(`/listings/${editing.id}`, body);
       else await api.post("/listings", body);
       succeeded = true;
-      Alert.alert(editing ? "수정 완료" : "등록 완료", editing ? "관리자 재승인 후 다시 게시됩니다." : "관리자 승인 후 게시됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
+      Alert.alert(editing ? "수정 완료" : "등록 완료", user?.userType === "admin" ? "저장되었습니다." : editing ? "관리자 재승인 후 다시 게시됩니다." : "관리자 승인 후 게시됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
     } catch (err: any) {
       setError(err?.message ?? "등록에 실패했습니다");
     } finally {

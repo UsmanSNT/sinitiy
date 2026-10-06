@@ -8,6 +8,7 @@ import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { usePartners } from "../lib/usePartners";
 import { fallbackImage } from "../lib/listingImage";
+import { imageUri } from "../lib/api";
 import { matchesRegionFilter } from "../lib/regionMatch";
 import { ListState } from "../components/ListState";
 import { BottomNav } from "../components/BottomNav";
@@ -56,7 +57,7 @@ export function PartnerInfoScreen({ navigation }: Props) {
     category: p.category ?? "",
     recommended: p.recommended,
     ...(categoryStyle[p.category ?? ""] ?? categoryStyle["추천서비스"]),
-    image: fallbackImage(i),
+    image: p.images[0] ? { uri: imageUri(p.images[0]) } : fallbackImage(i),
     location: p.location,
     address: p.address,
     phone: p.phone,

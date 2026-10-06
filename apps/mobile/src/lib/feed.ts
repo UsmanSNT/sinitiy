@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import type { FeedItem, ListingType } from "@sinity/shared";
+import type { AppNotification, FeedItem, ListingType } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "./api";
 import { listingImage } from "./listingImage";
@@ -50,6 +50,24 @@ export function useFeed(limit: number) {
   return { items: items ?? [], loading: items === null && !error, error, reload: load };
 }
 
+// Home qo'ng'iroqchasi uchun: o'qilmagan shaxsiy bildirishnomalar soni (kirmagan bo'lsa 0).
+export function usePersonalUnread() {
+  const [count, setCount] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      let alive = true;
+      api
+        .get<AppNotification[]>("/notifications")
+        .then((items) => alive && setCount(items.filter((n) => !n.isRead).length))
+        .catch(() => alive && setCount(0));
+      return () => {
+        alive = false;
+      };
+    }, [])
+  );
+  return count;
+}
+
 // Lenta hammaga umumiy, shuning uchun "o'qildi" holati serverda emas, qurilmada saqlanadi.
 const READ_KEY = "sinity_feed_read_ids";
 const MAX_READ_IDS = 300;
@@ -71,8 +89,9 @@ export function useUnreadCount(enabled: boolean) {
     useCallback(() => {
       if (!enabled) return;
       let alive = true;
-      Promise.all([api.get<FeedItem[]>("/feed?limit=50"), loadFeedReadIds()])
-        .then(([items, read]) => alive && setCount(items.filter((i) => !read.has(i.id)).length))
+      // Shaxsiy bildirishnomalar (izoh, like, shartnoma/e'lon natijasi...) faqat kirgan foydalanuvchida bor.
+      Promise.all([api.get<FeedItem[]>("/feed?limit=50"), loadFeedReadIds(), api.get<AppNotification[]>("/notifications").catch(() => [])])
+        .then(([items, read, mine]) => alive && setCount(items.filter((i) => !read.has(i.id)).length + mine.filter((n) => !n.isRead).length))
         .catch(() => {});
       return () => {
         alive = false;

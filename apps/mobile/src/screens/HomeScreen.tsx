@@ -7,7 +7,7 @@ import { colors } from "../theme";
 import { AppHeader } from "../components/AppHeader";
 import { BriefcaseIcon, HeartbeatIcon, FamilyIcon, MegaphoneIcon } from "../components/HomeIcons";
 import type { RootStackParamList } from "../navigation/types";
-import { feedTag, feedTime, loadFeedReadIds, markFeedRead, openFeedItem, useFeed } from "../lib/feed";
+import { feedTag, feedTime, loadFeedReadIds, markFeedRead, openFeedItem, useFeed, usePersonalUnread } from "../lib/feed";
 
 const serviceItems = [
   { Icon: BriefcaseIcon, iconColor: "#3fae5c", label: "일자리·복지", sub: "취업·복지 정보" },
@@ -29,7 +29,8 @@ export function HomeScreen() {
       loadFeedReadIds().then(setReadIds);
     }, [])
   );
-  const unreadCount = feed.filter((item) => !readIds.has(item.id)).length;
+  const personalUnread = usePersonalUnread();
+  const unreadCount = feed.filter((item) => !readIds.has(item.id)).length + personalUnread;
   // Kartalar balandligi ekran balandligining foizi sifatida hisoblanadi (aspectRatio emas) -
   // Yoga'da aspectRatio + justifyContent:"center" birikmasi Android'da kontentni pastga
   // surib, tepa/pastki bo'shliqni notekis qilib qo'yardi (aniq balandlik bu muammoni oldini oladi).

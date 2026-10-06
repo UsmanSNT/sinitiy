@@ -47,6 +47,8 @@ export function MyPageScreen() {
       { icon: "bullhorn-variant", color: "#c9661c", background: "#fff1e2", title: "광고 승인 관리", subtitle: "기관 배너 광고 심사·게시 관리", onPress: () => navigation.navigate("AdminAds") },
       { icon: "alert-octagon", color: "#d4483f", background: "#fdeaea", title: "신고 관리", subtitle: "신고된 게시글 확인 및 처리", onPress: () => navigation.navigate("AdminReports") },
       { icon: "file-document-multiple", color: "#2368bc", background: "#e8f1ff", title: "게시글 관리", subtitle: "커뮤니티 글 숨김·삭제", onPress: () => navigation.navigate("AdminPosts") },
+      { icon: "bullhorn", color: "#e2536b", background: "#fdecef", title: "공지 관리", subtitle: "공지 작성·수정·삭제", onPress: () => navigation.navigate("AdminNotices") },
+      { icon: "account-group", color: "#18a9a1", background: "#e2f8f6", title: "파트너 관리", subtitle: "파트너 정보 등록·수정·노출 기간", onPress: () => navigation.navigate("AdminPartners") },
       { icon: "message-outline", color: "#5479b8", background: "#eaf0fb", title: "문의 관리", subtitle: "1:1 문의 확인 및 답변", onPress: () => navigation.navigate("AdminInquiries") },
       { icon: "account-cog", color: "#7a5cd6", background: "#f0ebfb", title: "회원 관리", subtitle: "회원 조회 및 이용 정지", onPress: () => navigation.navigate("AdminUsers") }
     );
