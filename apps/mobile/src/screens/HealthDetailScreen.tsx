@@ -6,12 +6,13 @@ import { AppHeader } from "../components/AppHeader";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
+import { showApplyInfo } from "../lib/actions";
 
 type Props = NativeStackScreenProps<RootStackParamList, "HealthDetail">;
 const PHONE = "02-987-6543";
 
 export function HealthDetailScreen({ navigation, route }: Props) {
-  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod } = route.params;
+  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod, applyUrl } = route.params;
   const phoneNumber = phone ?? PHONE;
 
   return (
@@ -59,6 +60,9 @@ export function HealthDetailScreen({ navigation, route }: Props) {
         <Pressable style={styles.mapButton} onPress={() => Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(organization)}`)}>
           <Text style={styles.mapButtonText}>지도보기</Text>
         </Pressable>
+        <Pressable style={styles.applyButton} onPress={() => showApplyInfo(applyMethod, phoneNumber, applyUrl)}>
+          <Text style={styles.applyButtonText}>신청하기</Text>
+        </Pressable>
       </View>
       <BottomNav active={route.params.from ?? "Services"} />
     </SafeAreaView>
@@ -83,7 +87,9 @@ const styles = StyleSheet.create({
   infoValue: { flex: 1, fontSize: 15, color: colors.navy },
   actions: { flexDirection: "row", gap: 10, padding: 14, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.white },
   callButton: { flex: 1, flexDirection: "row", gap: 7, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "#2674bd", borderRadius: 7, paddingVertical: 13 },
-  callButtonText: { fontSize: 16, fontWeight: "800", color: "#1768b5" },
-  mapButton: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#2c8be5", borderRadius: 7, paddingVertical: 13 },
-  mapButtonText: { fontSize: 16, fontWeight: "800", color: colors.white },
+  callButtonText: { fontSize: 15, fontWeight: "800", color: "#1768b5" },
+  mapButton: { flex: 1, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "#2674bd", borderRadius: 7, paddingVertical: 13 },
+  mapButtonText: { fontSize: 15, fontWeight: "800", color: "#1768b5" },
+  applyButton: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#2268bd", borderRadius: 7, paddingVertical: 13 },
+  applyButtonText: { fontSize: 15, fontWeight: "800", color: colors.white },
 });
