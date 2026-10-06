@@ -128,7 +128,7 @@ export function PostDetailScreen({ route, navigation }: Props) {
         <ScrollView contentContainerStyle={styles.container}>
           <BackButton onPress={() => navigation.goBack()} />
 
-          <Text style={styles.category}>{post.categoryName}</Text>
+          <Text style={styles.category}>{post.categoryName}{post.region ? ` · ${post.region}` : ""}</Text>
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.author}>{post.authorName}</Text>
           {user && (user.id === post.authorId || user.userType === "admin") && (

@@ -12,6 +12,7 @@ import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 import { PhotoPicker } from "../components/PhotoPicker";
+import { DateRangeFields, validateDateRange } from "../components/DateRangeFields";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AdForm">;
 
@@ -25,6 +26,8 @@ export function AdFormScreen({ navigation, route }: Props) {
     content: editing?.content ?? "",
     phone: editing?.phone ?? user?.phone ?? "",
     homepage: editing?.homepage ?? user?.organizationProfile?.homepage ?? "",
+    displayStart: editing?.displayStart ?? "",
+    displayEnd: editing?.displayEnd ?? "",
   });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -36,6 +39,8 @@ export function AdFormScreen({ navigation, route }: Props) {
     if (!form.title.trim()) return setError("광고 제목을 입력해주세요");
     if (!form.content.trim()) return setError("광고 내용을 입력해주세요");
     if (!isValidKoreanPhone(form.phone)) return setError("문의 전화번호를 올바르게 입력해주세요");
+    const dateError = validateDateRange(form.displayStart, form.displayEnd);
+    if (dateError) return setError(dateError);
     let homepage = form.homepage.trim();
     if (homepage && !/^https?:\/\//.test(homepage)) homepage = `https://${homepage}`;
 
@@ -49,6 +54,8 @@ export function AdFormScreen({ navigation, route }: Props) {
         phone: form.phone.trim(),
         homepage,
         images,
+        displayStart: form.displayStart,
+        displayEnd: form.displayEnd,
       };
       if (editing) await api.put(`/ad-requests/${editing.id}`, body);
       else await api.post("/ad-requests", body);
@@ -78,6 +85,7 @@ export function AdFormScreen({ navigation, route }: Props) {
           <Field label="광고 내용" value={form.content} onChangeText={update("content")} placeholder="어르신들께 알리고 싶은 내용을 적어주세요" multiline />
           <Field label="문의 전화" value={form.phone} onChangeText={update("phone")} placeholder="02-123-4567" keyboardType="phone-pad" />
           <Field label="홈페이지 (선택)" value={form.homepage} onChangeText={update("homepage")} placeholder="www.example.com" autoCapitalize="none" keyboardType="url" />
+          <DateRangeFields label="노출 기간 (선택)" start={form.displayStart} end={form.displayEnd} onChange={(displayStart, displayEnd) => setForm((f) => ({ ...f, displayStart, displayEnd }))} />
           <Text style={styles.label}>배너 이미지 (선택)</Text>
           <PhotoPicker images={images} onChange={setImages} onError={setError} />
 

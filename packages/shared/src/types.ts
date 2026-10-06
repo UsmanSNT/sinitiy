@@ -41,6 +41,7 @@ export interface Post {
   title: string;
   content: string;
   images: string[];
+  region: string | null;
   likeCount: number;
   commentCount: number;
   reportCount: number;
@@ -82,6 +83,9 @@ export interface Listing {
   targetAudience: string;
   applyMethod: string;
   applyUrl: string | null;
+  publishStart: string | null;
+  publishEnd: string | null;
+  rejectReason: string | null;
   phone: string;
   latitude: number | null;
   longitude: number | null;
@@ -139,6 +143,8 @@ export interface AdRequest {
   images: string[];
   phone: string;
   homepage: string | null;
+  displayStart: string | null;
+  displayEnd: string | null;
   status: AdRequestStatus;
   adminNote: string | null;
   createdAt: string;

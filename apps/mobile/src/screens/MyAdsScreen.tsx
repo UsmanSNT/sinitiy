@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Alert } from "../lib/alert";
+import { windowText } from "../lib/publishWindow";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -75,6 +76,7 @@ export function MyAdsScreen({ navigation }: Props) {
               </View>
               <Text style={styles.title}>{ad.title}</Text>
               <Text style={styles.content} numberOfLines={2}>{ad.content}</Text>
+              {windowText(ad.displayStart, ad.displayEnd) ? <Text style={styles.date}>노출 기간 {windowText(ad.displayStart, ad.displayEnd)}</Text> : null}
               {ad.status === "rejected" && (
                 <Text style={styles.rejected}>{ad.adminNote ? `반려 사유: ${ad.adminNote}` : "관리자가 반려한 광고입니다. '수정'으로 내용을 고치면 다시 심사를 받습니다."}</Text>
               )}

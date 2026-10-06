@@ -22,6 +22,7 @@ export function serializePost(post: any) {
     title: post.title,
     content: post.content,
     images: post.images,
+    region: post.region,
     likeCount: post._count?.likes ?? 0,
     commentCount: post._count?.comments ?? 0,
     reportCount: post._count?.reports ?? 0,
@@ -79,6 +80,7 @@ postsRouter.post("/", requireAuth, async (req, res) => {
       title: parsed.data.title,
       content: parsed.data.content,
       images: parsed.data.images,
+      region: parsed.data.region || null,
     },
     include: postInclude,
   });
@@ -101,9 +103,10 @@ postsRouter.put("/:id", requireAuth, async (req, res) => {
   const parsed = createPostSchema.partial().safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ message: "잘못된 요청입니다" });
 
+  const { region, ...rest } = parsed.data;
   const updated = await prisma.post.update({
     where: { id: req.params.id },
-    data: parsed.data,
+    data: { ...rest, ...(region !== undefined ? { region: region || null } : {}) },
     include: postInclude,
   });
 

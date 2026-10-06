@@ -3,6 +3,7 @@ import { prisma } from "../prisma";
 import { requireAuth, requireRole } from "../auth/middleware";
 import { serializeListing } from "./listings";
 import { postInclude, serializePost } from "./posts";
+import { sendPush } from "../push";
 
 export const adminRouter = Router();
 
@@ -77,15 +78,28 @@ adminRouter.get("/listings", async (req, res) => {
 });
 
 adminRouter.patch("/listings/:id/status", async (req, res) => {
-  const { status } = req.body as { status: string };
+  const { status, rejectReason } = req.body as { status: string; rejectReason?: string };
   if (!["active", "closed", "hidden", "pending", "rejected"].includes(status)) {
     return res.status(400).json({ message: "잘못된 요청입니다" });
   }
+  const reason = status === "rejected" ? (typeof rejectReason === "string" ? rejectReason.trim().slice(0, 500) : "") || null : null;
+  const before = await prisma.listing.findUnique({ where: { id: req.params.id } });
+  if (!before) return res.status(404).json({ message: "찾을 수 없습니다" });
   const listing = await prisma.listing.update({
     where: { id: req.params.id },
-    data: { status: status as any },
+    data: { status: status as any, rejectReason: reason },
     include: { org: true },
   });
+
+  // Review natijasi tashkilotga bildiriladi (faqat holat haqiqatan o'zgarganda).
+  if (before.status !== status && (status === "active" || status === "rejected")) {
+    const approved = status === "active";
+    const message = approved ? `"${listing.title}" 공고가 승인되었습니다` : `"${listing.title}" 공고가 반려되었습니다${reason ? ` (사유: ${reason})` : ""}`;
+    await prisma.notification.create({
+      data: { userId: listing.orgId, type: approved ? "listing_approved" : "listing_rejected", refId: listing.id, message },
+    });
+    void sendPush([listing.orgId], "system", { title: "공고 심사 결과", body: message, data: { listingId: listing.id } });
+  }
   return res.json(serializeListing(listing));
 });
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../prisma";
 import { serializeListing } from "./listings";
+import { windowWhere } from "../lib/window";
 
 export const feedRouter = Router();
 
@@ -11,7 +12,7 @@ feedRouter.get("/", async (req, res) => {
 
   const [listings, posts] = await Promise.all([
     prisma.listing.findMany({
-      where: { status: "active" },
+      where: { status: "active", ...windowWhere("publishStart", "publishEnd") },
       include: { org: true },
       orderBy: { createdAt: "desc" },
       take: limit,

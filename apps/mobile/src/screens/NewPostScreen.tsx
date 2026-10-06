@@ -17,6 +17,8 @@ import { useAuth } from "../context/AuthContext";
 import { AppHeader } from "../components/AppHeader";
 import { BottomNav } from "../components/BottomNav";
 import { PhotoPicker } from "../components/PhotoPicker";
+import { RegionPicker } from "../components/RegionPicker";
+import { MaterialIcons } from "@expo/vector-icons";
 import { BackButton } from "../components/BackButton";
 import { colors } from "../theme";
 
@@ -32,6 +34,8 @@ export function NewPostScreen({ navigation, route }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [images, setImages] = useState<string[]>(editing?.images ?? []);
+  const [region, setRegion] = useState<string | null>(editing?.region ?? null);
+  const [regionOpen, setRegionOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -52,7 +56,7 @@ export function NewPostScreen({ navigation, route }: Props) {
     setError(null);
     setSubmitting(true);
     try {
-      const body = { categoryId, title, content, images };
+      const body = { categoryId, title, content, images, region: region ?? "" };
       const post = editing
         ? await api.put<{ id: string }>(`/posts/${editing.id}`, body)
         : await api.post<{ id: string }>("/posts", body);
@@ -87,6 +91,12 @@ export function NewPostScreen({ navigation, route }: Props) {
           ))}
         </View>
 
+        <Pressable onPress={() => setRegionOpen(true)} style={styles.regionRow} accessibilityLabel="지역 선택">
+          <MaterialIcons name="place" size={18} color={colors.brand} />
+          <Text style={[styles.regionText, !region && { color: colors.gray }]} numberOfLines={1}>{region ?? "지역 선택 (선택사항)"}</Text>
+          <MaterialIcons name="keyboard-arrow-down" size={20} color="#66758a" />
+        </Pressable>
+
         <TextInput
           placeholder="제목"
           placeholderTextColor={colors.gray}
@@ -120,6 +130,7 @@ export function NewPostScreen({ navigation, route }: Props) {
           )}
         </Pressable>
       </ScrollView>
+      <RegionPicker visible={regionOpen} value={region} onSelect={setRegion} onClose={() => setRegionOpen(false)} />
       <BottomNav active="Community" />
     </SafeAreaView>
   );
@@ -151,6 +162,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   textArea: { minHeight: 160 },
+  regionRow: { flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1, borderColor: colors.border, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 13, marginBottom: 12 },
+  regionText: { flex: 1, fontSize: 15, color: colors.navy },
   error: { color: "#ef4444", fontSize: 13, marginBottom: 8 },
   button: {
     backgroundColor: colors.brand,

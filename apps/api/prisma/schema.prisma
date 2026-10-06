@@ -83,6 +83,7 @@ model Post {
   title        String
   content      String
   images       String[]   @default([])
+  region       String?
   status       PostStatus @default(visible)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -180,6 +181,10 @@ model Listing {
   targetAudience String
   applyMethod    String
   applyUrl       String?
+  // 게시기간: ikkalasi ham null bo'lsa cheklovsiz. Davr tashqarisidagi e'lon foydalanuvchilarga ko'rinmaydi.
+  publishStart   DateTime?
+  publishEnd     DateTime?
+  rejectReason   String?
   phone          String
   latitude       Float?
   longitude      Float?
@@ -207,6 +212,9 @@ model AdRequest {
   images     String[]        @default([])
   phone      String
   homepage   String?
+  // Banner ko'rsatish davri (null - cheklovsiz).
+  displayStart DateTime?
+  displayEnd   DateTime?
   status     AdRequestStatus @default(pending)
   adminNote  String?
   createdAt  DateTime        @default(now())
@@ -239,6 +247,8 @@ enum NotificationType {
   ad_rejected
   announcement
   inquiry_answered
+  listing_approved
+  listing_rejected
 }
 
 model Notification {

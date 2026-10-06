@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Alert } from "../lib/alert";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -24,6 +24,8 @@ export function AdminListingsScreen({ navigation }: Props) {
   const [tab, setTab] = useState<(typeof tabs)[number]["key"]>("pending");
   const [items, setItems] = useState<Listing[] | null>(null);
   const [error, setError] = useState(false);
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [reason, setReason] = useState("");
 
   const load = useCallback(() => {
     setError(false);
@@ -34,9 +36,11 @@ export function AdminListingsScreen({ navigation }: Props) {
   }, [tab]);
   useFocusEffect(load);
 
-  async function setStatus(item: Listing, status: "active" | "rejected") {
+  async function setStatus(item: Listing, status: "active" | "rejected", rejectReason?: string) {
     try {
-      await api.patch(`/admin/listings/${item.id}/status`, { status });
+      await api.patch(`/admin/listings/${item.id}/status`, { status, rejectReason });
+      setRejectingId(null);
+      setReason("");
       load();
     } catch (err: any) {
       Alert.alert("처리 실패", err?.message ?? "처리하지 못했습니다");
@@ -77,10 +81,31 @@ export function AdminListingsScreen({ navigation }: Props) {
               <Text style={styles.meta}>{item.orgName} · {item.period ?? "기간 미정"}</Text>
               <Text style={styles.content} numberOfLines={3}>{item.content}</Text>
               <Text style={styles.meta}>대상: {item.targetAudience} · 신청: {item.applyMethod} · {item.phone}</Text>
-              {item.status !== "active" && (
+              {item.status === "rejected" && item.rejectReason ? <Text style={styles.meta}>반려 사유: {item.rejectReason}</Text> : null}
+              {rejectingId === item.id ? (
+                <View>
+                  <TextInput
+                    value={reason}
+                    onChangeText={setReason}
+                    placeholder="반려 사유 (기관에 표시됩니다)"
+                    placeholderTextColor={colors.gray}
+                    multiline
+                    maxLength={500}
+                    style={styles.reasonInput}
+                  />
+                  <View style={styles.actions}>
+                    <Pressable style={[styles.actionBtn, styles.rejectBtn]} onPress={() => { setRejectingId(null); setReason(""); }}>
+                      <Text style={styles.rejectText}>취소</Text>
+                    </Pressable>
+                    <Pressable style={[styles.actionBtn, styles.approveBtn]} onPress={() => setStatus(item, "rejected", reason)}>
+                      <Text style={styles.approveText}>반려하기</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ) : item.status !== "active" && (
                 <View style={styles.actions}>
                   {item.status !== "rejected" && (
-                    <Pressable style={[styles.actionBtn, styles.rejectBtn]} onPress={() => setStatus(item, "rejected")}>
+                    <Pressable style={[styles.actionBtn, styles.rejectBtn]} onPress={() => { setRejectingId(item.id); setReason(""); }}>
                       <Text style={styles.rejectText}>반려</Text>
                     </Pressable>
                   )}
@@ -116,6 +141,7 @@ const styles = StyleSheet.create({
   title: { marginTop: 8, fontSize: 17, fontWeight: "800", color: colors.navy },
   meta: { marginTop: 5, fontSize: 13, color: "#8390a2" },
   content: { marginTop: 8, fontSize: 14, color: colors.navy, lineHeight: 20 },
+  reasonInput: { marginTop: 10, minHeight: 64, textAlignVertical: "top", borderWidth: 1, borderColor: "#dfe5eb", borderRadius: 8, padding: 10, fontSize: 14, color: colors.navy },
   actions: { flexDirection: "row", justifyContent: "flex-end", gap: 8, marginTop: 12 },
   actionBtn: { borderRadius: 999, paddingHorizontal: 18, paddingVertical: 8 },
   approveBtn: { backgroundColor: colors.brand },

@@ -11,6 +11,8 @@ import { colors } from "../theme";
 import { AppHeader } from "../components/AppHeader";
 import { SearchBar } from "../components/SearchBar";
 import { matchesQuery } from "../lib/search";
+import { matchesRegionFilter } from "../lib/regionMatch";
+import { RegionPicker } from "../components/RegionPicker";
 
 type CommunityPost = Post & { thumbnail?: ImageSourcePropType; sample?: boolean };
 
@@ -27,19 +29,19 @@ const samplePosts: CommunityPost[] = [
   {
     id: "sample-hiking", authorId: "sample", authorName: "서초 산우회", categoryId: "club",
     categoryName: "동네소식", title: "동네 산책 함께해요!", content: "이번 주말, 가까운 공원에서 함께 걸어요.",
-    images: [], thumbnail: fallbackImages[0], likeCount: 12, commentCount: 5, reportCount: 0,
+    images: [], region: null, thumbnail: fallbackImages[0], likeCount: 12, commentCount: 5, reportCount: 0,
     status: "visible", createdAt: new Date().toISOString(), sample: true,
   },
   {
     id: "sample-board", authorId: "sample", authorName: "행복한 모임", categoryId: "club",
     categoryName: "취미생활", title: "바둑 동호회 회원 모집", content: "초보자도 환영합니다. 편하게 오세요.",
-    images: [], thumbnail: fallbackImages[1], likeCount: 8, commentCount: 3, reportCount: 0,
+    images: [], region: null, thumbnail: fallbackImages[1], likeCount: 8, commentCount: 3, reportCount: 0,
     status: "visible", createdAt: new Date().toISOString(), sample: true,
   },
   {
     id: "sample-cafe", authorId: "sample", authorName: "마포 이웃", categoryId: "free",
     categoryName: "자유게시판", title: "우리동네 카페 추천", content: "분위기 좋은 카페를 공유해요.",
-    images: [], thumbnail: fallbackImages[2], likeCount: 15, commentCount: 6, reportCount: 0,
+    images: [], region: null, thumbnail: fallbackImages[2], likeCount: 15, commentCount: 6, reportCount: 0,
     status: "visible", createdAt: new Date().toISOString(), sample: true,
   },
 ];
@@ -52,6 +54,8 @@ export function CommunityScreen() {
   const [activeTab, setActiveTab] = useState(ALL);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [regionFilter, setRegionFilter] = useState<string | null>(null);
+  const [regionOpen, setRegionOpen] = useState(false);
 
   const load = useCallback(() => {
     api.get<PaginatedResult<Post>>("/posts")
@@ -68,9 +72,10 @@ export function CommunityScreen() {
       posts.filter(
         (post) =>
           (activeTab === ALL || post.categoryName === activeTab) &&
+          matchesRegionFilter(regionFilter, post.region) &&
           matchesQuery(query, post.title, post.content, post.authorName)
       ),
-    [activeTab, posts, query]
+    [activeTab, posts, query, regionFilter]
   );
 
   function writePost() {
@@ -101,6 +106,11 @@ export function CommunityScreen() {
           </Pressable>
         ))}
       </View>
+      <Pressable style={styles.regionBar} onPress={() => setRegionOpen(true)} accessibilityLabel="지역 선택">
+        <MaterialIcons name="place" size={16} color="#2468d7" />
+        <Text style={styles.regionText} numberOfLines={1}>{regionFilter ? regionFilter : "전체지역"}</Text>
+        <MaterialIcons name="keyboard-arrow-down" size={18} color="#66758a" />
+      </Pressable>
       <FlatList
         data={visiblePosts}
         keyExtractor={(item) => item.id}
@@ -116,7 +126,7 @@ export function CommunityScreen() {
             >
               <View style={styles.postCopy}>
                 <Text style={styles.postTitle} numberOfLines={1}>{item.title}</Text>
-                <Text style={styles.postMeta} numberOfLines={1}>{item.authorName} · {item.categoryName}</Text>
+                <Text style={styles.postMeta} numberOfLines={1}>{item.authorName} · {item.categoryName}{item.region ? ` · ${item.region.split(" ").pop()}` : ""}</Text>
                 <Text style={styles.postBody} numberOfLines={2}>{item.content}</Text>
                 <View style={styles.stats}>
                   <MaterialCommunityIcons name="heart-outline" size={14} color="#8290a4" />
@@ -130,6 +140,7 @@ export function CommunityScreen() {
           );
         }}
       />
+      <RegionPicker visible={regionOpen} value={regionFilter} onSelect={setRegionFilter} onClose={() => setRegionOpen(false)} />
     </View>
   );
 }
@@ -144,6 +155,8 @@ const styles = StyleSheet.create({
   tabLabel: { fontSize: 14, fontWeight: "600", color: "#8792a4" },
   tabLabelActive: { color: "#2468d7", fontWeight: "800" },
   tabIndicator: { position: "absolute", bottom: 0, width: 42, height: 3, borderRadius: 2, backgroundColor: "#3979dc" },
+  regionBar: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 18, paddingVertical: 9, backgroundColor: colors.white, borderBottomWidth: 1, borderBottomColor: "#eef1f5" },
+  regionText: { flex: 1, fontSize: 13, fontWeight: "700", color: "#2468d7" },
   list: { padding: 12, paddingBottom: 20, gap: 10 },
   empty: { textAlign: "center", color: colors.gray, marginTop: 40 },
   postCard: { minHeight: 112, flexDirection: "row", alignItems: "center", backgroundColor: colors.white, borderWidth: 1, borderColor: "#e8edf3", borderRadius: 8, padding: 12, shadowColor: "#1d2b45", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 5, elevation: 1 },

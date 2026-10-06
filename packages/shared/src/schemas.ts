@@ -57,6 +57,7 @@ export const createPostSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.string().min(1),
   images: z.array(z.union([httpImageUrl, uploadedImagePath])).max(3).default([]),
+  region: z.string().max(50).optional().or(z.literal("")),
 });
 
 export type CreatePostInput = z.infer<typeof createPostSchema>;
@@ -78,6 +79,9 @@ export type ReportInput = z.infer<typeof reportSchema>;
 
 const imageList = z.array(z.union([httpImageUrl, uploadedImagePath])).max(3).default([]);
 // Bo'sh qator ham ruxsat (formada maydon bo'sh qoldirilganda); http(s) manzil bo'lishi shart.
+// Sana: "YYYY-MM-DD" (KST). Bo'sh qator - cheklovsiz.
+export const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "날짜 형식이 올바르지 않습니다").optional().or(z.literal(""));
+
 const optionalUrl = z.string().url().regex(/^https?:\/\//).optional().or(z.literal(""));
 
 export const createListingSchema = z.object({
@@ -92,6 +96,8 @@ export const createListingSchema = z.object({
   targetAudience: z.string().min(1),
   applyMethod: z.string().min(1),
   applyUrl: optionalUrl,
+  publishStart: dateOnly,
+  publishEnd: dateOnly,
   phone: contactPhone,
   latitude: z.number().optional(),
   longitude: z.number().optional(),
@@ -105,6 +111,8 @@ export const createAdRequestSchema = z.object({
   images: imageList,
   phone: contactPhone,
   homepage: z.string().url().optional().or(z.literal("")),
+  displayStart: dateOnly,
+  displayEnd: dateOnly,
 });
 
 export type CreateAdRequestInput = z.infer<typeof createAdRequestSchema>;

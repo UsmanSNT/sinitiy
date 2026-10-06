@@ -13,6 +13,7 @@ import { categoriesByType, listingTypeLabel } from "../lib/listingMeta";
 import { colors } from "../theme";
 import { RegionPicker } from "../components/RegionPicker";
 import { PhotoPicker } from "../components/PhotoPicker";
+import { DateRangeFields, validateDateRange } from "../components/DateRangeFields";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ListingForm">;
 
@@ -31,6 +32,8 @@ export function ListingFormScreen({ navigation, route }: Props) {
     targetAudience: editing?.targetAudience ?? "",
     applyMethod: editing?.applyMethod ?? "",
     applyUrl: editing?.applyUrl ?? "",
+    publishStart: editing?.publishStart ?? "",
+    publishEnd: editing?.publishEnd ?? "",
     phone: editing?.phone ?? "",
   });
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +48,8 @@ export function ListingFormScreen({ navigation, route }: Props) {
     if (!form.content.trim()) return setError("내용을 입력해주세요");
     if (!form.targetAudience.trim()) return setError("지원 대상을 입력해주세요");
     if (!form.applyMethod.trim()) return setError("신청 방법을 입력해주세요");
+    const dateError = validateDateRange(form.publishStart, form.publishEnd);
+    if (dateError) return setError(dateError);
     let applyUrl = form.applyUrl.trim();
     if (applyUrl && !/^https?:\/\//.test(applyUrl)) applyUrl = `https://${applyUrl}`;
     if (applyUrl && !/^https?:\/\/[^\s.]+\.[^\s]+$/.test(applyUrl)) return setError("신청 페이지 주소를 올바르게 입력해주세요");
@@ -66,6 +71,8 @@ export function ListingFormScreen({ navigation, route }: Props) {
         period: form.period.trim() || undefined,
         images,
         applyUrl,
+        publishStart: form.publishStart,
+        publishEnd: form.publishEnd,
       };
       if (editing) await api.put(`/listings/${editing.id}`, body);
       else await api.post("/listings", body);
@@ -124,7 +131,8 @@ export function ListingFormScreen({ navigation, route }: Props) {
             </Text>
           </Pressable>
 
-          <Field label="기간" value={form.period} onChangeText={update("period")} placeholder="예: 2025.09 - 10 또는 상시 모집" />
+          <Field label="일정 (화면에 표시)" value={form.period} onChangeText={update("period")} placeholder="예: 2025.09 - 10 또는 상시 모집" />
+          <DateRangeFields label="게시 기간 (선택)" start={form.publishStart} end={form.publishEnd} onChange={(publishStart, publishEnd) => setForm((f) => ({ ...f, publishStart, publishEnd }))} />
           <Field label="내용" value={form.content} onChangeText={update("content")} placeholder="공고 내용을 입력하세요" multiline />
           <Field label="지원 대상" value={form.targetAudience} onChangeText={update("targetAudience")} placeholder="예: 만 60세 이상" />
           <Field label="신청 방법" value={form.applyMethod} onChangeText={update("applyMethod")} placeholder="예: 전화 신청, 온라인 신청" />

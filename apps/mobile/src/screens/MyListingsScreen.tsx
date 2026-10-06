@@ -10,6 +10,7 @@ import type { Listing } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { listingTypeLabel, statusColor, statusLabel } from "../lib/listingMeta";
+import { windowState, windowText } from "../lib/publishWindow";
 import { ListState } from "../components/ListState";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
@@ -60,18 +61,24 @@ export function MyListingsScreen({ navigation }: Props) {
       <ScrollView contentContainerStyle={styles.list} showsVerticalScrollIndicator={false}>
         <ListState loading={items === null && !error} error={error} empty={items !== null && items.length === 0} />
         {(items ?? []).map((item) => {
-          const c = statusColor[item.status];
+          const win = windowState(item.publishStart, item.publishEnd);
+          const c = item.status === "active" && win === "expired" ? { fg: "#6b7688", bg: "#eceff3" } : item.status === "active" && win === "scheduled" ? { fg: "#2368bc", bg: "#e8f1ff" } : statusColor[item.status];
+          const badge = item.status === "active" && win === "expired" ? "기간 만료" : item.status === "active" && win === "scheduled" ? "게시 예정" : statusLabel[item.status];
+          const range = windowText(item.publishStart, item.publishEnd);
           return (
             <View key={item.id} style={styles.card}>
               <View style={styles.cardTop}>
                 <Text style={styles.type}>{listingTypeLabel[item.listingType]}{item.category ? ` · ${item.category}` : ""}</Text>
                 <View style={[styles.badge, { backgroundColor: c.bg }]}>
-                  <Text style={[styles.badgeText, { color: c.fg }]}>{statusLabel[item.status]}</Text>
+                  <Text style={[styles.badgeText, { color: c.fg }]}>{badge}</Text>
                 </View>
               </View>
               <Text style={styles.title}>{item.title}</Text>
               <Text style={styles.meta}>{item.period ?? "기간 미정"}</Text>
-              {item.status === "rejected" && <Text style={styles.rejected}>관리자가 반려한 공고입니다. '수정'으로 내용을 고치면 다시 심사를 받습니다.</Text>}
+              {range ? <Text style={styles.meta}>게시 기간 {range}</Text> : null}
+              {item.status === "rejected" && (
+                <Text style={styles.rejected}>{item.rejectReason ? `반려 사유: ${item.rejectReason}` : "관리자가 반려한 공고입니다."} '수정'으로 내용을 고치면 다시 심사를 받습니다.</Text>
+              )}
               <View style={styles.actions}>
                 <Pressable onPress={() => navigation.navigate("ListingForm", { listing: item })} hitSlop={8}>
                   <Text style={styles.editText}>수정</Text>

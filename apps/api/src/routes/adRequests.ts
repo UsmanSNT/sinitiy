@@ -3,6 +3,7 @@ import { createAdRequestSchema } from "@sinity/shared";
 import { prisma } from "../prisma";
 import { sendPush } from "../push";
 import { requireAuth, requireRole } from "../auth/middleware";
+import { parseWindow, toKstDate, windowWhere } from "../lib/window";
 
 export const adRequestsRouter = Router();
 
@@ -16,6 +17,8 @@ function serialize(ad: any) {
     images: ad.images,
     phone: ad.phone,
     homepage: ad.homepage,
+    displayStart: toKstDate(ad.displayStart),
+    displayEnd: toKstDate(ad.displayEnd),
     status: ad.status,
     adminNote: ad.adminNote,
     createdAt: ad.createdAt,
@@ -36,8 +39,12 @@ adRequestsRouter.post("/", requireAuth, requireRole("organization"), async (req,
   const parsed = createAdRequestSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ message: "잘못된 요청입니다" });
 
+  const { displayStart, displayEnd, ...fields } = parsed.data;
+  const window = parseWindow(displayStart, displayEnd);
+  if ("error" in window) return res.status(400).json({ message: window.error });
+
   const ad = await prisma.adRequest.create({
-    data: { orgId: req.auth!.userId, ...parsed.data, homepage: parsed.data.homepage || null },
+    data: { orgId: req.auth!.userId, ...fields, homepage: fields.homepage || null, displayStart: window.start ?? null, displayEnd: window.end ?? null },
     include: { org: true },
   });
 
@@ -53,9 +60,13 @@ adRequestsRouter.put("/:id", requireAuth, requireRole("organization"), async (re
   const parsed = createAdRequestSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ message: "잘못된 요청입니다" });
 
+  const { displayStart, displayEnd, ...fields } = parsed.data;
+  const window = parseWindow(displayStart, displayEnd);
+  if ("error" in window) return res.status(400).json({ message: window.error });
+
   const updated = await prisma.adRequest.update({
     where: { id: ad.id },
-    data: { ...parsed.data, homepage: parsed.data.homepage || null, status: "pending", adminNote: null },
+    data: { ...fields, homepage: fields.homepage || null, displayStart: window.start ?? null, displayEnd: window.end ?? null, status: "pending", adminNote: null },
     include: { org: true },
   });
   return res.json(serialize(updated));
@@ -64,7 +75,7 @@ adRequestsRouter.put("/:id", requireAuth, requireRole("organization"), async (re
 // Faqat tasdiqlangan reklamalar - foydalanuvchi tomonida tasodifiy ko'rsatish uchun.
 adRequestsRouter.get("/approved", async (_req, res) => {
   const items = await prisma.adRequest.findMany({
-    where: { status: "approved" },
+    where: { status: "approved", ...windowWhere("displayStart", "displayEnd") },
     include: { org: true },
     orderBy: { createdAt: "desc" },
   });

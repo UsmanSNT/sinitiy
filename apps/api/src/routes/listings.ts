@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createListingSchema } from "@sinity/shared";
 import { prisma } from "../prisma";
 import { requireAuth, requireRole } from "../auth/middleware";
+import { parseWindow, toKstDate, windowWhere } from "../lib/window";
 
 export const listingsRouter = Router();
 
@@ -21,6 +22,9 @@ export function serializeListing(listing: any) {
     targetAudience: listing.targetAudience,
     applyMethod: listing.applyMethod,
     applyUrl: listing.applyUrl,
+    publishStart: toKstDate(listing.publishStart),
+    publishEnd: toKstDate(listing.publishEnd),
+    rejectReason: listing.rejectReason,
     phone: listing.phone,
     latitude: listing.latitude,
     longitude: listing.longitude,
@@ -36,6 +40,7 @@ listingsRouter.get("/", async (req, res) => {
 
   const where = {
     status: "active" as const,
+    ...windowWhere("publishStart", "publishEnd"),
     ...(listingType ? { listingType: listingType as any } : {}),
     ...(category ? { category } : {}),
     ...(region ? { region } : {}),
@@ -68,7 +73,8 @@ listingsRouter.get("/mine", requireAuth, requireRole("organization"), async (req
 
 listingsRouter.get("/:id", async (req, res) => {
   const listing = await prisma.listing.findUnique({ where: { id: req.params.id }, include: { org: true } });
-  if (!listing || listing.status !== "active") return res.status(404).json({ message: "찾을 수 없습니다" });
+  const live = listing && (!listing.publishStart || listing.publishStart <= new Date()) && (!listing.publishEnd || listing.publishEnd >= new Date());
+  if (!listing || listing.status !== "active" || !live) return res.status(404).json({ message: "찾을 수 없습니다" });
   return res.json(serializeListing(listing));
 });
 
@@ -83,9 +89,13 @@ listingsRouter.post("/", requireAuth, requireRole("organization", "admin"), asyn
   }
 
   // Tashkilot e'loni admin tasdiqlaguncha ko'rinmaydi; admin yozsa darhol faol.
+  const { publishStart, publishEnd, ...fields } = parsed.data;
+  const window = parseWindow(publishStart, publishEnd);
+  if ("error" in window) return res.status(400).json({ message: window.error });
+
   const status = req.auth!.userType === "admin" ? "active" : "pending";
   const listing = await prisma.listing.create({
-    data: { orgId, ...parsed.data, applyUrl: parsed.data.applyUrl || null, status },
+    data: { orgId, ...fields, applyUrl: fields.applyUrl || null, publishStart: window.start ?? null, publishEnd: window.end ?? null, status },
     include: { org: true },
   });
 
@@ -105,13 +115,17 @@ listingsRouter.put("/:id", requireAuth, requireRole("organization", "admin"), as
   // Tashkilot tasdiqlangan/rad etilgan e'lonni tahrirlasa, qayta tekshiruv uchun "pending"ga qaytadi
   // (tasdiqlangandan keyin ichki o'zgartirib qo'yish mumkin bo'lmasligi uchun). Admin tahriri holatni o'zgartirmaydi.
   const resubmit = req.auth!.userType === "organization" && ["active", "rejected"].includes(listing.status);
-  const { applyUrl, ...rest } = parsed.data;
+  const { applyUrl, publishStart, publishEnd, ...rest } = parsed.data;
+  const window = parseWindow(publishStart, publishEnd, { start: listing.publishStart, end: listing.publishEnd });
+  if ("error" in window) return res.status(400).json({ message: window.error });
   const updated = await prisma.listing.update({
     where: { id: req.params.id },
     data: {
       ...rest,
       ...(applyUrl !== undefined ? { applyUrl: applyUrl || null } : {}),
-      ...(resubmit ? { status: "pending" as const } : {}),
+      ...(window.start !== undefined ? { publishStart: window.start } : {}),
+      ...(window.end !== undefined ? { publishEnd: window.end } : {}),
+      ...(resubmit ? { status: "pending" as const, rejectReason: null } : {}),
     },
     include: { org: true },
   });
