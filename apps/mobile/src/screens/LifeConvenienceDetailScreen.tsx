@@ -12,7 +12,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "LifeConvenienceDetail">
 const PHONE = "02-567-8901";
 
 export function LifeConvenienceDetailScreen({ navigation, route }: Props) {
-  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod } = route.params;
+  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod, applyUrl } = route.params;
   const phoneNumber = phone ?? PHONE;
 
   return (
@@ -61,7 +61,7 @@ export function LifeConvenienceDetailScreen({ navigation, route }: Props) {
           <MaterialIcons name="call" size={19} color="#1768b5" />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>
-        <Pressable style={styles.applyButton} onPress={() => showApplyInfo(applyMethod, phoneNumber)}>
+        <Pressable style={styles.applyButton} onPress={() => showApplyInfo(applyMethod, phoneNumber, applyUrl)}>
           <Text style={styles.applyButtonText}>신청하기</Text>
         </Pressable>
       </View>

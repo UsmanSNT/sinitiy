@@ -1,6 +1,7 @@
 import type { ImageSourcePropType } from "react-native";
 import type { NavigatorScreenParams } from "@react-navigation/native";
-import type { AdRequest } from "@sinity/shared";
+import type { AdRequest, Listing, Post } from "@sinity/shared";
+import type { SupportDocKind } from "../lib/supportDocs";
 
 export type RootStackParamList = {
   Splash: undefined;
@@ -8,7 +9,8 @@ export type RootStackParamList = {
   Signup: undefined;
   Main: NavigatorScreenParams<MainTabParamList> | undefined;
   PostDetail: { postId: string };
-  NewPost: undefined;
+  // post berilsa - tahrirlash rejimi.
+  NewPost: { post?: Post } | undefined;
   JobWelfare: undefined;
   JobDetail: {
     title: string;
@@ -20,6 +22,7 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    applyUrl?: string;
     // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
     from?: keyof MainTabParamList;
   };
@@ -34,6 +37,7 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    applyUrl?: string;
     // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
     from?: keyof MainTabParamList;
   };
@@ -48,6 +52,7 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    applyUrl?: string;
     // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
     from?: keyof MainTabParamList;
   };
@@ -62,12 +67,14 @@ export type RootStackParamList = {
     phone?: string;
     targetAudience?: string;
     applyMethod?: string;
+    applyUrl?: string;
     // Qaysi pastki menyu bo'limidan ochilgani (footer'da o'sha tab yonadi); berilmasa 서비스.
     from?: keyof MainTabParamList;
   };
   Notifications: undefined;
   MyListings: undefined;
-  ListingForm: undefined;
+  // listing berilsa - tahrirlash rejimi (tashkilot o'z e'lonini tahrirlaydi).
+  ListingForm: { listing?: Listing } | undefined;
   AdminListings: undefined;
   AdminReports: undefined;
   AdminPosts: undefined;
@@ -75,7 +82,7 @@ export type RootStackParamList = {
   AdminAds: undefined;
   AdminStats: undefined;
   MyAds: undefined;
-  AdForm: undefined;
+  AdForm: { ad?: AdRequest } | undefined;
   AdDetail: { ad: AdRequest; color: string };
   PartnerInfo: undefined;
   PartnerDetail: {
@@ -92,6 +99,9 @@ export type RootStackParamList = {
   InterestSettings: undefined;
   NotificationSettings: undefined;
   CustomerCenter: undefined;
+  SupportDoc: { kind: SupportDocKind };
+  Inquiry: undefined;
+  AdminInquiries: undefined;
   MyActivity: undefined;
 };
 

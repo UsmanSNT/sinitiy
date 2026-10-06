@@ -81,6 +81,7 @@ export interface Listing {
   period: string | null;
   targetAudience: string;
   applyMethod: string;
+  applyUrl: string | null;
   phone: string;
   latitude: number | null;
   longitude: number | null;
@@ -185,4 +186,15 @@ export interface AdminStats {
   push: { devices: number };
   // Oxirgi 7 kun (Asia/Seoul sanasi bilan), eskidan yangiga.
   daily: Array<{ date: string; users: number; posts: number }>;
+}
+
+export interface Inquiry {
+  id: string;
+  userId: string;
+  userName?: string;
+  title: string;
+  content: string;
+  answer: string | null;
+  answeredAt: string | null;
+  createdAt: string;
 }

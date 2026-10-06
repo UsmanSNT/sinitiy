@@ -29,6 +29,7 @@ type EducationItem = {
   phone?: string;
   targetAudience?: string;
   applyMethod?: string;
+  applyUrl?: string;
 };
 
 const filters = ["전체", "교육", "문화·여가", "행사"] as const;
@@ -52,6 +53,7 @@ export function EducationCultureScreen({ navigation }: Props) {
       phone: l.phone,
       targetAudience: l.targetAudience,
       applyMethod: l.applyMethod,
+      applyUrl: l.applyUrl ?? undefined,
   }));
   const visibleItems = educationItems.filter(
     (item) =>

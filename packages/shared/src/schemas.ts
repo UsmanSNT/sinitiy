@@ -50,12 +50,13 @@ export type LoginInput = z.infer<typeof loginSchema>;
 // Yuklangan rasm DB'da nisbiy yo'l sifatida saqlanadi (/api/uploads/<fayl>) - emulyator,
 // staging va production'da host har xil bo'lgani uchun to'liq URL saqlab bo'lmaydi.
 export const uploadedImagePath = z.string().regex(/^\/api\/uploads\/[\w-]+\.(jpg|png|webp)$/);
+const httpImageUrl = z.string().url().regex(/^https?:\/\//);
 
 export const createPostSchema = z.object({
   categoryId: z.string().min(1),
   title: z.string().min(1).max(200),
   content: z.string().min(1),
-  images: z.array(z.union([z.string().url(), uploadedImagePath])).max(3).default([]),
+  images: z.array(z.union([httpImageUrl, uploadedImagePath])).max(3).default([]),
 });
 
 export type CreatePostInput = z.infer<typeof createPostSchema>;
@@ -75,10 +76,14 @@ export const reportSchema = z.object({
 
 export type ReportInput = z.infer<typeof reportSchema>;
 
+const imageList = z.array(z.union([httpImageUrl, uploadedImagePath])).max(3).default([]);
+// Bo'sh qator ham ruxsat (formada maydon bo'sh qoldirilganda); http(s) manzil bo'lishi shart.
+const optionalUrl = z.string().url().regex(/^https?:\/\//).optional().or(z.literal(""));
+
 export const createListingSchema = z.object({
   listingType: z.enum(["job", "health", "education", "life"]),
   title: z.string().min(1).max(200),
-  images: z.array(z.string().url()).default([]),
+  images: imageList,
   content: z.string().min(1),
   category: z.string().max(50).optional(),
   region: z.string().max(50).optional(),
@@ -86,6 +91,7 @@ export const createListingSchema = z.object({
   period: z.string().max(100).optional(),
   targetAudience: z.string().min(1),
   applyMethod: z.string().min(1),
+  applyUrl: optionalUrl,
   phone: contactPhone,
   latitude: z.number().optional(),
   longitude: z.number().optional(),
@@ -96,7 +102,7 @@ export type CreateListingInput = z.infer<typeof createListingSchema>;
 export const createAdRequestSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.string().min(1),
-  images: z.array(z.string().url()).default([]),
+  images: imageList,
   phone: contactPhone,
   homepage: z.string().url().optional().or(z.literal("")),
 });
@@ -108,3 +114,10 @@ export const createCategorySchema = z.object({
 });
 
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
+
+export const createInquirySchema = z.object({
+  title: z.string().trim().min(1).max(100),
+  content: z.string().trim().min(1).max(2000),
+});
+
+export type CreateInquiryInput = z.infer<typeof createInquirySchema>;

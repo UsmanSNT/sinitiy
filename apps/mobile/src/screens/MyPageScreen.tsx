@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
 import { AppHeader } from "../components/AppHeader";
 
-type IconName = "heart" | "bell" | "bullhorn" | "briefcase" | "face-agent" | "clipboard-text" | "shield-check" | "account-group" | "alert-octagon" | "file-document-multiple" | "account-cog" | "bullhorn-variant" | "chart-box";
+type IconName = "heart" | "bell" | "bullhorn" | "briefcase" | "face-agent" | "clipboard-text" | "shield-check" | "account-group" | "alert-octagon" | "file-document-multiple" | "account-cog" | "bullhorn-variant" | "chart-box" | "message-outline";
 
 // Kirmagan foydalanuvchiga faqat login bilan ochiladigan, ilovada haqiqatan ishlaydigan imkoniyatlar ko'rsatiladi.
 const guestBenefits: Array<{ icon: IconName; color: string; background: string; title: string; subtitle: string }> = [
@@ -47,6 +47,7 @@ export function MyPageScreen() {
       { icon: "bullhorn-variant", color: "#c9661c", background: "#fff1e2", title: "광고 승인 관리", subtitle: "기관 배너 광고 심사·게시 관리", onPress: () => navigation.navigate("AdminAds") },
       { icon: "alert-octagon", color: "#d4483f", background: "#fdeaea", title: "신고 관리", subtitle: "신고된 게시글 확인 및 처리", onPress: () => navigation.navigate("AdminReports") },
       { icon: "file-document-multiple", color: "#2368bc", background: "#e8f1ff", title: "게시글 관리", subtitle: "커뮤니티 글 숨김·삭제", onPress: () => navigation.navigate("AdminPosts") },
+      { icon: "message-outline", color: "#5479b8", background: "#eaf0fb", title: "문의 관리", subtitle: "1:1 문의 확인 및 답변", onPress: () => navigation.navigate("AdminInquiries") },
       { icon: "account-cog", color: "#7a5cd6", background: "#f0ebfb", title: "회원 관리", subtitle: "회원 조회 및 이용 정지", onPress: () => navigation.navigate("AdminUsers") }
     );
   }

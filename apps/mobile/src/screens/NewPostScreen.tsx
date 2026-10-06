@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -9,33 +8,30 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import type { Category } from "@sinity/shared";
 import type { RootStackParamList } from "../navigation/types";
-import { api, imageUri, uploadImage } from "../lib/api";
+import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { AppHeader } from "../components/AppHeader";
 import { BottomNav } from "../components/BottomNav";
+import { PhotoPicker } from "../components/PhotoPicker";
 import { BackButton } from "../components/BackButton";
 import { colors } from "../theme";
 
 type Props = NativeStackScreenProps<RootStackParamList, "NewPost">;
 
-const MAX_IMAGES = 3;
-
-export function NewPostScreen({ navigation }: Props) {
+export function NewPostScreen({ navigation, route }: Props) {
   const { user } = useAuth();
+  const editing = route.params?.post;
   const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryId, setCategoryId] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [categoryId, setCategoryId] = useState(editing?.categoryId ?? "");
+  const [title, setTitle] = useState(editing?.title ?? "");
+  const [content, setContent] = useState(editing?.content ?? "");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const [images, setImages] = useState<string[]>(editing?.images ?? []);
 
   useEffect(() => {
     if (!user) {
@@ -44,31 +40,9 @@ export function NewPostScreen({ navigation }: Props) {
     }
     api.get<Category[]>("/categories").then((cats) => {
       setCategories(cats);
-      if (cats[0]) setCategoryId(cats[0].id);
+      if (cats[0] && !editing) setCategoryId(cats[0].id);
     });
   }, [navigation, user]);
-
-  async function pickImage() {
-    if (images.length >= MAX_IMAGES || uploading) return;
-    setError(null);
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        quality: 0.6,
-        base64: true,
-      });
-      const asset = result.canceled ? null : result.assets[0];
-      if (!asset) return;
-      if (!asset.base64) throw new Error("이미지를 불러오지 못했습니다");
-      setUploading(true);
-      const path = await uploadImage(asset.base64, asset.mimeType ?? "image/jpeg");
-      setImages((prev) => [...prev, path]);
-    } catch (err: any) {
-      setError(err?.message ?? "이미지 업로드에 실패했습니다");
-    } finally {
-      setUploading(false);
-    }
-  }
 
   async function handleSubmit() {
     if (!title.trim() || !content.trim()) {
@@ -78,13 +52,13 @@ export function NewPostScreen({ navigation }: Props) {
     setError(null);
     setSubmitting(true);
     try {
-      const post = await api.post<{ id: string }>("/posts", {
-        categoryId,
-        title,
-        content,
-        images,
-      });
-      navigation.replace("PostDetail", { postId: post.id });
+      const body = { categoryId, title, content, images };
+      const post = editing
+        ? await api.put<{ id: string }>(`/posts/${editing.id}`, body)
+        : await api.post<{ id: string }>("/posts", body);
+      // Tahrirlashda orqaga qaytiladi (PostDetail fokusda qayta yuklanadi) - aks holda stack'da eski nusxa qolib ketadi.
+      if (editing) navigation.goBack();
+      else navigation.replace("PostDetail", { postId: post.id });
     } catch (err: any) {
       setError(err?.message ?? "글 작성에 실패했습니다");
     } finally {
@@ -97,7 +71,7 @@ export function NewPostScreen({ navigation }: Props) {
       <AppHeader />
       <ScrollView contentContainerStyle={styles.container}>
         <BackButton onPress={() => navigation.goBack()} />
-        <Text style={styles.title}>글쓰기</Text>
+        <Text style={styles.title}>{editing ? "글 수정" : "글쓰기"}</Text>
 
         <View style={styles.categoryRow}>
           {categories.map((c) => (
@@ -130,35 +104,7 @@ export function NewPostScreen({ navigation }: Props) {
           textAlignVertical="top"
         />
 
-        <View style={styles.photoRow}>
-          {images.map((path) => (
-            <View key={path} style={styles.photoBox}>
-              <Image source={{ uri: imageUri(path) }} style={styles.photo} />
-              <Pressable
-                accessibilityLabel="사진 삭제"
-                hitSlop={8}
-                onPress={() => setImages((prev) => prev.filter((p) => p !== path))}
-                style={styles.photoRemove}
-              >
-                <MaterialIcons name="close" size={16} color={colors.white} />
-              </Pressable>
-            </View>
-          ))}
-          {images.length < MAX_IMAGES && (
-            <Pressable onPress={pickImage} disabled={uploading} style={[styles.photoBox, styles.photoAdd]}>
-              {uploading ? (
-                <ActivityIndicator color={colors.brand} />
-              ) : (
-                <>
-                  <MaterialIcons name="add-a-photo" size={26} color={colors.brand} />
-                  <Text style={styles.photoAddText}>
-                    사진 {images.length}/{MAX_IMAGES}
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          )}
-        </View>
+        <PhotoPicker images={images} onChange={setImages} onError={setError} />
 
         {error && <Text style={styles.error}>{error}</Text>}
 
@@ -170,7 +116,7 @@ export function NewPostScreen({ navigation }: Props) {
           {submitting ? (
             <ActivityIndicator color={colors.white} />
           ) : (
-            <Text style={styles.buttonText}>등록하기</Text>
+            <Text style={styles.buttonText}>{editing ? "수정하기" : "등록하기"}</Text>
           )}
         </Pressable>
       </ScrollView>
@@ -205,29 +151,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   textArea: { minHeight: 160 },
-  photoRow: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 14 },
-  photoBox: { width: 96, height: 96, borderRadius: 14, overflow: "visible" },
-  photo: { width: 96, height: 96, borderRadius: 14, backgroundColor: "#eef1f5" },
-  photoRemove: {
-    position: "absolute",
-    top: -6,
-    right: -6,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#4b5563",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  photoAdd: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderStyle: "dashed",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 4,
-  },
-  photoAddText: { fontSize: 13, color: colors.gray },
   error: { color: "#ef4444", fontSize: 13, marginBottom: 8 },
   button: {
     backgroundColor: colors.brand,

@@ -6,27 +6,26 @@ import { AppHeader } from "../components/AppHeader";
 import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
-import { comingSoon } from "../lib/actions";
 
 type Props = NativeStackScreenProps<RootStackParamList, "CustomerCenter">;
 const PHONE = "02-1234-5678";
-const rows: Array<{ icon: "frequently-asked-questions" | "message-outline" | "phone-outline" | "information-outline" | "shield-lock-outline" | "file-document-outline"; title: string; subtitle: string; phone?: boolean }> = [
-  { icon: "frequently-asked-questions", title: "자주 묻는 질문", subtitle: "궁금한 점을 확인해 보세요" },
-  { icon: "message-outline", title: "1:1 문의", subtitle: "문의 내용을 남겨주세요" },
-  { icon: "phone-outline", title: "전화 문의", subtitle: `${PHONE}\n평일 09:00 - 18:00`, phone: true },
-  { icon: "information-outline", title: "앱 이용 가이드", subtitle: "시니티 이용 방법 안내" },
-  { icon: "shield-lock-outline", title: "개인정보 처리방침", subtitle: "" },
-  { icon: "file-document-outline", title: "이용약관", subtitle: "" },
-];
-
 export function CustomerCenterScreen({ navigation }: Props) {
+  const rows: Array<{ icon: "frequently-asked-questions" | "message-outline" | "phone-outline" | "information-outline" | "shield-lock-outline" | "file-document-outline"; title: string; subtitle: string; phone?: boolean; go?: () => void }> = [
+    { icon: "frequently-asked-questions", title: "자주 묻는 질문", subtitle: "궁금한 점을 확인해 보세요", go: () => navigation.navigate("SupportDoc", { kind: "faq" }) },
+    { icon: "message-outline", title: "1:1 문의", subtitle: "문의 내용을 남겨주세요", go: () => navigation.navigate("Inquiry") },
+    { icon: "phone-outline", title: "전화 문의", subtitle: `${PHONE}
+평일 09:00 - 18:00`, phone: true },
+    { icon: "information-outline", title: "앱 이용 가이드", subtitle: "시니티 이용 방법 안내", go: () => navigation.navigate("SupportDoc", { kind: "guide" }) },
+    { icon: "shield-lock-outline", title: "개인정보 처리방침", subtitle: "", go: () => navigation.navigate("SupportDoc", { kind: "privacy" }) },
+    { icon: "file-document-outline", title: "이용약관", subtitle: "", go: () => navigation.navigate("SupportDoc", { kind: "terms" }) },
+  ];
   return (
     <SafeAreaView style={styles.safeArea} edges={[]}>
       <AppHeader />
       <View style={styles.header}><Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}><MaterialIcons name="chevron-left" size={28} color={colors.navy} /></Pressable><Text style={styles.headerTitle}>고객센터</Text><View style={styles.spacer} /></View>
       <View style={styles.body}>
         <View style={styles.card}>{rows.map((item, index) => (
-          <Pressable key={item.title} onPress={() => (item.phone ? Linking.openURL(`tel:${PHONE}`) : comingSoon())} style={[styles.row, index < rows.length - 1 && styles.divider]}>
+          <Pressable key={item.title} onPress={() => (item.phone ? Linking.openURL(`tel:${PHONE}`) : item.go?.())} style={[styles.row, index < rows.length - 1 && styles.divider]}>
             <View style={styles.iconBox}><MaterialCommunityIcons name={item.icon} size={21} color="#5b73a0" /></View>
             <View style={styles.copy}><Text style={styles.title}>{item.title}</Text>{item.subtitle ? <Text style={styles.subtitle}>{item.subtitle}</Text> : null}</View><MaterialIcons name="chevron-right" size={22} color="#a4adba" />
           </Pressable>

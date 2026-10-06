@@ -20,6 +20,7 @@ export function serializeListing(listing: any) {
     period: listing.period,
     targetAudience: listing.targetAudience,
     applyMethod: listing.applyMethod,
+    applyUrl: listing.applyUrl,
     phone: listing.phone,
     latitude: listing.latitude,
     longitude: listing.longitude,
@@ -84,7 +85,7 @@ listingsRouter.post("/", requireAuth, requireRole("organization", "admin"), asyn
   // Tashkilot e'loni admin tasdiqlaguncha ko'rinmaydi; admin yozsa darhol faol.
   const status = req.auth!.userType === "admin" ? "active" : "pending";
   const listing = await prisma.listing.create({
-    data: { orgId, ...parsed.data, status },
+    data: { orgId, ...parsed.data, applyUrl: parsed.data.applyUrl || null, status },
     include: { org: true },
   });
 
@@ -101,9 +102,17 @@ listingsRouter.put("/:id", requireAuth, requireRole("organization", "admin"), as
   const parsed = createListingSchema.partial().safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ message: "잘못된 요청입니다" });
 
+  // Tashkilot tasdiqlangan/rad etilgan e'lonni tahrirlasa, qayta tekshiruv uchun "pending"ga qaytadi
+  // (tasdiqlangandan keyin ichki o'zgartirib qo'yish mumkin bo'lmasligi uchun). Admin tahriri holatni o'zgartirmaydi.
+  const resubmit = req.auth!.userType === "organization" && ["active", "rejected"].includes(listing.status);
+  const { applyUrl, ...rest } = parsed.data;
   const updated = await prisma.listing.update({
     where: { id: req.params.id },
-    data: parsed.data,
+    data: {
+      ...rest,
+      ...(applyUrl !== undefined ? { applyUrl: applyUrl || null } : {}),
+      ...(resubmit ? { status: "pending" as const } : {}),
+    },
     include: { org: true },
   });
 

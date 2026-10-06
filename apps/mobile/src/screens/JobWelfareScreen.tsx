@@ -28,6 +28,7 @@ type JobItem = {
   phone?: string;
   targetAudience?: string;
   applyMethod?: string;
+  applyUrl?: string;
 };
 
 const filters = ["전체", "일자리", "복지정책", "지원금"] as const;
@@ -51,6 +52,7 @@ export function JobWelfareScreen({ navigation }: Props) {
     phone: l.phone,
     targetAudience: l.targetAudience,
     applyMethod: l.applyMethod,
+      applyUrl: l.applyUrl ?? undefined,
   }));
   const visibleItems = jobItems.filter(
     (item) =>

@@ -8,6 +8,12 @@ function webAlert(title: string, message?: string, buttons?: AlertButton[]) {
 
 ${message}` : title;
   const actions = buttons ?? [];
+  // 0-1 ta tugma: oddiy xabar (masalan "등록 완료" + [확인]) - window.alert, so'ng tugmaning onPress'i chaqiriladi.
+  if (actions.length <= 1) {
+    window.alert(text);
+    actions[0]?.onPress?.();
+    return;
+  }
   const cancel = actions.find((b) => b.style === "cancel");
   const others = actions.filter((b) => b !== cancel);
   if (others.length === 0) {

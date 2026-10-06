@@ -44,6 +44,23 @@ adRequestsRouter.post("/", requireAuth, requireRole("organization"), async (req,
   return res.status(201).json(serialize(ad));
 });
 
+// Tashkilot o'z so'rovini tahrirlaydi; tasdiqlangan yoki rad etilgan bo'lsa qayta tekshiruvga ("pending") qaytadi.
+adRequestsRouter.put("/:id", requireAuth, requireRole("organization"), async (req, res) => {
+  const ad = await prisma.adRequest.findUnique({ where: { id: req.params.id } });
+  if (!ad) return res.status(404).json({ message: "찾을 수 없습니다" });
+  if (ad.orgId !== req.auth!.userId) return res.status(403).json({ message: "권한이 없습니다" });
+
+  const parsed = createAdRequestSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ message: "잘못된 요청입니다" });
+
+  const updated = await prisma.adRequest.update({
+    where: { id: ad.id },
+    data: { ...parsed.data, homepage: parsed.data.homepage || null, status: "pending", adminNote: null },
+    include: { org: true },
+  });
+  return res.json(serialize(updated));
+});
+
 // Faqat tasdiqlangan reklamalar - foydalanuvchi tomonida tasodifiy ko'rsatish uchun.
 adRequestsRouter.get("/approved", async (_req, res) => {
   const items = await prisma.adRequest.findMany({

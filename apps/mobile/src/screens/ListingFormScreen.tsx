@@ -12,15 +12,27 @@ import { api } from "../lib/api";
 import { categoriesByType, listingTypeLabel } from "../lib/listingMeta";
 import { colors } from "../theme";
 import { RegionPicker } from "../components/RegionPicker";
+import { PhotoPicker } from "../components/PhotoPicker";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ListingForm">;
 
 const types: ListingType[] = ["health", "education", "life", "job"];
 
-export function ListingFormScreen({ navigation }: Props) {
-  const [listingType, setListingType] = useState<ListingType>("health");
-  const [category, setCategory] = useState("");
-  const [form, setForm] = useState({ title: "", region: "", period: "", content: "", targetAudience: "", applyMethod: "", phone: "" });
+export function ListingFormScreen({ navigation, route }: Props) {
+  const editing = route.params?.listing;
+  const [listingType, setListingType] = useState<ListingType>(editing?.listingType ?? "health");
+  const [category, setCategory] = useState(editing?.category ?? "");
+  const [images, setImages] = useState<string[]>(editing?.images ?? []);
+  const [form, setForm] = useState({
+    title: editing?.title ?? "",
+    region: editing?.region ?? "",
+    period: editing?.period ?? "",
+    content: editing?.content ?? "",
+    targetAudience: editing?.targetAudience ?? "",
+    applyMethod: editing?.applyMethod ?? "",
+    applyUrl: editing?.applyUrl ?? "",
+    phone: editing?.phone ?? "",
+  });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [regionPickerOpen, setRegionPickerOpen] = useState(false);
@@ -33,13 +45,16 @@ export function ListingFormScreen({ navigation }: Props) {
     if (!form.content.trim()) return setError("내용을 입력해주세요");
     if (!form.targetAudience.trim()) return setError("지원 대상을 입력해주세요");
     if (!form.applyMethod.trim()) return setError("신청 방법을 입력해주세요");
+    let applyUrl = form.applyUrl.trim();
+    if (applyUrl && !/^https?:\/\//.test(applyUrl)) applyUrl = `https://${applyUrl}`;
+    if (applyUrl && !/^https?:\/\/[^\s.]+\.[^\s]+$/.test(applyUrl)) return setError("신청 페이지 주소를 올바르게 입력해주세요");
     if (!isValidKoreanPhone(form.phone)) return setError("문의 전화번호를 올바르게 입력해주세요");
 
     if (submitting) return;
     setSubmitting(true);
     let succeeded = false;
     try {
-      await api.post("/listings", {
+      const body = {
         listingType,
         title: form.title.trim(),
         content: form.content.trim(),
@@ -49,9 +64,13 @@ export function ListingFormScreen({ navigation }: Props) {
         category: category || undefined,
         region: form.region.trim() || undefined,
         period: form.period.trim() || undefined,
-      });
+        images,
+        applyUrl,
+      };
+      if (editing) await api.put(`/listings/${editing.id}`, body);
+      else await api.post("/listings", body);
       succeeded = true;
-      Alert.alert("등록 완료", "관리자 승인 후 게시됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
+      Alert.alert(editing ? "수정 완료" : "등록 완료", editing ? "관리자 재승인 후 다시 게시됩니다." : "관리자 승인 후 게시됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
     } catch (err: any) {
       setError(err?.message ?? "등록에 실패했습니다");
     } finally {
@@ -69,7 +88,7 @@ export function ListingFormScreen({ navigation }: Props) {
         <Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}>
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
         </Pressable>
-        <Text style={styles.headerTitle}>새 공고 등록</Text>
+        <Text style={styles.headerTitle}>{editing ? "공고 수정" : "새 공고 등록"}</Text>
       </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -109,15 +128,18 @@ export function ListingFormScreen({ navigation }: Props) {
           <Field label="내용" value={form.content} onChangeText={update("content")} placeholder="공고 내용을 입력하세요" multiline />
           <Field label="지원 대상" value={form.targetAudience} onChangeText={update("targetAudience")} placeholder="예: 만 60세 이상" />
           <Field label="신청 방법" value={form.applyMethod} onChangeText={update("applyMethod")} placeholder="예: 전화 신청, 온라인 신청" />
+          <Field label="신청 페이지 주소 (선택)" value={form.applyUrl} onChangeText={update("applyUrl")} placeholder="www.example.com/apply" autoCapitalize="none" keyboardType="url" />
+          <Text style={styles.label}>대표 이미지 (선택)</Text>
+          <PhotoPicker images={images} onChange={setImages} onError={setError} />
           <Field label="문의 전화" value={form.phone} onChangeText={update("phone")} placeholder="02-123-4567" keyboardType="phone-pad" />
 
           {error && <Text style={styles.error}>{error}</Text>}
-          <Text style={styles.notice}>등록한 공고는 관리자 승인 후 사용자에게 게시됩니다.</Text>
+          <Text style={styles.notice}>등록한 공고는 관리자 승인 후 사용자에게 게시됩니다. 승인된 공고를 수정하면 다시 승인을 받아야 합니다.</Text>
         </ScrollView>
 
         <View style={styles.footer}>
           <Pressable onPress={submit} disabled={submitting} style={[styles.submit, submitting && { opacity: 0.6 }]}>
-            {submitting ? <ActivityIndicator color={colors.white} /> : <Text style={styles.submitText}>등록하기</Text>}
+            {submitting ? <ActivityIndicator color={colors.white} /> : <Text style={styles.submitText}>{editing ? "수정하기" : "등록하기"}</Text>}
           </Pressable>
         </View>
       </KeyboardAvoidingView>

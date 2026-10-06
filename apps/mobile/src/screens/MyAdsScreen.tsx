@@ -76,11 +76,16 @@ export function MyAdsScreen({ navigation }: Props) {
               <Text style={styles.title}>{ad.title}</Text>
               <Text style={styles.content} numberOfLines={2}>{ad.content}</Text>
               {ad.status === "rejected" && (
-                <Text style={styles.rejected}>{ad.adminNote ? `반려 사유: ${ad.adminNote}` : "관리자가 반려한 광고입니다. 내용을 확인해 다시 신청해주세요."}</Text>
+                <Text style={styles.rejected}>{ad.adminNote ? `반려 사유: ${ad.adminNote}` : "관리자가 반려한 광고입니다. '수정'으로 내용을 고치면 다시 심사를 받습니다."}</Text>
               )}
-              <Pressable onPress={() => confirmDelete(ad)} hitSlop={8} style={styles.deleteBtn}>
-                <Text style={styles.deleteText}>삭제</Text>
-              </Pressable>
+              <View style={styles.actions}>
+                <Pressable onPress={() => navigation.navigate("AdForm", { ad })} hitSlop={8}>
+                  <Text style={styles.editText}>수정</Text>
+                </Pressable>
+                <Pressable onPress={() => confirmDelete(ad)} hitSlop={8}>
+                  <Text style={styles.deleteText}>삭제</Text>
+                </Pressable>
+              </View>
             </View>
           );
         })}
@@ -111,7 +116,8 @@ const styles = StyleSheet.create({
   title: { marginTop: 8, fontSize: 17, fontWeight: "800", color: colors.navy },
   content: { marginTop: 5, fontSize: 14, color: "#4d5a6c", lineHeight: 20 },
   rejected: { marginTop: 8, fontSize: 13, color: "#d4483f" },
-  deleteBtn: { alignSelf: "flex-end", marginTop: 6 },
+  actions: { flexDirection: "row", justifyContent: "flex-end", gap: 18, marginTop: 8 },
+  editText: { fontSize: 14, color: "#2368bc", fontWeight: "700", textDecorationLine: "underline" },
   deleteText: { fontSize: 14, color: "#8390a2", textDecorationLine: "underline" },
   footer: { padding: 15, backgroundColor: colors.white, borderTopWidth: 1, borderTopColor: "#edf0f4" },
   addButton: { backgroundColor: colors.brand, borderRadius: 999, paddingVertical: 14, alignItems: "center" },

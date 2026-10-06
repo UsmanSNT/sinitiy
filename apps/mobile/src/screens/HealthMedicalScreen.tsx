@@ -32,6 +32,7 @@ type HealthItem = {
   phone?: string;
   targetAudience?: string;
   applyMethod?: string;
+  applyUrl?: string;
 };
 
 const filters = ["전체", "병원", "건강정보", "예방·검진"] as const;
@@ -62,6 +63,7 @@ export function HealthMedicalScreen({ navigation }: Props) {
       phone: l.phone,
       targetAudience: l.targetAudience,
       applyMethod: l.applyMethod,
+      applyUrl: l.applyUrl ?? undefined,
   }));
   const visibleItems = healthItems.filter(
     (item) =>

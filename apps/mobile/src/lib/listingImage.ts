@@ -1,5 +1,6 @@
 import type { ImageSourcePropType } from "react-native";
 import type { Listing } from "@sinity/shared";
+import { imageUri } from "./api";
 
 // Serverda rasm bo'lmasa, loyihadagi namunaviy rasmlardan navbatma-navbat olinadi.
 const fallbacks: ImageSourcePropType[] = [
@@ -16,6 +17,6 @@ export function fallbackImage(index: number): ImageSourcePropType {
 }
 
 export function listingImage(listing: Listing, index: number): ImageSourcePropType {
-  if (listing.images[0]) return { uri: listing.images[0] };
+  if (listing.images[0]) return { uri: imageUri(listing.images[0]) };
   return fallbackImage(index);
 }

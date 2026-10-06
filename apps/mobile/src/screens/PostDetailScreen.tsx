@@ -43,6 +43,24 @@ export function PostDetailScreen({ route, navigation }: Props) {
     Alert.alert("오류", err?.message ?? "요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.");
   }
 
+  function confirmDelete() {
+    Alert.alert("게시글 삭제", "삭제한 게시글은 다시 볼 수 없습니다. 삭제할까요?", [
+      { text: "취소", style: "cancel" },
+      {
+        text: "삭제",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await api.delete(`/posts/${postId}`);
+            navigation.goBack();
+          } catch (err) {
+            showError(err);
+          }
+        },
+      },
+    ]);
+  }
+
   async function toggleLike() {
     if (!user) {
       navigation.navigate("Login");
@@ -113,6 +131,18 @@ export function PostDetailScreen({ route, navigation }: Props) {
           <Text style={styles.category}>{post.categoryName}</Text>
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.author}>{post.authorName}</Text>
+          {user && (user.id === post.authorId || user.userType === "admin") && (
+            <View style={styles.ownerRow}>
+              {user.id === post.authorId && (
+                <Pressable onPress={() => navigation.navigate("NewPost", { post })} hitSlop={8}>
+                  <Text style={styles.ownerEdit}>수정</Text>
+                </Pressable>
+              )}
+              <Pressable onPress={confirmDelete} hitSlop={8}>
+                <Text style={styles.ownerDelete}>삭제</Text>
+              </Pressable>
+            </View>
+          )}
           <Text style={styles.body}>{post.content}</Text>
           {post.images.map((src) => (
             <PostImage key={src} uri={imageUri(src)} />
@@ -192,6 +222,9 @@ const styles = StyleSheet.create({
   loading: { textAlign: "center", marginTop: 40, color: colors.gray },
   category: { fontSize: 14, color: colors.accent, fontWeight: "700", marginTop: 16 },
   title: { fontSize: 20, fontWeight: "700", color: colors.navy, marginTop: 6 },
+  ownerRow: { flexDirection: "row", gap: 18, marginTop: 10 },
+  ownerEdit: { fontSize: 14, fontWeight: "700", color: "#2368bc", textDecorationLine: "underline" },
+  ownerDelete: { fontSize: 14, color: "#8390a2", textDecorationLine: "underline" },
   author: { fontSize: 14, color: colors.gray, marginTop: 4 },
   body: { fontSize: 14, color: colors.navy, marginTop: 16, lineHeight: 22 },
   actionRow: { flexDirection: "row", gap: 10, marginTop: 20 },

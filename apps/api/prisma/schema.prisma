@@ -19,6 +19,7 @@ enum UserStatus {
 }
 
 model User {
+  inquiries Inquiry[]
   id                   String    @id @default(cuid())
   email                String    @unique
   passwordHash         String
@@ -178,6 +179,7 @@ model Listing {
   period         String?
   targetAudience String
   applyMethod    String
+  applyUrl       String?
   phone          String
   latitude       Float?
   longitude      Float?
@@ -236,6 +238,7 @@ enum NotificationType {
   ad_approved
   ad_rejected
   announcement
+  inquiry_answered
 }
 
 model Notification {
@@ -269,5 +272,20 @@ model PushToken {
   updatedAt DateTime @updatedAt
 
   @@map("push_tokens")
+  @@index([userId])
+}
+
+// 1:1 문의: foydalanuvchi savol yuboradi, admin javob yozadi.
+model Inquiry {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title      String
+  content    String
+  answer     String?
+  answeredAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@map("inquiries")
   @@index([userId])
 }

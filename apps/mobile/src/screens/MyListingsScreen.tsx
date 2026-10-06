@@ -71,10 +71,15 @@ export function MyListingsScreen({ navigation }: Props) {
               </View>
               <Text style={styles.title}>{item.title}</Text>
               <Text style={styles.meta}>{item.period ?? "기간 미정"}</Text>
-              {item.status === "rejected" && <Text style={styles.rejected}>관리자가 반려한 공고입니다. 내용을 확인해 다시 등록해주세요.</Text>}
-              <Pressable onPress={() => confirmDelete(item)} hitSlop={8} style={styles.deleteBtn}>
-                <Text style={styles.deleteText}>삭제</Text>
-              </Pressable>
+              {item.status === "rejected" && <Text style={styles.rejected}>관리자가 반려한 공고입니다. '수정'으로 내용을 고치면 다시 심사를 받습니다.</Text>}
+              <View style={styles.actions}>
+                <Pressable onPress={() => navigation.navigate("ListingForm", { listing: item })} hitSlop={8}>
+                  <Text style={styles.editText}>수정</Text>
+                </Pressable>
+                <Pressable onPress={() => confirmDelete(item)} hitSlop={8}>
+                  <Text style={styles.deleteText}>삭제</Text>
+                </Pressable>
+              </View>
             </View>
           );
         })}
@@ -103,7 +108,8 @@ const styles = StyleSheet.create({
   title: { marginTop: 8, fontSize: 17, fontWeight: "800", color: colors.navy },
   meta: { marginTop: 4, fontSize: 13, color: "#8390a2" },
   rejected: { marginTop: 8, fontSize: 13, color: "#d4483f" },
-  deleteBtn: { alignSelf: "flex-end", marginTop: 6 },
+  actions: { flexDirection: "row", justifyContent: "flex-end", gap: 18, marginTop: 8 },
+  editText: { fontSize: 14, color: "#2368bc", fontWeight: "700", textDecorationLine: "underline" },
   deleteText: { fontSize: 14, color: "#8390a2", textDecorationLine: "underline" },
   footer: { padding: 15, backgroundColor: colors.white, borderTopWidth: 1, borderTopColor: "#edf0f4" },
   addButton: { backgroundColor: colors.brand, borderRadius: 999, paddingVertical: 14, alignItems: "center" },

@@ -13,7 +13,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "JobDetail">;
 const PHONE = "02-123-4567";
 
 export function JobDetailScreen({ navigation, route }: Props) {
-  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod } = route.params;
+  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod, applyUrl } = route.params;
   const phoneNumber = phone ?? PHONE;
 
   return (
@@ -64,7 +64,7 @@ export function JobDetailScreen({ navigation, route }: Props) {
           <MaterialIcons name="call" size={18} color={colors.navy} />
           <Text style={styles.callButtonText}>전화하기</Text>
         </Pressable>
-        <Pressable style={styles.goButton} onPress={() => showApplyInfo(applyMethod, phoneNumber)}>
+        <Pressable style={styles.goButton} onPress={() => showApplyInfo(applyMethod, phoneNumber, applyUrl)}>
           <Text style={styles.goButtonText}>신청하기</Text>
         </Pressable>
       </View>

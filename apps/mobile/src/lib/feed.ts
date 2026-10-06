@@ -118,6 +118,7 @@ export function openFeedItem(
     phone: l.phone,
     targetAudience: l.targetAudience,
     applyMethod: l.applyMethod,
+    applyUrl: l.applyUrl ?? undefined,
     from: "Home",
   });
 }

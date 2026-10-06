@@ -11,17 +11,20 @@ import type { RootStackParamList } from "../navigation/types";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
 import { colors } from "../theme";
+import { PhotoPicker } from "../components/PhotoPicker";
 
 type Props = NativeStackScreenProps<RootStackParamList, "AdForm">;
 
-export function AdFormScreen({ navigation }: Props) {
+export function AdFormScreen({ navigation, route }: Props) {
   const { user } = useAuth();
+  const editing = route.params?.ad;
+  const [images, setImages] = useState<string[]>(editing?.images ?? []);
   // Tashkilot profilidagi ma'lumotlar oldindan to'ldiriladi - ko'pincha o'zgartirish shart emas.
   const [form, setForm] = useState({
-    title: "",
-    content: "",
-    phone: user?.phone ?? "",
-    homepage: user?.organizationProfile?.homepage ?? "",
+    title: editing?.title ?? "",
+    content: editing?.content ?? "",
+    phone: editing?.phone ?? user?.phone ?? "",
+    homepage: editing?.homepage ?? user?.organizationProfile?.homepage ?? "",
   });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -40,14 +43,17 @@ export function AdFormScreen({ navigation }: Props) {
     setSubmitting(true);
     let succeeded = false;
     try {
-      await api.post("/ad-requests", {
+      const body = {
         title: form.title.trim(),
         content: form.content.trim(),
         phone: form.phone.trim(),
         homepage,
-      });
+        images,
+      };
+      if (editing) await api.put(`/ad-requests/${editing.id}`, body);
+      else await api.post("/ad-requests", body);
       succeeded = true;
-      Alert.alert("신청 완료", "관리자 승인 후 배너로 노출됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
+      Alert.alert(editing ? "수정 완료" : "신청 완료", editing ? "관리자 재승인 후 다시 배너로 노출됩니다." : "관리자 승인 후 배너로 노출됩니다.", [{ text: "확인", onPress: () => navigation.goBack() }]);
     } catch (err: any) {
       setError(err?.message ?? "신청에 실패했습니다");
     } finally {
@@ -63,7 +69,7 @@ export function AdFormScreen({ navigation }: Props) {
         <Pressable accessibilityLabel="뒤로" hitSlop={12} onPress={() => navigation.goBack()}>
           <MaterialIcons name="chevron-left" size={28} color={colors.navy} />
         </Pressable>
-        <Text style={styles.headerTitle}>새 광고 신청</Text>
+        <Text style={styles.headerTitle}>{editing ? "광고 수정" : "새 광고 신청"}</Text>
       </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -72,6 +78,8 @@ export function AdFormScreen({ navigation }: Props) {
           <Field label="광고 내용" value={form.content} onChangeText={update("content")} placeholder="어르신들께 알리고 싶은 내용을 적어주세요" multiline />
           <Field label="문의 전화" value={form.phone} onChangeText={update("phone")} placeholder="02-123-4567" keyboardType="phone-pad" />
           <Field label="홈페이지 (선택)" value={form.homepage} onChangeText={update("homepage")} placeholder="www.example.com" autoCapitalize="none" keyboardType="url" />
+          <Text style={styles.label}>배너 이미지 (선택)</Text>
+          <PhotoPicker images={images} onChange={setImages} onError={setError} />
 
           {error && <Text style={styles.error}>{error}</Text>}
           <Text style={styles.notice}>승인된 광고는 '파트너 정보' 화면 상단 배너로 노출됩니다.</Text>
@@ -79,7 +87,7 @@ export function AdFormScreen({ navigation }: Props) {
 
         <View style={styles.footer}>
           <Pressable onPress={submit} disabled={submitting} style={[styles.submit, submitting && { opacity: 0.6 }]}>
-            {submitting ? <ActivityIndicator color={colors.white} /> : <Text style={styles.submitText}>신청하기</Text>}
+            {submitting ? <ActivityIndicator color={colors.white} /> : <Text style={styles.submitText}>{editing ? "수정하기" : "신청하기"}</Text>}
           </Pressable>
         </View>
       </KeyboardAvoidingView>

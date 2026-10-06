@@ -33,6 +33,7 @@ type LifeItem = {
   phone?: string;
   targetAudience?: string;
   applyMethod?: string;
+  applyUrl?: string;
 };
 
 const filters = ["전체", "교통", "주거", "생활지원"] as const;
@@ -63,6 +64,7 @@ export function LifeConvenienceScreen({ navigation }: Props) {
       phone: l.phone,
       targetAudience: l.targetAudience,
       applyMethod: l.applyMethod,
+      applyUrl: l.applyUrl ?? undefined,
   }));
   const visibleItems = lifeItems.filter(
     (item) =>
