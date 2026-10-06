@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { RootStackParamList } from "../navigation/types";
 import { BellIcon } from "./HomeIcons";
 import { useUnreadCount } from "../lib/feed";
+import { useAuth } from "../context/AuthContext";
 import { useStatusBarStyle } from "../lib/useStatusBarStyle";
 import { colors } from "../theme";
 
@@ -21,7 +22,9 @@ interface Props {
 export function AppHeader({ dark, unreadCount }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
-  const fetched = useUnreadCount(unreadCount === undefined);
+  const { user } = useAuth();
+  // 알림 (qo'ng'iroqcha va yangi xabarlar soni) faqat ro'yxatdan o'tgan foydalanuvchiga; mehmonga so'rov ham yuborilmaydi.
+  const fetched = useUnreadCount(!!user && unreadCount === undefined);
   const unread = unreadCount ?? fetched;
   useStatusBarStyle(dark ? "light-content" : "dark-content");
   const fg = dark ? colors.white : colors.navy;
@@ -38,18 +41,20 @@ export function AppHeader({ dark, unreadCount }: Props) {
         </View>
         <Text style={[styles.name, { color: fg }]}>시니티</Text>
       </Pressable>
-      <Pressable
-        accessibilityLabel={unread ? `알림, 읽지 않은 소식 ${unread}개` : "알림"}
-        hitSlop={12}
-        onPress={() => navigation.navigate("Notifications")}
-      >
-        <BellIcon color={fg} size={26} />
-        {unread > 0 ? (
-          <View style={[styles.badge, dark && styles.badgeDark]}>
-            <Text style={styles.badgeText}>{unread > 99 ? "99+" : unread}</Text>
-          </View>
-        ) : null}
-      </Pressable>
+      {user ? (
+        <Pressable
+          accessibilityLabel={unread ? `알림, 읽지 않은 소식 ${unread}개` : "알림"}
+          hitSlop={12}
+          onPress={() => navigation.navigate("Notifications")}
+        >
+          <BellIcon color={fg} size={26} />
+          {unread > 0 ? (
+            <View style={[styles.badge, dark && styles.badgeDark]}>
+              <Text style={styles.badgeText}>{unread > 99 ? "99+" : unread}</Text>
+            </View>
+          ) : null}
+        </Pressable>
+      ) : null}
     </View>
   );
 }

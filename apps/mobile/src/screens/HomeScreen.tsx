@@ -70,6 +70,8 @@ export function HomeScreen() {
         </View>
       </View>
 
+      {/* Yangi xabarlar (오늘의 알림) faqat kirgan foydalanuvchiga ko'rsatiladi. */}
+      {user ? (
       <View style={styles.noticeBar}>
         <View style={styles.noticeHeader}>
           <Text style={styles.noticeTitle}>오늘의 알림</Text>
@@ -99,6 +101,7 @@ export function HomeScreen() {
           );
         })}
       </View>
+      ) : null}
     </View>
   );
 }

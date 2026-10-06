@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -54,7 +54,11 @@ const personalLabel: Record<AppNotification["type"], { label: string; color: str
 };
 
 export function NotificationsScreen({ navigation }: Props) {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  // Mehmonga 알림 ekrani yo'q - kirish sahifasiga yo'naltiriladi.
+  useEffect(() => {
+    if (!authLoading && !user) navigation.replace("Login");
+  }, [authLoading, user, navigation]);
   const [mode, setMode] = useState<Mode>("feed");
   const [mine, setMine] = useState<AppNotification[] | null>(null);
   const { items, loading, error } = useFeed(50);
