@@ -26,7 +26,7 @@ Server (49.247.205.179) — a shared VPS that also runs unrelated projects
                                    /api/*  → proxy_pass to 127.0.0.1:4000/api/
 ```
 
-Live URL: **http://49.247.205.179:8090**
+Live URL: **https://xn--9i1bx81a37l.com** (시니티.com). Eski manzil http://49.247.205.179:8090 faqat yangi build tarqatilgunga qadar ishlaydi, keyin yopiladi.
 
 ## Exact workflow file
 
@@ -96,7 +96,7 @@ and never generates new migration files on the server. **Always create migration
 ## Environment variables baked into the web build
 
 `EXPO_PUBLIC_API_URL` is set at build time (in the GitHub Actions script) to
-`http://49.247.205.179:8090/api` — this gets compiled into the static JS bundle. If the server's
+`https://xn--9i1bx81a37l.com/api` — this gets compiled into the static JS bundle. If the server's
 IP or port ever changes, update it in **both** `.github/workflows/deploy.yml` and re-deploy;
 there is no runtime config for this on web builds. (Android/iOS native builds don't need this —
 they use the platform-aware default in `apps/mobile/src/lib/api.ts`, or their own

@@ -9,7 +9,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://49.247.205.179:8090/api"
+        "EXPO_PUBLIC_API_URL": "https://xn--9i1bx81a37l.com/api"
       }
     },
     "production": {
@@ -18,7 +18,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://49.247.205.179:8090/api"
+        "EXPO_PUBLIC_API_URL": "https://xn--9i1bx81a37l.com/api"
       }
     }
   },
