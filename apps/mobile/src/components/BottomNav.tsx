@@ -3,14 +3,14 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { MainTabParamList, RootStackParamList } from "../navigation/types";
 import { HomeTabIcon, ServicesTabIcon, CommunityTabIcon, MyPageTabIcon } from "./TabIcons";
-import { useTabBarMetrics } from "../lib/useTabBarMetrics";
+import { TAB_ICON_SIZE, TAB_LABEL_LINE, TAB_LABEL_SIZE, useTabBarMetrics } from "../lib/useTabBarMetrics";
 import { colors } from "../theme";
 
 const icons: Record<keyof MainTabParamList, (props: { color: string }) => React.ReactElement> = {
-  Home: ({ color }) => <HomeTabIcon color={color} size={22} />,
-  Services: ({ color }) => <ServicesTabIcon color={color} size={22} />,
-  Community: ({ color }) => <CommunityTabIcon color={color} size={22} />,
-  MyPage: ({ color }) => <MyPageTabIcon color={color} size={22} />,
+  Home: ({ color }) => <HomeTabIcon color={color} size={TAB_ICON_SIZE} />,
+  Services: ({ color }) => <ServicesTabIcon color={color} size={TAB_ICON_SIZE} />,
+  Community: ({ color }) => <CommunityTabIcon color={color} size={TAB_ICON_SIZE} />,
+  MyPage: ({ color }) => <MyPageTabIcon color={color} size={TAB_ICON_SIZE} />,
 };
 
 const labels: Record<keyof MainTabParamList, string> = {
@@ -33,10 +33,11 @@ interface Props {
 // uchun ham pastki menyu doim ko'rinib turishi maqsadida ishlatiladi.
 export function BottomNav({ active }: Props) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { basePad, bottomPad } = useTabBarMetrics();
+  const { basePad, bottomPad, height } = useTabBarMetrics();
 
+  // MainTabs bilan aynan bir xil balandlik - tab va stack ekranlarda footer bir joyda turadi.
   return (
-    <View style={[styles.bar, { paddingTop: basePad, paddingBottom: bottomPad }]}>
+    <View style={[styles.bar, { height, paddingTop: basePad, paddingBottom: bottomPad }]}>
       {tabs.map((tab) => {
         const isActive = tab === active;
         const color = isActive ? colors.accent : colors.gray;
@@ -63,6 +64,6 @@ const styles = StyleSheet.create({
     borderTopColor: "#edf0f4",
     backgroundColor: colors.white,
   },
-  item: { flex: 1, alignItems: "center", justifyContent: "center", gap: 2 },
-  label: { fontSize: 11, fontWeight: "600", includeFontPadding: false },
+  item: { flex: 1, alignItems: "center", justifyContent: "center", gap: 3 },
+  label: { fontSize: TAB_LABEL_SIZE, lineHeight: TAB_LABEL_LINE, fontWeight: "700", includeFontPadding: false },
 });

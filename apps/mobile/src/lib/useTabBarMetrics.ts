@@ -1,7 +1,11 @@
 import { useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const CONTENT_HEIGHT = 50;
+// Katta ikon va matn - keksalar uchun qulay (MainTabs va BottomNav bir xil o'lchamdan foydalanadi).
+export const TAB_ICON_SIZE = 28;
+export const TAB_LABEL_SIZE = 14;
+export const TAB_LABEL_LINE = 20;
+const CONTENT_HEIGHT = 64;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);

@@ -27,6 +27,12 @@
         }
       ],
       "expo-notifications"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e6fee5a9-ac77-4335-9b69-d3d7aa2fabaa"
+      }
+    },
+    "owner": "avrangzeb1499"
   }
 }
