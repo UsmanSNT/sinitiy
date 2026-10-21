@@ -19,6 +19,7 @@ import { OptionSheet } from "../components/OptionSheet";
 
 type Props = NativeStackScreenProps<RootStackParamList, "EducationCulture">;
 type EducationItem = {
+  id: string;
   title: string;
   organization: string;
   period: string;
@@ -43,6 +44,7 @@ export function EducationCultureScreen({ navigation }: Props) {
   const [query, setQuery] = useState("");
   const { items, loading, error } = useListings("education");
   const educationItems: EducationItem[] = items.map((l, i) => ({
+    id: l.id,
     title: l.title,
     organization: l.orgName,
     period: l.period ?? "",

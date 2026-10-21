@@ -69,8 +69,15 @@ export const createCommentSchema = z.object({
 
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;
 
+export const createListingCommentSchema = z.object({
+  listingId: z.string().min(1),
+  content: z.string().trim().min(1).max(1000),
+});
+
+export type CreateListingCommentInput = z.infer<typeof createListingCommentSchema>;
+
 export const reportSchema = z.object({
-  targetType: z.enum(["post", "comment"]),
+  targetType: z.enum(["post", "comment", "listing_comment"]),
   targetId: z.string().min(1),
   reason: z.string().min(1).max(500),
 });

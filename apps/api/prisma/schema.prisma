@@ -35,6 +35,7 @@ model User {
   organizationProfile  OrganizationProfile?
   posts                Post[]
   comments             Comment[]
+  listingComments      ListingComment[]
   likes                Like[]
   reports              Report[]
   notifications        Notification[]
@@ -127,6 +128,7 @@ model Like {
 enum ReportTargetType {
   post
   comment
+  listing_comment
 }
 
 enum ReportStatus {
@@ -142,6 +144,8 @@ model Report {
   post        Post?            @relation(fields: [postId], references: [id], onDelete: Cascade)
   commentId   String?
   comment     Comment?         @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  listingCommentId String?
+  listingComment   ListingComment? @relation(fields: [listingCommentId], references: [id], onDelete: Cascade)
   reporterId  String
   reporter    User             @relation(fields: [reporterId], references: [id])
   reason      String
@@ -192,9 +196,27 @@ model Listing {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
+  listingComments ListingComment[]
+
   @@map("listings")
   @@index([listingType, status])
   @@index([orgId])
+}
+
+// E'lon izohlari: postlardagi izohlardan alohida jadval, chunki e'lonning ko'rinish qoidalari boshqacha.
+model ListingComment {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+
+  reports   Report[]
+
+  @@map("listing_comments")
+  @@index([listingId])
 }
 
 enum AdRequestStatus {

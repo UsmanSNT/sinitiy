@@ -18,6 +18,7 @@ import { OptionSheet } from "../components/OptionSheet";
 
 type Props = NativeStackScreenProps<RootStackParamList, "JobWelfare">;
 type JobItem = {
+  id: string;
   title: string;
   organization: string;
   period: string;
@@ -42,6 +43,7 @@ export function JobWelfareScreen({ navigation }: Props) {
   const [query, setQuery] = useState("");
   const { items, loading, error } = useListings("job");
   const jobItems: JobItem[] = items.map((l, i) => ({
+    id: l.id,
     title: l.title,
     organization: l.orgName,
     period: l.period ?? "",

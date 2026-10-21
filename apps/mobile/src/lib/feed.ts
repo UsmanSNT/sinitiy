@@ -128,6 +128,7 @@ export function openFeedItem(
   }
   const l = item.listing!;
   navigation.navigate(detailRoutes[l.listingType], {
+    id: l.id,
     title: l.title,
     organization: l.orgName,
     period: l.period ?? "",

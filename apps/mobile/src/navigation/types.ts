@@ -13,6 +13,7 @@ export type RootStackParamList = {
   NewPost: { post?: Post } | undefined;
   JobWelfare: undefined;
   JobDetail: {
+    id: string;
     title: string;
     organization: string;
     period: string;
@@ -28,6 +29,7 @@ export type RootStackParamList = {
   };
   HealthMedical: undefined;
   HealthDetail: {
+    id: string;
     title: string;
     organization: string;
     period: string;
@@ -43,6 +45,7 @@ export type RootStackParamList = {
   };
   EducationCulture: undefined;
   EducationDetail: {
+    id: string;
     title: string;
     organization: string;
     period: string;
@@ -58,6 +61,7 @@ export type RootStackParamList = {
   };
   LifeConvenience: undefined;
   LifeConvenienceDetail: {
+    id: string;
     title: string;
     organization: string;
     period: string;

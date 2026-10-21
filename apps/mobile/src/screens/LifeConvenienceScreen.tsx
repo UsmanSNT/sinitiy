@@ -20,6 +20,7 @@ import { OptionSheet } from "../components/OptionSheet";
 type Props = NativeStackScreenProps<RootStackParamList, "LifeConvenience">;
 type LifeCategory = "교통" | "주거" | "생활지원";
 type LifeItem = {
+  id: string;
   title: string;
   organization: string;
   period: string;
@@ -53,6 +54,7 @@ export function LifeConvenienceScreen({ navigation }: Props) {
   const [query, setQuery] = useState("");
   const { items, loading, error } = useListings("life");
   const lifeItems: LifeItem[] = items.map((l, i) => ({
+    id: l.id,
     title: l.title,
     organization: l.orgName,
     period: l.period ?? "",

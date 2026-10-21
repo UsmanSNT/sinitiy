@@ -16,6 +16,7 @@ reportsRouter.post("/", requireAuth, async (req, res) => {
       targetType,
       postId: targetType === "post" ? targetId : undefined,
       commentId: targetType === "comment" ? targetId : undefined,
+      listingCommentId: targetType === "listing_comment" ? targetId : undefined,
       reporterId: req.auth!.userId,
       reason,
     },
@@ -26,7 +27,7 @@ reportsRouter.post("/", requireAuth, async (req, res) => {
 
 reportsRouter.get("/", requireAuth, requireRole("admin"), async (_req, res) => {
   const reports = await prisma.report.findMany({
-    include: { reporter: true, post: true, comment: true },
+    include: { reporter: true, post: true, comment: true, listingComment: true },
     orderBy: { createdAt: "desc" },
   });
   return res.json(
@@ -40,7 +41,7 @@ reportsRouter.get("/", requireAuth, requireRole("admin"), async (_req, res) => {
       postId: r.postId ?? r.comment?.postId ?? null,
       postTitle: r.post?.title ?? null,
       postStatus: r.post?.status ?? null,
-      commentContent: r.comment?.content ?? null,
+      commentContent: r.comment?.content ?? r.listingComment?.content ?? null,
     }))
   );
 });

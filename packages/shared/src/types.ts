@@ -66,6 +66,15 @@ export interface MyComment {
   createdAt: string;
 }
 
+export interface ListingComment {
+  id: string;
+  listingId: string;
+  authorId: string;
+  authorName: string;
+  content: string;
+  createdAt: string;
+}
+
 export type ListingType = "job" | "health" | "education" | "life";
 
 export interface Listing {

@@ -7,13 +7,14 @@ import type { RootStackParamList } from "../navigation/types";
 import { colors } from "../theme";
 import { BottomNav } from "../components/BottomNav";
 import { showApplyInfo } from "../lib/actions";
+import { ListingComments } from "../components/ListingComments";
 
 type Props = NativeStackScreenProps<RootStackParamList, "JobDetail">;
 
 const PHONE = "02-123-4567";
 
 export function JobDetailScreen({ navigation, route }: Props) {
-  const { title, organization, period, category, image, content, phone, targetAudience, applyMethod, applyUrl } = route.params;
+  const { id, title, organization, period, category, image, content, phone, targetAudience, applyMethod, applyUrl } = route.params;
   const phoneNumber = phone ?? PHONE;
 
   return (
@@ -57,6 +58,7 @@ export function JobDetailScreen({ navigation, route }: Props) {
             <Text style={styles.infoValue}>{phoneNumber}</Text>
           </View>
         </View>
+        <ListingComments listingId={id} />
       </ScrollView>
 
       <View style={styles.actions}>

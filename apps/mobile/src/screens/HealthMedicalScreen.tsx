@@ -19,6 +19,7 @@ import { OptionSheet } from "../components/OptionSheet";
 
 type Props = NativeStackScreenProps<RootStackParamList, "HealthMedical">;
 type HealthItem = {
+  id: string;
   title: string;
   organization: string;
   period: string;
@@ -52,6 +53,7 @@ export function HealthMedicalScreen({ navigation }: Props) {
   const [query, setQuery] = useState("");
   const { items, loading, error } = useListings("health");
   const healthItems: HealthItem[] = items.map((l, i) => ({
+    id: l.id,
     title: l.title,
     organization: l.orgName,
     period: l.period ?? "",
