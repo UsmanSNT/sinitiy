@@ -6,14 +6,14 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "ios": {
-      "bundleIdentifier": "com.sinitymobile",
+      "bundleIdentifier": "com.itslivingco.sinity",
       "supportsTablet": false,
       "config": {
         "usesNonExemptEncryption": false
       }
     },
     "android": {
-      "package": "com.sinitymobile",
+      "package": "com.itslivingco.sinity",
       "predictiveBackGestureEnabled": false
     },
     "web": {
