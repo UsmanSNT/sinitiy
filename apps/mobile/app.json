@@ -4,6 +4,7 @@
     "slug": "sinity",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "com.itslivingco.sinity",
@@ -14,6 +15,10 @@
     },
     "android": {
       "package": "com.itslivingco.sinity",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#182f53"
+      },
       "predictiveBackGestureEnabled": false
     },
     "web": {
