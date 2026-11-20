@@ -4,6 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../navigation/types";
 import { useAuth } from "../context/AuthContext";
+import { api } from "../lib/api";
+import { Alert } from "../lib/alert";
 import { colors } from "../theme";
 import { AppHeader } from "../components/AppHeader";
 
@@ -23,6 +25,24 @@ export function MyPageScreen() {
   async function handleLogout() {
     await logout();
     navigation.reset({ index: 0, routes: [{ name: "Main" }] });
+  }
+
+  function confirmWithdraw() {
+    Alert.alert("회원탈퇴", "탈퇴하면 계정과 작성한 글·댓글 등 모든 정보가 삭제되며 복구할 수 없습니다. 탈퇴할까요?", [
+      { text: "취소", style: "cancel" },
+      {
+        text: "탈퇴하기",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await api.delete("/me");
+            await handleLogout();
+          } catch (err: any) {
+            Alert.alert("탈퇴 실패", err?.message ?? "탈퇴하지 못했습니다");
+          }
+        },
+      },
+    ]);
   }
 
   const menuItems: Array<{ icon: IconName; color: string; background: string; title: string; subtitle: string; onPress: () => void }> = [
@@ -104,6 +124,7 @@ export function MyPageScreen() {
       </View>
       {renderMenu(menuItems)}
       <Pressable onPress={handleLogout} style={styles.logoutRow}><MaterialIcons name="logout" size={20} color="#dd6570" /><Text style={styles.logoutText}>로그아웃</Text></Pressable>
+      {user.userType !== "admin" && <Pressable onPress={confirmWithdraw} style={styles.withdrawRow}><Text style={styles.withdrawText}>회원탈퇴</Text></Pressable>}
     </ScrollView>
     </View>
   );
@@ -119,6 +140,7 @@ const styles = StyleSheet.create({
   menuIcon: { width: 39, height: 39, borderRadius: 12, alignItems: "center", justifyContent: "center" }, menuCopy: { flex: 1, minWidth: 0, paddingHorizontal: 11 },
   menuTitle: { fontSize: 17, fontWeight: "800", color: colors.navy }, menuSubtitle: { marginTop: 3, fontSize: 13, color: "#8995a5" },
   logoutRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 14, padding: 17, borderRadius: 10, backgroundColor: colors.white }, logoutText: { fontSize: 15, color: "#cc5965" },
+  withdrawRow: { alignItems: "center", marginTop: 14, padding: 12 }, withdrawText: { fontSize: 14, color: "#8995a5", textDecorationLine: "underline" },
   guestContainer: { flex: 1, backgroundColor: "#f6f8fb" }, guestContent: { paddingHorizontal: 15, paddingTop: 8, paddingBottom: 20 },
   guestHero: { alignItems: "center", paddingHorizontal: 10, paddingBottom: 26 },
   guestAvatar: { width: 72, height: 72, borderRadius: 36, alignItems: "center", justifyContent: "center", backgroundColor: "#e8edf3", marginBottom: 16 },
